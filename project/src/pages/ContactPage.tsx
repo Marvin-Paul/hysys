@@ -39,8 +39,8 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-gray-600">+1 (800) 123-4567</p>
-                    <p className="text-sm text-gray-500">Mon-Fri 9am-6pm EST</p>
+                    <p className="text-gray-600">0782-602854 · 0752602857 · 0757 602854</p>
+                    <p className="text-sm text-gray-500">Mon-Fri 9am-6pm (local time)</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -49,8 +49,9 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">contact@cloudforce.com</p>
+                    <p className="text-gray-600">info@hysysglobal.com</p>
                     <p className="text-sm text-gray-500">We'll respond within 24 hours</p>
+                    <p className="text-sm text-gray-500 mt-1">Website: <a href="https://www.hysysglobal.com" className="text-[#0b5394] hover:underline">www.hysysglobal.com</a></p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -59,8 +60,8 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Headquarters</h3>
-                    <p className="text-gray-600">123 Cloud Street</p>
-                    <p className="text-gray-600">San Francisco, CA 94105</p>
+                    <p className="text-gray-600">Plot 19 Sir Albert Cook Road, MENGO - KAMPALA</p>
+                    <p className="text-gray-600">P.O.Box 16435 K'la</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">

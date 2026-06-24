@@ -7,7 +7,6 @@ import {
   FileText,
   Settings,
   HelpCircle,
-  Sparkles,
   LogOut,
   Search,
   Bell,
@@ -55,12 +54,10 @@ function DashboardLayout() {
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-[#032d60] text-white flex-shrink-0 hidden lg:flex flex-col">
-        <div className="p-4 border-b border-white/10">
+            <div className="p-4 border-b border-white/10">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-bold">CloudForce</span>
+            <img src="/logo.jpeg" alt="HYSYS logo" className="w-[100px] h-[72px] sm:w-[120px] sm:h-[86px] rounded-full border-2 border-gray-300 object-cover" />
+            <span className="text-lg font-bold">HYSYS GLOBAL SOLUTIONS LIMITED</span>
           </Link>
         </div>
 
@@ -91,7 +88,7 @@ function DashboardLayout() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">Demo User</div>
-              <div className="text-xs text-white/60 truncate">demo@cloudforce.com</div>
+                <div className="text-xs text-white/60 truncate">demo@hysysglobal.com</div>
             </div>
             <Link to="/login" className="text-white/60 hover:text-white">
               <LogOut className="w-5 h-5" />
@@ -992,7 +989,7 @@ function SettingsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input type="email" defaultValue="demo@cloudforce.com" className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none" />
+              <input type="email" defaultValue="demo@hysysglobal.com" className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none" />
             </div>
             <button className="px-4 py-2 bg-[#0b5394] text-white rounded-lg font-medium hover:bg-[#032d60] transition-colors">
               Save Changes
@@ -1061,10 +1058,10 @@ function SupportPage() {
             </div>
             <div>
               <div className="font-semibold text-gray-900">Email Support</div>
-              <div className="text-sm text-gray-500">support@cloudforce.com</div>
+              <div className="text-sm text-gray-500">support@hysysglobal.com</div>
             </div>
           </div>
-          <a href="mailto:support@cloudforce.com" className="text-[#0b5394] text-sm font-medium hover:underline">Send Email</a>
+          <a href="mailto:support@hysysglobal.com" className="text-[#0b5394] text-sm font-medium hover:underline">Send Email</a>
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">

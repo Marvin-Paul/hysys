@@ -16,7 +16,7 @@ const values = [
 ];
 
 const milestones = [
-  { year: '2010', event: 'CloudForce founded' },
+  { year: '2010', event: 'HYSYS GLOBAL SOLUTIONS LIMITED founded' },
   { year: '2014', event: 'Reached 1 million users' },
   { year: '2018', event: 'Launched AI Platform' },
   { year: '2022', event: '100,000+ customers worldwide' },
@@ -28,7 +28,7 @@ export function AboutPage() {
     <div className="pt-16">
       <section className="bg-gradient-to-br from-[#032d60] to-[#0b5394] py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">About CloudForce</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">About HYSYS GLOBAL SOLUTIONS LIMITED</h1>
           <p className="text-xl text-white/80 max-w-2xl mx-auto">We believe business is the greatest platform for change and are committed to helping companies connect with customers in a whole new way.</p>
         </div>
       </section>
@@ -39,7 +39,7 @@ export function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
               <p className="text-lg text-gray-700 mb-4">
-                CloudForce is dedicated to empowering businesses of all sizes to connect with their customers in meaningful ways. We believe that when companies have the right tools, they can transform industries and improve lives.
+                HYSYS GLOBAL SOLUTIONS LIMITED is dedicated to empowering businesses of all sizes to connect with their customers in meaningful ways. We believe that when companies have the right tools, they can transform industries and improve lives.
               </p>
               <p className="text-lg text-gray-700 mb-6">
                 Founded on the principle that customer relationships are the heart of every successful business, we've grown to become the world's leading CRM platform, serving over 150,000 companies globally.
@@ -51,7 +51,7 @@ export function AboutPage() {
             <div className="relative">
               <div className="bg-gradient-to-br from-[#0b5394] to-[#00a3e0] rounded-2xl p-8 text-white">
                 <div className="text-5xl font-bold mb-2">150K+</div>
-                <div className="text-white/80 mb-8">Companies trust CloudForce</div>
+                <div className="text-white/80 mb-8">Companies trust HYSYS GLOBAL SOLUTIONS LIMITED</div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/10 rounded-lg p-4"><div className="text-2xl font-bold">40M+</div><div className="text-sm text-white/80">Users</div></div>
                   <div className="bg-white/10 rounded-lg p-4"><div className="text-2xl font-bold">60+</div><div className="text-sm text-white/80">Countries</div></div>

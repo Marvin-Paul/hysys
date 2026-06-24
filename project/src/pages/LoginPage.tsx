@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Sparkles, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 
 export function LoginPage() {
@@ -43,11 +43,11 @@ export function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
+            <Link to="/" className="inline-flex flex-col items-center gap-4 mb-6">
+              <div className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] lg:w-[140px] lg:h-[140px] rounded-full bg-white shadow-lg border-4 border-gray-300 overflow-hidden flex items-center justify-center">
+                <img src="/logo.jpeg" alt="HYSYS logo" className="w-full h-full object-cover" />
               </div>
-              <span className="text-2xl font-bold text-[#032d60]">CloudForce</span>
+              <span className="text-2xl font-bold text-[#032d60]">HYSYS GLOBAL SOLUTIONS LIMITED</span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h1>
             <p className="text-gray-600">Sign in to your account to continue</p>

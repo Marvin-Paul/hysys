@@ -1,18 +1,18 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
   Play,
-  Star,
   Users,
   BarChart3,
   Shield,
   Zap,
-  TrendingUp,
   Globe,
   Award,
-  CheckCircle,
-  Sparkles
+  Sparkles,
+  X
 } from 'lucide-react';
+import { CustomerStoriesSection } from '../components/CustomerStoriesSection';
+import { FAQSection } from '../components/FAQSection';
 
 const trustedBrands = ['Spotify', 'Toyota', 'Adobe', 'IBM', 'Amazon Web Services', 'Cisco'];
 
@@ -28,13 +28,6 @@ const productCards = [
   { icon: BarChart3, title: 'Service Cloud', subtitle: 'Customer Service', description: 'Deliver exceptional support experiences with AI-powered service solutions.', color: 'from-cyan-500 to-teal-600', bgColor: 'bg-cyan-50', link: '/products/service-cloud' },
   { icon: Zap, title: 'Marketing Cloud', subtitle: 'Digital Marketing', description: 'Create personalized customer journeys across every channel and touchpoint.', color: 'from-green-500 to-emerald-600', bgColor: 'bg-green-50', link: '/products/marketing-cloud' },
   { icon: Shield, title: 'Commerce Cloud', subtitle: 'E-Commerce', description: 'Build seamless shopping experiences that convert browsers into buyers.', color: 'from-orange-500 to-red-500', bgColor: 'bg-orange-50', link: '/products/commerce-cloud' },
-  { icon: Globe, title: 'Platform Cloud', subtitle: 'Admin & Automation', description: 'Configure automation, integrations, security, and data governance.', color: 'from-slate-600 to-cyan-600', bgColor: 'bg-slate-50', link: '/products/platform-cloud' },
-];
-
-const testimonials = [
-  { quote: "The platform transformed how we engage with customers. We've seen a 40% increase in conversion rates.", author: "Sarah Chen", role: "VP of Sales, TechCorp", avatar: "SC" },
-  { quote: "Implementation was seamless and the support team is exceptional. Best CRM decision we ever made.", author: "Michael Rodriguez", role: "CTO, Innovate Inc", avatar: "MR" },
-  { quote: "The AI-powered insights have completely changed our forecasting accuracy. Game changer.", author: "Emily Watson", role: "Director of Operations, GlobalCo", avatar: "EW" }
 ];
 
 const features = [
@@ -45,6 +38,16 @@ const features = [
 ];
 
 export function HomePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isDemoOpen = searchParams.get('demo') === '1';
+
+  const openDemo = () => setSearchParams({ demo: '1' });
+  const closeDemo = () => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete('demo');
+    setSearchParams(nextParams, { replace: true });
+  };
+
   return (
     <>
       <section className="relative min-h-screen bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0] overflow-hidden">
@@ -83,13 +86,14 @@ export function HomePage() {
                   Start Free Trial
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <a
-                  href="#demo"
+                <button
+                  type="button"
+                  onClick={openDemo}
                   className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/30 text-white rounded-xl font-semibold hover:bg-white/20 transition-all"
                 >
                   <Play className="w-5 h-5" />
                   Watch Demo
-                </a>
+                </button>
               </div>
 
               <div className="mt-10 animate-fade-in-up animate-delay-500">
@@ -104,57 +108,7 @@ export function HomePage() {
               </div>
             </div>
 
-            <div className="hidden lg:block animate-fade-in animate-delay-300">
-              <div className="relative">
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-3 h-3 rounded-full bg-red-400" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                    <div className="w-3 h-3 rounded-full bg-green-400" />
-                  </div>
-                  <div className="space-y-4">
-                    <div className="h-8 bg-white/20 rounded-lg w-3/4 shimmer" />
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="h-24 bg-gradient-to-br from-cyan-400/30 to-blue-500/30 rounded-xl flex items-center justify-center">
-                        <Users className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="h-24 bg-gradient-to-br from-green-400/30 to-emerald-500/30 rounded-xl flex items-center justify-center">
-                        <TrendingUp className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="h-24 bg-gradient-to-br from-orange-400/30 to-red-500/30 rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-8 h-8 text-white" />
-                      </div>
-                    </div>
-                    <div className="h-32 bg-white/10 rounded-xl" />
-                  </div>
-                </div>
-
-                <div className="absolute -right-8 top-1/4 bg-white rounded-xl shadow-xl p-4 animate-float" style={{ animationDelay: '1s' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-gray-900">Deal Closed</div>
-                      <div className="text-xs text-gray-500">$125,000</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -left-8 bottom-1/4 bg-white rounded-xl shadow-xl p-4 animate-float" style={{ animationDelay: '3s' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <Star className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-gray-900">New Lead</div>
-                      <div className="text-xs text-gray-500">Enterprise Account</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
@@ -163,6 +117,67 @@ export function HomePage() {
           </svg>
         </div>
       </section>
+
+      {isDemoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="relative w-full max-w-5xl overflow-hidden rounded-[32px] bg-white shadow-2xl">
+            <button
+              onClick={closeDemo}
+              className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-gray-900 shadow-sm transition hover:bg-white"
+              aria-label="Close demo modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="grid gap-6 lg:grid-cols-[1.8fr_1fr] p-6 sm:p-8 lg:p-10">
+              <div className="rounded-3xl bg-slate-950 overflow-hidden">
+                <div className="relative aspect-video bg-black">
+                  <iframe
+                    className="absolute inset-0 h-full w-full"
+                    src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1&mute=1"
+                    title="HYSYS demo video"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between gap-6 rounded-3xl bg-slate-50 p-6 sm:p-8">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[#0b5394] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                    <Play className="w-4 h-4" />
+                    Demo Experience
+                  </div>
+                  <h2 className="mt-6 text-2xl font-semibold text-slate-900">See HYSYS in action</h2>
+                  <p className="mt-4 text-sm leading-6 text-slate-600">
+                    Watch a concise product demo to understand how our CRM platform accelerates sales, service, and marketing across teams.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <div className="text-sm font-semibold text-slate-900">What you'll see</div>
+                    <ul className="mt-3 space-y-3 text-sm text-slate-600">
+                      <li>• Intelligent pipeline management</li>
+                      <li>• Automated service workflows</li>
+                      <li>• Personalized marketing journeys</li>
+                      <li>• Real-time customer analytics</li>
+                    </ul>
+                  </div>
+
+                  <Link
+                    to="/signup"
+                    onClick={closeDemo}
+                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#0b5394] px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-[#032d60]"
+                  >
+                    Start your free trial
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="bg-white py-12 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -205,29 +220,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Loved by <span className="gradient-text">Teams Worldwide</span></h2>
-            <p className="text-lg text-gray-600">See why thousands of businesses choose CloudForce</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 border border-gray-100">
-                <div className="flex gap-1 mb-4">{[...Array(5)].map((_, i) => (<Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />))}</div>
-                <p className="text-gray-700 mb-6 italic">"{t.quote}"</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center text-white font-semibold">{t.avatar}</div>
-                  <div>
-                    <div className="font-semibold text-gray-900">{t.author}</div>
-                    <div className="text-sm text-gray-500">{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CustomerStoriesSection />
+
+      <FAQSection />
 
       <section className="py-20 bg-gradient-to-br from-[#032d60] to-[#0b5394] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
