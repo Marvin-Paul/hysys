@@ -117,7 +117,7 @@ export function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between h-16 gap-4">
             <div className="flex items-center gap-4">
               <Link to="/" className="flex items-center gap-3">
-                <img src="/logo.jpeg" alt="HYSYS logo" className="w-[100px] h-[72px] sm:w-[120px] sm:h-[86px] lg:w-[140px] lg:h-[100px] rounded-full border-2 border-gray-300 object-cover" />
+                <img src="/Mavy%20logo2.png" alt="HYSYS logo" className="w-[100px] h-[72px] sm:w-[120px] sm:h-[86px] lg:w-[140px] lg:h-[100px] object-cover" />
               </Link>
             </div>
 
@@ -395,7 +395,7 @@ export function Layout({ children }: LayoutProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
             <div className="col-span-2">
               <Link to="/" className="flex items-center gap-2 mb-4">
-                <img src="/logo.jpeg" alt="HYSYS logo" className="w-[110px] h-[79px] rounded-full border-2 border-gray-300 object-cover" />
+                <img src="/Mavy%20logo2.png" alt="HYSYS logo" className="w-[110px] h-[79px] object-cover" />
                 <span className="text-xl font-bold">HYSYS GLOBAL SOLUTIONS LIMITED</span>
               </Link>
               <p className="text-white/60 text-sm mb-6 max-w-xs">

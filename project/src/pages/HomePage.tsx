@@ -192,6 +192,26 @@ export function HomePage() {
         </div>
       </section>
 
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#032d60] mb-6">
+              HYSYS is the platform for the Agentic Enterprise
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed">
+              Our AI-powered CRM platform helps businesses of all sizes connect with customers, automate processes, and drive growth. With intelligent automation and real-time insights, you can transform your customer experience and scale your operations efficiently.
+            </p>
+            <Link
+              to="/products"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#0b5394] text-white rounded-full font-semibold hover:bg-[#032d60] transition-all hover:shadow-lg hover:-translate-y-0.5"
+            >
+              See all products
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
