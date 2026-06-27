@@ -62,7 +62,7 @@ export function CustomerStoriesSection() {
   );
 
   return (
-    <section className="relative py-20 bg-gradient-to-b from-[#0052CC] to-[#032D60] text-white overflow-hidden">
+    <section className="relative py-20 bg-gradient-to-b from-[#0052CC] to-[#032D60] text-white overflow-hidden border-t border-blue-900">
       {/* Decorative wave shapes at bottom */}
       <div className="absolute inset-x-0 bottom-0 h-32">
         <svg viewBox="0 0 1440 120" fill="none" className="w-full h-full" preserveAspectRatio="none">

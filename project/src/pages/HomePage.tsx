@@ -13,6 +13,15 @@ import {
 } from 'lucide-react';
 import { CustomerStoriesSection } from '../components/CustomerStoriesSection';
 import { FAQSection } from '../components/FAQSection';
+import { PlatformArchitecture } from '../components/PlatformArchitecture';
+import { AIForBusinessSection } from '../components/AIForBusinessSection';
+import { AgentforceStatsSection } from '../components/AgentforceStatsSection';
+import { IndustriesSection } from '../components/IndustriesSection';
+import { AnalystReportSection } from '../components/AnalystReportSection';
+import { AgentblazerSection } from '../components/AgentblazerSection';
+import { CoreValuesSection } from '../components/CoreValuesSection';
+import { AISuccessSection } from '../components/AISuccessSection';
+import { GetStartedSection } from '../components/GetStartedSection';
 
 const trustedBrands = ['Spotify', 'Toyota', 'Adobe', 'IBM', 'Amazon Web Services', 'Cisco'];
 
@@ -179,7 +188,8 @@ export function HomePage() {
         </div>
       )}
 
-      <section className="bg-white py-12 border-b border-gray-100">
+      {/* stats bar — white */}
+      <section className="bg-white py-12 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, idx) => (
@@ -192,7 +202,8 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      {/* platform intro — #f3f3f3 light grey */}
+      <section className="py-20" style={{ background: '#f3f3f3' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#032d60] mb-6">
@@ -212,16 +223,16 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      {/* product cards — white */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Complete Suite of <span className="gradient-text">Cloud Products</span></h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">Everything you need to connect with customers, automate processes, and grow your business.</p>
           </div>
-
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {productCards.map((card, idx) => (
-              <Link key={idx} to={card.link} className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden">
+              <Link key={idx} to={card.link} className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-200 overflow-hidden">
                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${card.bgColor}`} />
                 <div className="relative">
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
@@ -240,71 +251,27 @@ export function HomePage() {
         </div>
       </section>
 
+      <PlatformArchitecture />
+
       <CustomerStoriesSection />
 
+      <AIForBusinessSection />
+
+      <AgentforceStatsSection />
+
+      <IndustriesSection />
+
+      <AnalystReportSection />
+
+      <AgentblazerSection />
+
+      <CoreValuesSection />
+
+      <AISuccessSection />
+
+      <GetStartedSection />
+
       <FAQSection />
-
-      <section className="py-20 bg-gradient-to-br from-[#032d60] to-[#0b5394] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">Built for the <span className="block text-cyan-300">Modern Enterprise</span></h2>
-              <p className="text-lg text-white/80 mb-8">Our platform combines cutting-edge AI with enterprise-grade reliability to deliver a CRM experience that scales with your business.</p>
-              <div className="grid sm:grid-cols-2 gap-6">
-                {features.map((f, idx) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <f.icon className="w-6 h-6 text-cyan-300" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">{f.title}</h3>
-                      <p className="text-sm text-white/70">{f.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="relative">
-              <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="font-semibold">Revenue Overview</h3>
-                  <span className="text-xs text-cyan-300">Live</span>
-                </div>
-                <div className="h-48 flex items-end gap-2">
-                  {[40, 65, 45, 80, 55, 90, 75, 95].map((h, i) => (
-                    <div key={i} className="flex-1 bg-gradient-to-t from-cyan-500 to-blue-400 rounded-t-lg transition-all duration-500 hover:from-cyan-400 hover:to-blue-300" style={{ height: `${h}%` }} />
-                  ))}
-                </div>
-                <div className="mt-6 grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-cyan-300">$2.4M</div>
-                    <div className="text-xs text-white/60">This Quarter</div>
-                  </div>
-                  <div className="bg-white/5 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-green-400">+24%</div>
-                    <div className="text-xs text-white/60">Growth Rate</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Ready to Transform Your Business?</h2>
-          <p className="text-lg text-gray-600 mb-8">Start your free trial today. No credit card required.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#0b5394] text-white rounded-xl font-semibold hover:bg-[#032d60] transition-all hover:shadow-lg hover:-translate-y-0.5">
-              Start Free Trial <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-100 text-gray-900 rounded-xl font-semibold hover:bg-gray-200 transition-all">
-              Contact Sales
-            </Link>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

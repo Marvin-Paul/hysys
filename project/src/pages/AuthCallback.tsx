@@ -9,27 +9,33 @@ export function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Exchange the auth code for a session
         const { error: authError } = await supabase.auth.exchangeCodeForSession(
           window.location.search
         );
-
         if (authError) {
-          console.error('Auth callback error:', authError);
           setError(authError.message);
           setTimeout(() => navigate('/login', { replace: true }), 2000);
           return;
         }
 
-        // Success - redirect to dashboard
-        navigate('/dashboard', { replace: true });
+        // Fetch role from profiles table and redirect accordingly
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          const role = profile?.role || 'user';
+          navigate(role === 'admin' ? '/dashboard' : '/crm', { replace: true });
+        } else {
+          navigate('/login', { replace: true });
+        }
       } catch (err) {
-        console.error('Unexpected error:', err);
         setError('An unexpected error occurred');
         setTimeout(() => navigate('/login', { replace: true }), 2000);
       }
     };
-
     handleCallback();
   }, [navigate]);
 

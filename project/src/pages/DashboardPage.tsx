@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -23,9 +23,15 @@ import {
   Clock,
   ArrowRight,
   Plus,
-  X
+  X,
+  Sparkles,
+  UserPlus,
+  Import,
+  BookOpen,
+  Rocket,
 } from 'lucide-react';
 import { supabase, type Contact, type Activity, type SupportTicket, type Company } from '../lib/supabase';
+import { useAuth } from '../lib/auth';
 
 const dashboardNavItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/dashboard' },
@@ -49,15 +55,32 @@ const dashboardNavItems = [
 function DashboardLayout() {
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  // Derive display name and initials from auth user
+  const firstName = user?.user_metadata?.first_name || '';
+  const lastName  = user?.user_metadata?.last_name  || '';
+  const fullName  = firstName && lastName ? `${firstName} ${lastName}`
+                  : firstName || user?.email?.split('@')[0] || 'User';
+  const initials  = firstName && lastName
+                  ? `${firstName[0]}${lastName[0]}`.toUpperCase()
+                  : (user?.email?.[0] || 'U').toUpperCase();
+  const email     = user?.email || '';
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-[#032d60] text-white flex-shrink-0 hidden lg:flex flex-col">
-            <div className="p-4 border-b border-white/10">
+        <div className="p-4 border-b border-white/10">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/logo.jpeg" alt="HYSYS logo" className="w-[100px] h-[72px] sm:w-[120px] sm:h-[86px] rounded-full border-2 border-gray-300 object-cover" />
-            <span className="text-lg font-bold">HYSYS GLOBAL SOLUTIONS LIMITED</span>
+            <img src="/Mavy%20logo2.png" alt="HYSYS logo" className="w-[80px] h-[58px] rounded object-cover" />
+            <span className="text-sm font-bold leading-tight">HYSYS GLOBAL SOLUTIONS</span>
           </Link>
         </div>
 
@@ -73,61 +96,66 @@ function DashboardLayout() {
                       : 'text-white/70 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-sm">{item.label}</span>
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
+        {/* User profile at bottom */}
         <div className="p-4 border-t border-white/10">
-          <div className="flex items-center gap-3 px-4 py-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center font-semibold">
-              JD
+          <div className="flex items-center gap-3 px-2 py-2">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center font-bold text-sm flex-shrink-0">
+              {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-medium truncate">Demo User</div>
-                <div className="text-xs text-white/60 truncate">demo@hysysglobal.com</div>
+              <div className="font-medium text-sm truncate">{fullName}</div>
+              <div className="text-xs text-white/60 truncate">{email}</div>
             </div>
-            <Link to="/login" className="text-white/60 hover:text-white">
-              <LogOut className="w-5 h-5" />
-            </Link>
+            <button
+              onClick={handleSignOut}
+              title="Sign out"
+              className="text-white/60 hover:text-white transition-colors flex-shrink-0"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <header className="bg-white border-b border-gray-200 px-6 py-3 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search..."
-                  className="pl-10 pr-4 py-2 w-64 rounded-lg border border-gray-200 focus:border-[#0b5394] focus:ring-1 focus:ring-[#0b5394] outline-none transition-all"
+                  className="pl-9 pr-4 py-2 w-56 rounded-lg border border-gray-200 text-sm focus:border-[#0b5394] focus:ring-1 focus:ring-[#0b5394] outline-none"
                 />
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+            <div className="flex items-center gap-3">
+              <button className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
               </button>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center font-semibold text-white">
-                  JD
+              <div className="flex items-center gap-2 cursor-pointer">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center font-bold text-white text-xs">
+                  {initials}
                 </div>
                 <div className="hidden md:block">
-                  <div className="font-medium text-gray-900">Demo User</div>
-                  <div className="text-xs text-gray-500">Admin</div>
+                  <div className="text-sm font-medium text-gray-900 leading-tight">{fullName}</div>
+                  <div className="text-xs text-gray-500">Member</div>
                 </div>
-                <ChevronDown className="w-4 h-4 text-gray-600" />
+                <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
             </div>
           </div>
@@ -146,6 +174,39 @@ function DashboardOverview() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ contacts: 0, deals: 0, revenue: 0, activities: 0 });
   const [recentActivities, setRecentActivities] = useState<(Activity & { contact?: Contact, company?: Company })[]>([]);
+  const [checklistDismissed, setChecklistDismissed] = useState(() =>
+    localStorage.getItem('hysys-checklist-dismissed') === 'true'
+  );
+  const { user } = useAuth();
+
+  const firstName = user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'there';
+
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
+    try { return JSON.parse(localStorage.getItem('hysys-checklist-items') || '{}'); }
+    catch { return {}; }
+  });
+
+  const checklistSteps = [
+    { id: 'profile',  icon: Users,    label: 'Complete your profile',        path: '/dashboard/settings' },
+    { id: 'contact',  icon: UserPlus, label: 'Add your first contact',        path: '/dashboard/crm' },
+    { id: 'deal',     icon: Target,   label: 'Create your first deal',        path: '/dashboard/pipeline' },
+    { id: 'import',   icon: Import,   label: 'Import your existing data',     path: '/dashboard/integrations' },
+    { id: 'learn',    icon: BookOpen, label: 'Explore Agentforce AI tools',   path: '/dashboard/ai-tools' },
+  ];
+
+  const completedCount = checklistSteps.filter(s => checkedItems[s.id]).length;
+  const isNewUser = stats.contacts === 0 && stats.deals === 0 && stats.activities === 0;
+
+  const toggleItem = (id: string) => {
+    const next = { ...checkedItems, [id]: !checkedItems[id] };
+    setCheckedItems(next);
+    localStorage.setItem('hysys-checklist-items', JSON.stringify(next));
+  };
+
+  const dismissChecklist = () => {
+    setChecklistDismissed(true);
+    localStorage.setItem('hysys-checklist-dismissed', 'true');
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -155,16 +216,13 @@ function DashboardOverview() {
           supabase.from('deals').select('*'),
           supabase.from('activities').select('*, contact:contacts(*), company:companies(*)').order('created_at', { ascending: false }).limit(5)
         ]);
-
         const totalRevenue = dealsRes.data?.reduce((sum, deal) => sum + (deal.stage === 'closed_won' ? deal.amount : 0), 0) || 0;
-
         setStats({
           contacts: contactsRes.count || 0,
           deals: dealsRes.data?.length || 0,
           revenue: totalRevenue,
           activities: activitiesRes.data?.length || 0
         });
-
         setRecentActivities(activitiesRes.data || []);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -176,10 +234,10 @@ function DashboardOverview() {
   }, []);
 
   const metrics = [
-    { label: 'Total Contacts', value: stats.contacts.toString(), change: '+12%', trend: 'up', icon: Users },
-    { label: 'Revenue (Won)', value: `$${(stats.revenue / 1000).toFixed(0)}K`, change: '+8%', trend: 'up', icon: DollarSign },
-    { label: 'Active Deals', value: stats.deals.toString(), change: '+24%', trend: 'up', icon: Target },
-    { label: 'Activities', value: stats.activities.toString(), change: '-5%', trend: 'down', icon: CheckCircle },
+    { label: 'Total Contacts', value: stats.contacts.toString(), change: '+12%', trend: 'up',   icon: Users },
+    { label: 'Revenue (Won)',  value: `$${(stats.revenue / 1000).toFixed(0)}K`, change: '+8%',  trend: 'up',   icon: DollarSign },
+    { label: 'Active Deals',  value: stats.deals.toString(),     change: '+24%', trend: 'up',   icon: Target },
+    { label: 'Activities',    value: stats.activities.toString(), change: '-5%',  trend: 'down', icon: CheckCircle },
   ];
 
   if (loading) {
@@ -192,61 +250,150 @@ function DashboardOverview() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard Overview</h1>
+      {/* Personalised greeting */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">
+          Welcome{isNewUser ? '' : ' back'}, {firstName}! 👋
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          {isNewUser
+            ? "You're all set — let's get your workspace ready."
+            : `Here's what's happening in your workspace today.`}
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {metrics.map((metric, idx) => (
-          <div key={idx} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center">
-                <metric.icon className="w-6 h-6 text-white" />
+      {/* Get Started checklist — shown until dismissed or all complete */}
+      {!checklistDismissed && (
+        <div className="bg-gradient-to-br from-[#032d60] to-[#0b5394] rounded-2xl p-6 mb-8 text-white relative">
+          <button
+            onClick={dismissChecklist}
+            className="absolute top-4 right-4 text-white/50 hover:text-white"
+            title="Dismiss"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <div className="flex items-start gap-4 mb-5">
+            <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+              <Rocket className="w-5 h-5 text-cyan-300" />
+            </div>
+            <div>
+              <h2 className="font-bold text-lg leading-tight">Get started with HYSYS</h2>
+              <p className="text-white/70 text-sm mt-0.5">
+                Complete these steps to unlock the full power of your CRM.
+              </p>
+            </div>
+            <div className="ml-auto text-right flex-shrink-0">
+              <span className="text-2xl font-extrabold text-cyan-300">{completedCount}</span>
+              <span className="text-white/60 text-sm"> / {checklistSteps.length}</span>
+              <div className="text-xs text-white/50 mt-0.5">completed</div>
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="h-1.5 bg-white/20 rounded-full mb-5 overflow-hidden">
+            <div
+              className="h-full bg-cyan-400 rounded-full transition-all duration-500"
+              style={{ width: `${(completedCount / checklistSteps.length) * 100}%` }}
+            />
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {checklistSteps.map((step) => (
+              <div
+                key={step.id}
+                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+                  checkedItems[step.id]
+                    ? 'bg-white/10 opacity-60'
+                    : 'bg-white/10 hover:bg-white/20'
+                }`}
+                onClick={() => toggleItem(step.id)}
+              >
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                  checkedItems[step.id] ? 'border-cyan-400 bg-cyan-400' : 'border-white/40'
+                }`}>
+                  {checkedItems[step.id] && <CheckCircle className="w-3 h-3 text-white fill-white" />}
+                </div>
+                <Link
+                  to={step.path}
+                  className={`text-sm font-medium flex-1 ${checkedItems[step.id] ? 'line-through text-white/50' : 'text-white'}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {step.label}
+                </Link>
+                <ArrowRight className="w-4 h-4 text-white/40 flex-shrink-0" />
               </div>
-              <span className={`flex items-center gap-1 text-sm font-medium ${metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                {metric.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+            ))}
+          </div>
+
+          {completedCount === checklistSteps.length && (
+            <div className="mt-4 flex items-center gap-2 text-cyan-300 text-sm font-semibold">
+              <Sparkles className="w-4 h-4" />
+              You're all set! Your workspace is fully configured.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        {metrics.map((metric, idx) => (
+          <div key={idx} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center">
+                <metric.icon className="w-5 h-5 text-white" />
+              </div>
+              <span className={`flex items-center gap-1 text-xs font-medium ${metric.trend === 'up' ? 'text-green-600' : 'text-red-500'}`}>
+                {metric.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                 {metric.change}
               </span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{metric.value}</div>
-            <div className="text-sm text-gray-600">{metric.label}</div>
+            <div className="text-sm text-gray-500 mt-0.5">{metric.label}</div>
           </div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Stage</h2>
-          <div className="h-64 flex items-end gap-2">
+          <h2 className="text-base font-semibold text-gray-900 mb-4">Revenue by Month</h2>
+          <div className="h-56 flex items-end gap-1.5">
             {[35, 45, 30, 55, 40, 65, 50, 75, 60, 85, 70, 90].map((h, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                <div
-                  className="w-full bg-gradient-to-t from-[#0b5394] to-[#00a3e0] rounded-t-lg transition-all duration-500 hover:from-cyan-500 hover:to-blue-400"
-                  style={{ height: `${h}%` }}
-                />
-                <span className="text-xs text-gray-500">{['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}</span>
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <div className="w-full bg-gradient-to-t from-[#0b5394] to-[#00a3e0] rounded-t-md transition-all duration-500 hover:opacity-80"
+                  style={{ height: `${h}%` }} />
+                <span className="text-[10px] text-gray-400">{['J','F','M','A','M','J','J','A','S','O','N','D'][i]}</span>
               </div>
             ))}
           </div>
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  {activity.type === 'call' && <Phone className="w-4 h-4 text-[#0b5394]" />}
-                  {activity.type === 'email' && <Mail className="w-4 h-4 text-[#0b5394]" />}
-                  {activity.type === 'meeting' && <Users className="w-4 h-4 text-[#0b5394]" />}
-                  {activity.type === 'note' && <FileText className="w-4 h-4 text-[#0b5394]" />}
-                  {activity.type === 'task' && <CheckCircle className="w-4 h-4 text-[#0b5394]" />}
+          <h2 className="text-base font-semibold text-gray-900 mb-4">Recent Activity</h2>
+          {recentActivities.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-40 text-center">
+              <Clock className="w-10 h-10 text-gray-200 mb-3" />
+              <p className="text-sm font-medium text-gray-500">No activity yet</p>
+              <p className="text-xs text-gray-400 mt-1">Your recent actions will appear here</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentActivities.map((activity) => (
+                <div key={activity.id} className="flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    {activity.type === 'call'    && <Phone className="w-3.5 h-3.5 text-[#0b5394]" />}
+                    {activity.type === 'email'   && <Mail className="w-3.5 h-3.5 text-[#0b5394]" />}
+                    {activity.type === 'meeting' && <Users className="w-3.5 h-3.5 text-[#0b5394]" />}
+                    {activity.type === 'note'    && <FileText className="w-3.5 h-3.5 text-[#0b5394]" />}
+                    {activity.type === 'task'    && <CheckCircle className="w-3.5 h-3.5 text-[#0b5394]" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-900 truncate">{activity.title || activity.type}</p>
+                    <p className="text-xs text-gray-400">{new Date(activity.created_at).toLocaleDateString()}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 truncate">{activity.title || activity.type}</p>
-                  <p className="text-xs text-gray-500">{new Date(activity.created_at).toLocaleDateString()}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -386,6 +533,22 @@ function CRMPage() {
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0b5394]" />
+        </div>
+      ) : contacts.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-16 text-center">
+          <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Users className="w-8 h-8 text-[#0b5394]" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No contacts yet</h3>
+          <p className="text-gray-500 text-sm mb-6 max-w-xs mx-auto">
+            Add your first contact to start building your CRM and tracking customer relationships.
+          </p>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0b5394] text-white rounded-lg font-medium text-sm hover:bg-[#032d60] transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Add your first contact
+          </button>
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -961,46 +1124,92 @@ function AdminPage() {
   );
 }
 function SettingsPage() {
+  const { user } = useAuth();
+  const [saved, setSaved] = useState(false);
+  const [form, setForm] = useState({
+    firstName: user?.user_metadata?.first_name || '',
+    lastName:  user?.user_metadata?.last_name  || '',
+    email:     user?.email || '',
+    company:   user?.user_metadata?.company || '',
+  });
+
+  const initials = (form.firstName && form.lastName)
+    ? `${form.firstName[0]}${form.lastName[0]}`.toUpperCase()
+    : (user?.email?.[0] || 'U').toUpperCase();
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await supabase.auth.updateUser({
+      data: {
+        first_name: form.firstName,
+        last_name:  form.lastName,
+        company:    form.company,
+      }
+    });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Account Settings</h1>
+      <div className="max-w-2xl space-y-6">
 
-      <div className="max-w-2xl">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+        {/* Profile */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Information</h2>
-          <div className="space-y-4">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center text-white text-2xl font-bold">
-                DU
+          <form onSubmit={handleSave} className="space-y-4">
+            <div className="flex items-center gap-5 mb-2">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center text-white text-xl font-bold">
+                {initials}
               </div>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                Change Photo
-              </button>
+              <div>
+                <div className="font-medium text-gray-900">{form.firstName} {form.lastName}</div>
+                <div className="text-sm text-gray-500">{form.email}</div>
+              </div>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                <input type="text" defaultValue="Demo" className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none" />
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+                <input type="text" value={form.firstName}
+                  onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                <input type="text" defaultValue="User" className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none" />
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+                <input type="text" value={form.lastName}
+                  onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input type="email" defaultValue="demo@hysysglobal.com" className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none" />
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <input type="email" value={form.email} disabled
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 outline-none text-sm cursor-not-allowed" />
+              <p className="text-xs text-gray-400 mt-1">Email cannot be changed here.</p>
             </div>
-            <button className="px-4 py-2 bg-[#0b5394] text-white rounded-lg font-medium hover:bg-[#032d60] transition-colors">
-              Save Changes
-            </button>
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Company</label>
+              <input type="text" value={form.company}
+                onChange={(e) => setForm({ ...form, company: e.target.value })}
+                placeholder="Your company name"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm" />
+            </div>
+            <div className="flex items-center gap-3">
+              <button type="submit"
+                className="px-5 py-2 bg-[#0b5394] text-white rounded-lg font-medium text-sm hover:bg-[#032d60] transition-colors">
+                Save Changes
+              </button>
+              {saved && <span className="text-green-600 text-sm font-medium flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Saved!</span>}
+            </div>
+          </form>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 border-red-200">
-          <h2 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h2>
-          <p className="text-gray-600 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
-          <button className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
+        {/* Danger Zone */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-red-200">
+          <h2 className="text-lg font-semibold text-red-600 mb-2">Danger Zone</h2>
+          <p className="text-gray-600 text-sm mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+          <button className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium text-sm hover:bg-red-700 transition-colors">
             Delete Account
           </button>
         </div>

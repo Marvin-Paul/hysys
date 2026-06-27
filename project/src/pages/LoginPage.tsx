@@ -23,7 +23,15 @@ export function LoginPage() {
     if (error) {
       setError(error.message);
     } else {
-      navigate('/dashboard');
+      // Role-based redirect — fetch profile
+      const { data: { user: u } } = await (await import('../lib/supabase')).supabase.auth.getUser();
+      if (u) {
+        const { data: profile } = await (await import('../lib/supabase')).supabase
+          .from('profiles').select('role').eq('id', u.id).single();
+        navigate(profile?.role === 'admin' ? '/dashboard' : '/crm', { replace: true });
+      } else {
+        navigate('/crm', { replace: true });
+      }
     }
   };
 
@@ -45,7 +53,7 @@ export function LoginPage() {
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex flex-col items-center gap-4 mb-6">
               <div className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] lg:w-[140px] lg:h-[140px] rounded-full bg-white shadow-lg border-4 border-gray-300 overflow-hidden flex items-center justify-center">
-                <img src="/logo.jpeg" alt="HYSYS logo" className="w-full h-full object-cover" />
+                <img src="/Mavy%20logo2.png" alt="HYSYS logo" className="w-full h-full object-cover" />
               </div>
               <span className="text-2xl font-bold text-[#032d60]">HYSYS GLOBAL SOLUTIONS LIMITED</span>
             </Link>
