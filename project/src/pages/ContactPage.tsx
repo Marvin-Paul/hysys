@@ -1,46 +1,85 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Loader2 } from 'lucide-react';
+import { ScrollReveal } from '../components/ScrollReveal';
+import { useTranslation } from '../lib/i18n';
+import { useSiteContent } from '../hooks/useSiteContent';
+import { SEO } from '../components/SEO';
+import { supabase } from '../lib/supabase';
 
 export function ContactPage() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    company: '',
-    phone: '',
-    jobTitle: '',
-    interest: '',
-    message: ''
-  });
+  const { t } = useTranslation();
+  const content = useSiteContent('contact');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setSending(true);
+    setError(null);
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    const firstName = data.get('firstName') as string;
+    const lastName = data.get('lastName') as string;
+    const email = data.get('email') as string;
+    const phone = data.get('phone') as string;
+    const company = data.get('company') as string;
+    const jobTitle = data.get('jobTitle') as string;
+    const interest = data.get('interest') as string;
+    const message = data.get('message') as string;
+
+    try {
+      await Promise.all([
+        supabase.from('contact_submissions').insert({
+          first_name: firstName, last_name: lastName, email,
+          phone, company, job_title: jobTitle, interest, message,
+        }),
+        fetch('https://formsubmit.co/info@hysysglobal.com', {
+          method: 'POST',
+          body: new URLSearchParams({
+            _subject: 'New contact form submission from HYSYS website',
+            name: `${firstName} ${lastName}`, email, phone, company, jobTitle, interest, message,
+          } as any),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        }),
+      ]);
+      setSent(true);
+    } catch {
+      setError('Failed to send. Please email us directly at info@hysysglobal.com.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
     <div className="pt-16">
+      <SEO title="Contact" />
       <section className="bg-gradient-to-br from-[#032d60] to-[#0b5394] py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">Contact Us</h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">We're here to help. Reach out and we'll get back to you as soon as possible.</p>
-        </div>
+        <ScrollReveal>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">{content.getContent('contactTitle', t('contactTitle'))}</h1>
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">{content.getContent('contactDesc', t('contactDesc'))}</p>
+          </div>
+        </ScrollReveal>
       </section>
 
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-1">
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">Get in Touch</h2>
-              <div className="space-y-6">
+              <ScrollReveal>
+                <h2 className="text-2xl font-bold text-gray-900 mb-8">{content.getContent('getInTouch', t('getInTouch'))}</h2>
+              </ScrollReveal>
+              <div className="space-y-6 stagger-children">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-[#0b5394] flex items-center justify-center flex-shrink-0">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-gray-600">0782-602854 · 0752602857 · 0757 602854</p>
-                    <p className="text-sm text-gray-500">Mon-Fri 9am-6pm (local time)</p>
+                    <h3 className="font-semibold text-gray-900">{content.getContent('phoneLabel', t('phoneLabel'))}</h3>
+                    <p className="text-gray-600">{content.getContent('phoneNumbers', t('phoneNumbers'))}</p>
+                    <p className="text-sm text-gray-500">{content.getContent('phoneHours', t('phoneHours'))}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -48,10 +87,10 @@ export function ContactPage() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">info@hysysglobal.com</p>
-                    <p className="text-sm text-gray-500">We'll respond within 24 hours</p>
-                    <p className="text-sm text-gray-500 mt-1">Website: <a href="https://www.hysysglobal.com" className="text-[#0b5394] hover:underline">www.hysysglobal.com</a></p>
+                    <h3 className="font-semibold text-gray-900">{content.getContent('emailLabel', t('emailLabel'))}</h3>
+                    <p className="text-gray-600">{content.getContent('emailAddress', t('emailAddress'))}</p>
+                    <p className="text-sm text-gray-500">{content.getContent('emailResponse', t('emailResponse'))}</p>
+                    <p className="text-sm text-gray-500 mt-1">{content.getContent('websiteLabel', t('websiteLabel'))} <a href="https://www.hysysglobal.com" className="text-[#0b5394] hover:underline">www.hysysglobal.com</a></p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -59,9 +98,9 @@ export function ContactPage() {
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Headquarters</h3>
-                    <p className="text-gray-600">Plot 19 Sir Albert Cook Road, MENGO - KAMPALA</p>
-                    <p className="text-gray-600">P.O.Box 16435 K'la</p>
+                    <h3 className="font-semibold text-gray-900">{content.getContent('headquartersLabel', t('headquartersLabel'))}</h3>
+                    <p className="text-gray-600">{content.getContent('headquartersAddress', t('headquartersAddress'))}</p>
+                    <p className="text-gray-600">{content.getContent('poBox', t('poBox'))}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -69,9 +108,9 @@ export function ContactPage() {
                     <Clock className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Business Hours</h3>
-                    <p className="text-gray-600">Mon-Fri: 9am-6pm</p>
-                    <p className="text-gray-600">Sat-Sun: Closed</p>
+                    <h3 className="font-semibold text-gray-900">{content.getContent('businessHoursLabel', t('businessHoursLabel'))}</h3>
+                    <p className="text-gray-600">{content.getContent('hoursWeekdays', t('hoursWeekdays'))}</p>
+                    <p className="text-gray-600">{content.getContent('hoursWeekend', t('hoursWeekend'))}</p>
                   </div>
                 </div>
               </div>
@@ -79,27 +118,41 @@ export function ContactPage() {
 
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                {sent ? (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-500" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Thank you!</h3>
+                    <p className="text-gray-600">Your message has been sent. Our team will get back to you within 24 hours.</p>
+                  </div>
+                ) : (
+                  <>
+                <ScrollReveal>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">{content.getContent('sendUsMessage', t('sendUsMessage'))}</h2>
+                </ScrollReveal>
+                {error && (
+                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>
+                )}
+                <ScrollReveal>
+                  <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('firstNameLabel', t('firstNameLabel'))}</label>
                       <input
                         type="text"
+                        name="firstName"
                         required
-                        value={formData.firstName}
-                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                         placeholder="John"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('lastNameLabel', t('lastNameLabel'))}</label>
                       <input
                         type="text"
+                        name="lastName"
                         required
-                        value={formData.lastName}
-                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                         placeholder="Doe"
                       />
@@ -108,22 +161,20 @@ export function ContactPage() {
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Work Email *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('workEmailLabel', t('workEmailLabel'))}</label>
                       <input
                         type="email"
+                        name="email"
                         required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                         placeholder="john@company.com"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('phoneInputLabel', t('phoneInputLabel'))}</label>
                       <input
                         type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        name="phone"
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                         placeholder="+1 (555) 123-4567"
                       />
@@ -132,22 +183,20 @@ export function ContactPage() {
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Company *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('companyLabel', t('companyLabel'))}</label>
                       <input
                         type="text"
+                        name="company"
                         required
-                        value={formData.company}
-                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                         placeholder="Company Inc."
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('jobTitleLabel', t('jobTitleLabel'))}</label>
                       <input
                         type="text"
-                        value={formData.jobTitle}
-                        onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+                        name="jobTitle"
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                         placeholder="VP of Sales"
                       />
@@ -155,42 +204,44 @@ export function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">I'm interested in *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('interestedInLabel', t('interestedInLabel'))}</label>
                     <select
+                      name="interest"
                       required
-                      value={formData.interest}
-                      onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                     >
-                      <option value="">Select an option</option>
-                      <option value="demo">Product Demo</option>
-                      <option value="pricing">Pricing Information</option>
-                      <option value="support">Technical Support</option>
-                      <option value="partnership">Partnership Opportunities</option>
-                      <option value="other">Other</option>
+                      <option value="">{content.getContent('selectOption', t('selectOption'))}</option>
+                      <option value="demo">{content.getContent('productDemoOption', t('productDemoOption'))}</option>
+                      <option value="pricing">{content.getContent('pricingInfoOption', t('pricingInfoOption'))}</option>
+                      <option value="support">{content.getContent('technicalSupportOption', t('technicalSupportOption'))}</option>
+                      <option value="partnership">{content.getContent('partnershipOption', t('partnershipOption'))}</option>
+                      <option value="other">{content.getContent('otherOption', t('otherOption'))}</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{content.getContent('messageLabel', t('messageLabel'))}</label>
                     <textarea
+                      name="message"
                       required
                       rows={4}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all resize-none"
-                      placeholder="Tell us about your needs..."
+                      placeholder={content.getContent('messagePlaceholder', t('messagePlaceholder'))}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-4 bg-[#0b5394] text-white rounded-xl font-semibold hover:bg-[#032d60] transition-all hover:shadow-lg flex items-center justify-center gap-2"
+                    disabled={sending}
+                    className="w-full py-4 bg-[#0b5394] text-white rounded-xl font-semibold hover:bg-[#032d60] transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    <Send className="w-5 h-5" />
-                    Send Message
+                    {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                    {sending ? 'Sending...' : content.getContent('sendMessageBtn', t('sendMessageBtn'))}
                   </button>
                 </form>
+                </ScrollReveal>
+                </>
+                )}
               </div>
             </div>
           </div>
@@ -199,4 +250,3 @@ export function ContactPage() {
     </div>
   );
 }
-

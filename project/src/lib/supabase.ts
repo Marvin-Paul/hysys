@@ -355,6 +355,15 @@ export interface Note {
   updated_at: string;
 }
 
+export interface SiteContent {
+  id: string;
+  section: string;
+  content_key: string;
+  content_value: unknown;
+  updated_at: string;
+  updated_by: string | null;
+}
+
 export interface OpportunityLineItem {
   id: string;
   opportunity_id: string;

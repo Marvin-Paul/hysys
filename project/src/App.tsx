@@ -1,18 +1,32 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './lib/auth';
 import { Layout } from './components/Layout';
-import { HomePage } from './pages/HomePage';
-import { ProductsPage, ProductDetailPage } from './pages/ProductPage';
-import { SolutionsPage, SolutionDetailPage } from './pages/SolutionsPage';
-import { IndustriesPage, IndustryDetailPage } from './pages/IndustriesPage';
-import { LearningPage, LearningDetailPage } from './pages/LearningPage';
-import { PricingPage } from './pages/PricingPage';
-import { CustomerStoriesPage, CustomerStoryDetailPage } from './pages/CustomerStoriesPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
+
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const ProductsPage = lazy(() => import('./pages/ProductPage').then(m => ({ default: m.ProductsPage })));
+const ProductDetailPage = lazy(() => import('./pages/ProductPage').then(m => ({ default: m.ProductDetailPage })));
+const SolutionsPage = lazy(() => import('./pages/SolutionsPage').then(m => ({ default: m.SolutionsPage })));
+const SolutionDetailPage = lazy(() => import('./pages/SolutionsPage').then(m => ({ default: m.SolutionDetailPage })));
+const IndustriesPage = lazy(() => import('./pages/IndustriesPage').then(m => ({ default: m.IndustriesPage })));
+const IndustryDetailPage = lazy(() => import('./pages/IndustriesPage').then(m => ({ default: m.IndustryDetailPage })));
+const LearningPage = lazy(() => import('./pages/LearningPage').then(m => ({ default: m.LearningPage })));
+const LearningDetailPage = lazy(() => import('./pages/LearningPage').then(m => ({ default: m.LearningDetailPage })));
+const PricingPage = lazy(() => import('./pages/PricingPage').then(m => ({ default: m.PricingPage })));
+const CustomerStoriesPage = lazy(() => import('./pages/CustomerStoriesPage').then(m => ({ default: m.CustomerStoriesPage })));
+const CustomerStoryDetailPage = lazy(() => import('./pages/CustomerStoriesPage').then(m => ({ default: m.CustomerStoryDetailPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
+const CookiesPage = lazy(() => import('./pages/CookiesPage').then(m => ({ default: m.CookiesPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
+const ProjectStatusPage = lazy(() => import('./pages/ProjectStatusPage').then(m => ({ default: m.ProjectStatusPage })));
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
+import { RegistrationPage } from './pages/RegistrationPage';
 import { AuthCallback } from './pages/AuthCallback';
+import { AdminLoginPage } from './pages/AdminLoginPage';
+import { SiteContentProvider } from './hooks/useSiteContent';
 
 /* Admin dashboard */
 import {
@@ -21,6 +35,8 @@ import {
   ServiceOperationsPage, MarketingPage, CommercePage, IntegrationsPage,
   DataGovernancePage, AdminPage, SettingsPage, SupportPage,
 } from './pages/DashboardPage';
+import { ContentManagerPage } from './pages/ContentManagerPage';
+import { SubmissionsManager } from './pages/SubmissionsManager';
 
 /* User CRM app */
 import {
@@ -76,11 +92,14 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <SiteContentProvider>
         <Routes>
           {/* ── Auth pages ── */}
           <Route path="/login"         element={<LoginPage />} />
           <Route path="/signup"        element={<SignUpPage />} />
+          <Route path="/register"      element={<RegistrationPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/admin-login"   element={<AdminLoginPage />} />
           <Route path="/me"            element={<RoleRedirect />} />
 
           {/* ── Admin dashboard (/dashboard/*) ── */}
@@ -99,6 +118,8 @@ function App() {
             <Route path="integrations"    element={<IntegrationsPage />} />
             <Route path="data-governance" element={<DataGovernancePage />} />
             <Route path="admin"           element={<AdminPage />} />
+            <Route path="site-content"    element={<ContentManagerPage />} />
+            <Route path="submissions"     element={<SubmissionsManager />} />
             <Route path="settings"        element={<SettingsPage />} />
             <Route path="support"         element={<SupportPage />} />
           </Route>
@@ -115,27 +136,28 @@ function App() {
           </Route>
 
           {/* ── Public marketing site ── */}
-          <Route path="/*" element={
-            <Layout>
-              <Routes>
-                <Route path="/"                         element={<HomePage />} />
-                <Route path="/products"                 element={<ProductsPage />} />
-                <Route path="/products/:productId"      element={<ProductDetailPage />} />
-                <Route path="/solutions"                element={<SolutionsPage />} />
-                <Route path="/solutions/:solutionId"    element={<SolutionDetailPage />} />
-                <Route path="/industries"               element={<IndustriesPage />} />
-                <Route path="/industries/:industryId"   element={<IndustryDetailPage />} />
-                <Route path="/learning"                 element={<LearningPage />} />
-                <Route path="/learning/:learningId"     element={<LearningDetailPage />} />
-                <Route path="/pricing"                  element={<PricingPage />} />
-                <Route path="/customer-stories"         element={<CustomerStoriesPage />} />
-                <Route path="/customer-stories/:storyId" element={<CustomerStoryDetailPage />} />
-                <Route path="/about"                    element={<AboutPage />} />
-                <Route path="/contact"                  element={<ContactPage />} />
-              </Routes>
-            </Layout>
-          } />
+          <Route element={<Layout><Suspense fallback={<LoadingScreen />}><Outlet /></Suspense></Layout>}>
+            <Route path="/"                          element={<HomePage />} />
+            <Route path="/products"                  element={<ProductsPage />} />
+            <Route path="/products/:productId"       element={<ProductDetailPage />} />
+            <Route path="/solutions"                 element={<SolutionsPage />} />
+            <Route path="/solutions/:solutionId"     element={<SolutionDetailPage />} />
+            <Route path="/industries"                element={<IndustriesPage />} />
+            <Route path="/industries/:industryId"    element={<IndustryDetailPage />} />
+            <Route path="/learning"                  element={<LearningPage />} />
+            <Route path="/learning/:learningId"      element={<LearningDetailPage />} />
+            <Route path="/pricing"                   element={<PricingPage />} />
+            <Route path="/customer-stories"          element={<CustomerStoriesPage />} />
+            <Route path="/customer-stories/:storyId" element={<CustomerStoryDetailPage />} />
+            <Route path="/about"                     element={<AboutPage />} />
+            <Route path="/contact"                   element={<ContactPage />} />
+            <Route path="/privacy"                   element={<PrivacyPage />} />
+            <Route path="/cookies"                   element={<CookiesPage />} />
+            <Route path="/terms"                     element={<TermsPage />} />
+            <Route path="/project-status"            element={<ProjectStatusPage />} />
+          </Route>
         </Routes>
+        </SiteContentProvider>
       </Router>
     </AuthProvider>
   );

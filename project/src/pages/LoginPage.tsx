@@ -166,7 +166,7 @@ export function LoginPage() {
           <div className="mt-8 text-center">
             <p className="text-gray-600">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-[#0b5394] font-semibold hover:underline">
+              <Link to="/register" className="text-[#0b5394] font-semibold hover:underline">
                 Sign up for free
               </Link>
             </p>

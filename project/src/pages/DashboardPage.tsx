@@ -26,12 +26,14 @@ import {
   X,
   Sparkles,
   UserPlus,
-  Import,
   BookOpen,
   Rocket,
+  Download,
+  Globe,
 } from 'lucide-react';
 import { supabase, type Contact, type Activity, type SupportTicket, type Company } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
+import { DashboardOverview as DashboardOverviewImported } from './DashboardOverview';
 
 const dashboardNavItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/dashboard' },
@@ -47,6 +49,8 @@ const dashboardNavItems = [
   { icon: DollarSign, label: 'Commerce', path: '/dashboard/commerce' },
   { icon: ArrowRight, label: 'Integrations', path: '/dashboard/integrations' },
   { icon: CheckCircle, label: 'Data Governance', path: '/dashboard/data-governance' },
+  { icon: Globe, label: 'Site Content', path: '/dashboard/site-content' },
+  { icon: Mail, label: 'Submissions', path: '/dashboard/submissions' },
   { icon: Settings, label: 'Admin', path: '/dashboard/admin' },
   { icon: Settings, label: 'Account Settings', path: '/dashboard/settings' },
   { icon: HelpCircle, label: 'Support', path: '/dashboard/support' },
@@ -190,7 +194,7 @@ function DashboardOverview() {
     { id: 'profile',  icon: Users,    label: 'Complete your profile',        path: '/dashboard/settings' },
     { id: 'contact',  icon: UserPlus, label: 'Add your first contact',        path: '/dashboard/crm' },
     { id: 'deal',     icon: Target,   label: 'Create your first deal',        path: '/dashboard/pipeline' },
-    { id: 'import',   icon: Import,   label: 'Import your existing data',     path: '/dashboard/integrations' },
+    { id: 'import',   icon: Download, label: 'Import your existing data',     path: '/dashboard/integrations' },
     { id: 'learn',    icon: BookOpen, label: 'Explore Agentforce AI tools',   path: '/dashboard/ai-tools' },
   ];
 
@@ -235,7 +239,7 @@ function DashboardOverview() {
 
   const metrics = [
     { label: 'Total Contacts', value: stats.contacts.toString(), change: '+12%', trend: 'up',   icon: Users },
-    { label: 'Revenue (Won)',  value: `$${(stats.revenue / 1000).toFixed(0)}K`, change: '+8%',  trend: 'up',   icon: DollarSign },
+    { label: 'Revenue (Won)',  value: `UGX ${(stats.revenue / 1000000).toFixed(1)}M`, change: '+8%',  trend: 'up',   icon: DollarSign },
     { label: 'Active Deals',  value: stats.deals.toString(),     change: '+24%', trend: 'up',   icon: Target },
     { label: 'Activities',    value: stats.activities.toString(), change: '-5%',  trend: 'down', icon: CheckCircle },
   ];
@@ -400,23 +404,29 @@ function DashboardOverview() {
   );
 }
 
-function CRMPage() {
-  const [loading, setLoading] = useState(true);
-  const [contacts, setContacts] = useState<(Contact & { company: Company | null })[]>([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newContact, setNewContact] = useState({ first_name: '', last_name: '', email: '', company: '', status: 'lead' as const });
+const EMPTY_CONTACT = {
+  first_name: '', last_name: '', email: '', phone: '',
+  title: '', company: '', status: 'lead',
+};
 
-  useEffect(() => {
-    fetchContacts();
-  }, []);
+function CRMPage() {
+  const [loading, setLoading]         = useState(true);
+  const [saving, setSaving]           = useState(false);
+  const [saveError, setSaveError]     = useState<string | null>(null);
+  const [contacts, setContacts]       = useState<(Contact & { company: Company | null })[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [form, setForm]               = useState({ ...EMPTY_CONTACT });
+  const { user } = useAuth();
+
+  useEffect(() => { fetchContacts(); }, []);
 
   async function fetchContacts() {
+    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('contacts')
         .select('*, company:companies(*)')
         .order('created_at', { ascending: false });
-
       if (error) throw error;
       setContacts(data || []);
     } catch (err) {
@@ -426,46 +436,80 @@ function CRMPage() {
     }
   }
 
+  function closeModal() {
+    setShowAddModal(false);
+    setForm({ ...EMPTY_CONTACT });
+    setSaveError(null);
+  }
+
   async function addContact(e: React.FormEvent) {
     e.preventDefault();
+    setSaving(true);
+    setSaveError(null);
+
+    // Guard: must be authenticated
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (!currentUser) {
+      setSaveError('You must be logged in to add a contact.');
+      setSaving(false);
+      return;
+    }
+
     try {
-      const { data: companyData } = await supabase
-        .from('companies')
-        .select('id')
-        .ilike('name', newContact.company)
-        .limit(1);
-
-      let companyId = companyData?.[0]?.id || null;
-
-      if (!companyId && newContact.company) {
-        const { data: newCompany } = await supabase
+      // Resolve or create company — maybeSingle() avoids throwing on no match
+      let companyId: string | null = null;
+      if (form.company.trim()) {
+        const { data: existing } = await supabase
           .from('companies')
-          .insert({ name: newContact.company })
           .select('id')
-          .single();
-        companyId = newCompany?.id || null;
+          .ilike('name', form.company.trim())
+          .limit(1)
+          .maybeSingle();
+
+        if (existing?.id) {
+          companyId = existing.id;
+        } else {
+          const { data: created, error: compErr } = await supabase
+            .from('companies')
+            .insert({ name: form.company.trim(), owner_id: currentUser.id })
+            .select('id')
+            .single();
+          if (compErr) {
+            console.warn('Could not create company:', compErr.message);
+          } else {
+            companyId = created?.id ?? null;
+          }
+        }
       }
 
-      const contactToInsert = {
-        first_name: newContact.first_name,
-        last_name: newContact.last_name,
-        email: newContact.email || null,
-        company_id: companyId
-      };
+      const { error: contactErr } = await supabase.from('contacts').insert({
+        first_name: form.first_name.trim(),
+        last_name:  form.last_name.trim(),
+        email:      form.email.trim()   || null,
+        phone:      form.phone.trim()   || null,
+        title:      form.title.trim()   || null,
+        company:    form.company.trim() || null,
+        company_id: companyId,
+        status:     form.status,
+        owner_id:   currentUser.id,   // always set — required by RLS policy
+      });
 
-      await supabase.from('contacts').insert(contactToInsert);
-      setShowAddModal(false);
-      setNewContact({ first_name: '', last_name: '', email: '', company: '', status: 'lead' });
+      if (contactErr) throw contactErr;
+
+      closeModal();
       fetchContacts();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error adding contact:', err);
+      setSaveError(err?.message || 'Failed to save contact. Please try again.');
+    } finally {
+      setSaving(false);
     }
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">CRM - Contacts</h1>
+        <h1 className="text-2xl font-bold text-gray-900">CRM — Contacts</h1>
         <button
           onClick={() => setShowAddModal(true)}
           className="px-4 py-2 bg-[#0b5394] text-white rounded-lg font-medium hover:bg-[#032d60] transition-colors flex items-center gap-2"
@@ -475,53 +519,137 @@ function CRMPage() {
         </button>
       </div>
 
+      {/* ── Add Contact Modal ── */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Add Contact</h2>
-              <button onClick={() => setShowAddModal(false)}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Add New Contact</h2>
+                <p className="text-xs text-gray-500 mt-0.5">Fill in the details below to create a contact.</p>
+              </div>
+              <button onClick={closeModal} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={addContact} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+
+            <form onSubmit={addContact} className="px-6 py-5 space-y-4">
+
+              {/* Error banner */}
+              {saveError && (
+                <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                  <X className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  {saveError}
+                </div>
+              )}
+
+              {/* Name row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">First Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text" required
+                    value={form.first_name}
+                    onChange={(e) => setForm({ ...form, first_name: e.target.value })}
+                    placeholder="e.g. Jane"
+                    className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Last Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text" required
+                    value={form.last_name}
+                    onChange={(e) => setForm({ ...form, last_name: e.target.value })}
+                    placeholder="e.g. Doe"
+                    className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Email Address</label>
                 <input
-                  type="text"
-                  required
-                  placeholder="First Name"
-                  value={newContact.first_name}
-                  onChange={(e) => setNewContact({ ...newContact, first_name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none"
-                />
-                <input
-                  type="text"
-                  required
-                  placeholder="Last Name"
-                  value={newContact.last_name}
-                  onChange={(e) => setNewContact({ ...newContact, last_name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="jane.doe@company.com"
+                  className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
                 />
               </div>
-              <input
-                type="email"
-                placeholder="Email"
-                value={newContact.email}
-                onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Company"
-                value={newContact.company}
-                onChange={(e) => setNewContact({ ...newContact, company: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none"
-              />
-              <div className="flex gap-3">
-                <button type="submit" className="flex-1 py-3 bg-[#0b5394] text-white rounded-lg font-medium hover:bg-[#032d60]">
-                  Add Contact
+
+              {/* Phone + Title */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Phone</label>
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    placeholder="+256 700 000 000"
+                    className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Job Title</label>
+                  <input
+                    type="text"
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    placeholder="e.g. CEO"
+                    className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Company */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Company</label>
+                <input
+                  type="text"
+                  value={form.company}
+                  onChange={(e) => setForm({ ...form, company: e.target.value })}
+                  placeholder="e.g. Acme Corp (auto-created if new)"
+                  className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all"
+                />
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">Status</label>
+                <select
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  className="w-full px-3 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all bg-white"
+                >
+                  <option value="lead">Lead</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="churned">Churned</option>
+                </select>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-1">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 py-2.5 bg-[#0b5394] text-white rounded-lg font-semibold text-sm hover:bg-[#032d60] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {saving ? (
+                    <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Saving...</>
+                  ) : (
+                    <><Plus className="w-4 h-4" /> Save Contact</>
+                  )}
                 </button>
-                <button type="button" onClick={() => setShowAddModal(false)} className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={saving}
+                  className="px-5 py-2.5 border border-gray-300 rounded-lg font-semibold text-sm text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
                   Cancel
                 </button>
               </div>
@@ -585,7 +713,7 @@ function CRMPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    {contact.value ? `$${(contact.value / 1000).toFixed(0)}K` : '-'}
+                    {contact.value ? `UGX ${(contact.value / 1000000).toFixed(1)}M` : '-'}
                   </td>
                 </tr>
               ))}
@@ -599,10 +727,10 @@ function CRMPage() {
 
 function LeadsPage() {
   const leads = [
-    { name: 'Amina Okello', company: 'Kampala Foods Group', source: 'Web demo', score: 94, status: 'Qualified', owner: 'Demo User', value: '$82K' },
-    { name: 'Daniel Carter', company: 'Northstar Logistics', source: 'Partner referral', score: 87, status: 'Nurturing', owner: 'Sales Ops', value: '$140K' },
-    { name: 'Priya Shah', company: 'BrightCare Clinics', source: 'Campaign', score: 76, status: 'New', owner: 'Demo User', value: '$58K' },
-    { name: 'Leo Mensah', company: 'Mosaic Retail', source: 'LinkedIn', score: 69, status: 'Working', owner: 'Growth Team', value: '$36K' },
+    { name: 'Amina Okello', company: 'Kampala Foods Group', source: 'Web demo', score: 94, status: 'Qualified', owner: 'Demo User', value: 'UGX 300M' },
+    { name: 'Daniel Carter', company: 'Northstar Logistics', source: 'Partner referral', score: 87, status: 'Nurturing', owner: 'Sales Ops', value: 'UGX 510M' },
+    { name: 'Priya Shah', company: 'BrightCare Clinics', source: 'Campaign', score: 76, status: 'New', owner: 'Demo User', value: 'UGX 212M' },
+    { name: 'Leo Mensah', company: 'Mosaic Retail', source: 'LinkedIn', score: 69, status: 'Working', owner: 'Growth Team', value: 'UGX 132M' },
   ];
 
   return (
@@ -622,7 +750,7 @@ function LeadsPage() {
           { label: 'New Leads', value: '284', detail: '+18 this week' },
           { label: 'Avg. AI Score', value: '78', detail: 'Priority threshold 70+' },
           { label: 'Conversion Rate', value: '31%', detail: '+6% from last month' },
-          { label: 'Open Pipeline', value: '$316K', detail: 'From qualified leads' },
+          { label: 'Open Pipeline', value: 'UGX 1.15B', detail: 'From qualified leads' },
         ].map((item) => (
           <div key={item.label} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
             <div className="text-sm text-gray-600">{item.label}</div>
@@ -680,11 +808,11 @@ function LeadsPage() {
 
 function PipelinePage() {
   const stages = [
-    { name: 'Prospecting', total: '$180K', deals: ['BrightCare expansion', 'Mosaic pilot', 'City Bank renewal'] },
-    { name: 'Qualification', total: '$245K', deals: ['Northstar rollout', 'EduPlus CRM'] },
-    { name: 'Proposal', total: '$410K', deals: ['Kampala Foods suite', 'Nova Manufacturing'] },
-    { name: 'Negotiation', total: '$320K', deals: ['PrimeTel support cloud', 'GreenGrid commerce'] },
-    { name: 'Closed Won', total: '$690K', deals: ['Apex Data Cloud', 'Orbit Sales Cloud'] },
+    { name: 'Prospecting',  total: 'UGX 657M',  deals: ['BrightCare expansion', 'Mosaic pilot', 'City Bank renewal'] },
+    { name: 'Qualification',total: 'UGX 894M',  deals: ['Northstar rollout', 'EduPlus CRM'] },
+    { name: 'Proposal',     total: 'UGX 1.49B', deals: ['Kampala Foods suite', 'Nova Manufacturing'] },
+    { name: 'Negotiation',  total: 'UGX 1.17B', deals: ['PrimeTel support cloud', 'GreenGrid commerce'] },
+    { name: 'Closed Won',   total: 'UGX 2.52B', deals: ['Apex Data Cloud', 'Orbit Sales Cloud'] },
   ];
 
   return (
@@ -1060,16 +1188,16 @@ function MarketingPage() {
 
 function CommercePage() {
   const items = [
-    { name: 'Revenue Cloud Suite', sku: 'RC-ENT-01', price: '$240/user', stock: 'Active' },
-    { name: 'Service Add-on', sku: 'SV-ADD-20', price: '$80/user', stock: 'Active' },
-    { name: 'Data Credits', sku: 'DC-100K', price: '$1,200', stock: 'Active' },
+    { name: 'Revenue Cloud Suite', sku: 'RC-ENT-01', price: 'UGX 876,000/user', stock: 'Active' },
+    { name: 'Service Add-on',      sku: 'SV-ADD-20', price: 'UGX 292,000/user', stock: 'Active' },
+    { name: 'Data Credits',        sku: 'DC-100K',   price: 'UGX 4.38M',       stock: 'Active' },
   ];
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6"><div><h1 className="text-2xl font-bold text-gray-900">Commerce and Quote-to-Cash</h1><p className="text-sm text-gray-600 mt-1">Products, price books, quotes, contracts, orders, and renewals.</p></div><button className="px-4 py-2 bg-[#0b5394] text-white rounded-lg font-medium hover:bg-[#032d60] transition-colors flex items-center gap-2"><DollarSign className="w-5 h-5" /> New Quote</button></div>
       <div className="grid lg:grid-cols-3 gap-6 mb-6">
-        {['Open Quotes', 'Contract Value', 'Renewals Due'].map((label, idx) => <div key={label} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"><div className="text-sm text-gray-600">{label}</div><div className="text-2xl font-bold text-gray-900 mt-1">{['32', '$1.8M', '14'][idx]}</div><div className="text-xs text-gray-500 mt-2">Current quarter</div></div>)}
+        {['Open Quotes', 'Contract Value', 'Renewals Due'].map((label, idx) => <div key={label} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"><div className="text-sm text-gray-600">{label}</div><div className="text-2xl font-bold text-gray-900 mt-1">{['32', 'UGX 6.57B', '14'][idx]}</div><div className="text-xs text-gray-500 mt-2">Current quarter</div></div>)}
       </div>
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"><div className="p-5 border-b border-gray-100 font-semibold text-gray-900">Product Catalog</div><table className="w-full"><tbody>{items.map((item) => <tr key={item.sku} className="border-b border-gray-100 last:border-0"><td className="px-5 py-4"><div className="font-medium text-gray-900">{item.name}</div><div className="text-sm text-gray-500">{item.sku}</div></td><td className="px-5 py-4 text-gray-900">{item.price}</td><td className="px-5 py-4"><span className="px-2 py-1 rounded bg-green-100 text-green-700 text-xs">{item.stock}</span></td></tr>)}</tbody></table></div>

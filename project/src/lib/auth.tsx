@@ -31,21 +31,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Safety timeout — never stay loading more than 5 seconds
+    const timeout = setTimeout(() => setLoading(false), 5000);
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) fetchRole(session.user.id);
-      else setLoading(false);
+      if (session?.user) {
+        fetchRole(session.user.id).finally(() => { clearTimeout(timeout); setLoading(false); });
+      } else {
+        clearTimeout(timeout);
+        setLoading(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) fetchRole(session.user.id).finally(() => setLoading(false));
-      else { setRole(null); setLoading(false); }
+      if (session?.user) {
+        fetchRole(session.user.id).finally(() => setLoading(false));
+      } else {
+        setRole(null);
+        setLoading(false);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => { subscription.unsubscribe(); clearTimeout(timeout); };
   }, []);
 
   const signInWithGoogle = async (redirectTo?: string) => {

@@ -1,5 +1,7 @@
 import { useState, useEffect, ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { CookieConsent } from './CookieConsent';
+import { Chatbot } from './Chatbot';
 import {
   Menu,
   X,
@@ -19,9 +21,11 @@ import {
   Heart,
   ShoppingCart,
   Landmark,
-  BookOpen
+  BookOpen,
+  User,
+  Play
 } from 'lucide-react';
-import { languages, translations, TranslationContext, Language } from '../lib/i18n';
+import { languages, translations, TranslationContext, Language, useTranslation } from '../lib/i18n';
 
 interface LayoutProps {
   children: ReactNode;
@@ -70,19 +74,19 @@ export function Layout({ children }: LayoutProps) {
     return savedLang || languages[0].code;
   });
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === '/';
 
+  const setLanguage = (lang: Language) => setLanguageCode(lang.code);
+  const t = (key: string) => translations[languageCode]?.[key] ?? translations.en[key] ?? key;
+
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location]);
+  useEffect(() => { setMobileMenuOpen(false); }, [location]);
 
   useEffect(() => {
     const savedLang = window.localStorage.getItem('hysys-language');
@@ -97,19 +101,78 @@ export function Layout({ children }: LayoutProps) {
     document.documentElement.lang = languageCode;
   }, [languageCode]);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageCode(lang.code);
-  };
+  const handleSearch = () => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return;
 
-  const t = (key: string) => translations[languageCode]?.[key] ?? translations.en[key] ?? key;
+    const routes: Record<string, string> = {
+      'sales': '/products/sales-cloud',
+      'sales cloud': '/products/sales-cloud',
+      'service': '/products/service-cloud',
+      'service cloud': '/products/service-cloud',
+      'marketing': '/products/marketing-cloud',
+      'marketing cloud': '/products/marketing-cloud',
+      'commerce': '/products/commerce-cloud',
+      'commerce cloud': '/products/commerce-cloud',
+      'data': '/products/data-cloud',
+      'data cloud': '/products/data-cloud',
+      'platform': '/products/platform-cloud',
+      'platform cloud': '/products/platform-cloud',
+      'small business': '/solutions/small-business',
+      'small': '/solutions/small-business',
+      'enterprise': '/solutions/enterprise',
+      'startups': '/solutions/startups',
+      'startup': '/solutions/startups',
+      'nonprofits': '/solutions/nonprofits',
+      'nonprofit': '/solutions/nonprofits',
+      'healthcare': '/industries/healthcare',
+      'health': '/industries/healthcare',
+      'education': '/industries/education',
+      'financial': '/industries/financial-services',
+      'finance': '/industries/financial-services',
+      'retail': '/industries/retail',
+      'trailhead': '/learning/trailhead',
+      'certification': '/learning/certifications',
+      'certifications': '/learning/certifications',
+      'webinar': '/learning/webinars',
+      'webinars': '/learning/webinars',
+      'docs': '/learning/documentation',
+      'documentation': '/learning/documentation',
+      'pricing': '/pricing',
+      'plans': '/pricing',
+      'cost': '/pricing',
+      'customers': '/customer-stories',
+      'stories': '/customer-stories',
+      'about': '/about',
+      'company': '/about',
+      'contact': '/contact',
+      'support': '/contact',
+      'products': '/products',
+      'solutions': '/solutions',
+      'industries': '/industries',
+      'learning': '/learning',
+      'crm': '/products/sales-cloud',
+    };
+
+    for (const [keyword, path] of Object.entries(routes)) {
+      if (q.includes(keyword)) {
+        navigate(path);
+        setSearchQuery('');
+        return;
+      }
+    }
+
+    navigate('/');
+    setSearchQuery('');
+  };
 
   return (
     <TranslationContext.Provider value={{ languageCode, setLanguage, t }}>
       <div className="min-h-screen flex flex-col">
         <nav
-          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
             isScrolled || !isHome
-              ? 'bg-white shadow-lg border-b border-gray-100'
+              ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/80 shadow-sm'
               : 'bg-transparent'
           }`}
         >
@@ -125,7 +188,7 @@ export function Layout({ children }: LayoutProps) {
               {navItems.map((item) => (
                 <div
                   key={item.label}
-                  className="relative"
+                  className="relative group"
                   onMouseEnter={() => setActiveDropdown(item.label)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
@@ -133,24 +196,28 @@ export function Layout({ children }: LayoutProps) {
                     to={item.path}
                     className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                       isScrolled || !isHome
-                        ? 'text-gray-700 hover:bg-gray-100'
+                        ? 'text-gray-700 hover:bg-gray-100 hover:text-[#0b5394]'
                         : 'text-white/90 hover:bg-white/10'
                     }`}
                   >
-                    {item.label}
+                    {t(item.label.toLowerCase())}
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
+                      className={`w-4 h-4 transition-transform duration-200 ${
                         activeDropdown === item.label ? 'rotate-180' : ''
                       }`}
                     />
                   </Link>
 
+                  {/* Invisible bridge to prevent gap-triggered close */}
+                  <div className="absolute top-full left-0 w-full h-3" />
+
                   <div
-                    className={`absolute top-full left-0 mt-2 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
+                    className={`absolute top-[calc(100%+8px)] left-0 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
                       activeDropdown === item.label
                         ? 'opacity-100 translate-y-0 pointer-events-auto'
                         : 'opacity-0 -translate-y-2 pointer-events-none'
                     }`}
+                    style={{ zIndex: 100 }}
                   >
                     <div className="p-4 grid grid-cols-2 gap-3">
                       {item.items.map((subItem, idx) => (
@@ -191,19 +258,22 @@ export function Layout({ children }: LayoutProps) {
                       : 'text-white/90 hover:bg-white/10'
                   }`}
                 >
-                  More
+                  {t('more')}
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${
+                    className={`w-4 h-4 transition-transform duration-200 ${
                       activeDropdown === 'More' ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
+                {/* Invisible bridge */}
+                <div className="absolute top-full left-0 w-full h-3" />
                 <div
-                  className={`absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
+                  className={`absolute top-[calc(100%+8px)] left-0 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
                     activeDropdown === 'More'
                       ? 'opacity-100 translate-y-0 pointer-events-auto'
                       : 'opacity-0 -translate-y-2 pointer-events-none'
                   }`}
+                  style={{ zIndex: 100 }}
                 >
                   <div className="p-3 space-y-1">
                     {moreItems.map((item) => (
@@ -246,12 +316,14 @@ export function Layout({ children }: LayoutProps) {
                     }`}
                   />
                 </button>
+                <div className="absolute top-full left-0 w-full h-3" />
                 <div
-                  className={`absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
+                  className={`absolute top-[calc(100%+8px)] left-0 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
                     activeDropdown === 'language'
                       ? 'opacity-100 translate-y-0 pointer-events-auto'
                       : 'opacity-0 -translate-y-2 pointer-events-none'
                   }`}
+                  style={{ zIndex: 100 }}
                 >
                   <div className="p-2 space-y-1">
                     {languages.map((lang) => (
@@ -271,12 +343,13 @@ export function Layout({ children }: LayoutProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white/95 px-4 py-2 shadow-sm">
-                <Search className="w-5 h-5 text-gray-400" />
+              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white/95 px-4 py-2 shadow-sm hover:shadow-md transition-shadow duration-300 focus-within:ring-2 focus-within:ring-[#0b5394]/20 focus-within:border-[#0b5394]/30">
+                <Search className="w-5 h-5 text-gray-400 cursor-pointer hover:text-[#0b5394] transition-colors" onClick={handleSearch} />
                 <input
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   placeholder="Ask Hysys AI anything"
                   className="w-56 bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
                 />
@@ -290,13 +363,24 @@ export function Layout({ children }: LayoutProps) {
                   isScrolled || !isHome ? 'text-gray-700 hover:text-gray-900' : 'text-white/90 hover:text-white'
                 }`}
               >
-                Contact
+                {t('contact')}
               </Link>
               <Link
-                to="/signup"
-                className="px-4 py-2 text-sm font-medium text-white bg-[#0b5394] rounded-full hover:bg-[#032d60] transition-all hover:shadow-lg"
+                to="/login"
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                  isScrolled || !isHome
+                    ? 'text-gray-700 hover:bg-gray-100 hover:text-[#0b5394]'
+                    : 'text-white/90 hover:bg-white/10'
+                }`}
               >
-                Sign Up
+                <User className="w-4 h-4" />
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-green-600 rounded-full hover:bg-green-700 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                Get Started
               </Link>
             </div>
 
@@ -377,11 +461,12 @@ export function Layout({ children }: LayoutProps) {
                 {moreItems.map((item) => (
                   <Link key={item.title} to={item.path} className="block text-gray-900 font-medium">{item.title}</Link>
                 ))}
-                <Link to="/contact" className="block text-gray-900 font-medium">Contact</Link>
+                <Link to="/login" className="flex items-center gap-2 text-gray-900 font-medium"><User className="w-4 h-4" /> Login</Link>
+                <Link to="/contact" className="block text-gray-900 font-medium">Contact Us</Link>
               </div>
 
               <div className="pt-4 border-t border-gray-200 space-y-2">
-                <Link to="/signup" className="block py-3 text-center text-white bg-[#0b5394] rounded-xl hover:bg-[#032d60]">Sign Up</Link>
+                <Link to="/register" className="block py-3 text-center text-white bg-green-600 rounded-xl hover:bg-green-700 font-semibold">Get Started</Link>
               </div>
             </div>
           </div>
@@ -390,15 +475,19 @@ export function Layout({ children }: LayoutProps) {
 
       <main className="flex-1">{children}</main>
 
+      <CookieConsent />
+
+      <Chatbot />
+
       <footer className="bg-[#032d60] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
             <div className="col-span-2">
               <Link to="/" className="flex items-center gap-2 mb-4">
                 <img src="/Mavy%20logo2.png" alt="HYSYS logo" className="w-[110px] h-[79px] object-cover" />
-                <span className="text-xl font-bold">HYSYS GLOBAL SOLUTIONS LIMITED</span>
+                <span className="text-base sm:text-xl font-bold">HYSYS GLOBAL SOLUTIONS LIMITED</span>
               </Link>
-              <p className="text-white/60 text-sm mb-6 max-w-xs">
+              <p className="text-white/60 text-sm mb-6 max-w-xs break-words">
                 Plot 19 Sir Albert Cook Road, MENGO - KAMPALA
                 <br />P.O.Box 16435 K'la
                 <br />Tel: 0782-602854 · 0752602857 · 0757 602854
@@ -464,10 +553,17 @@ export function Layout({ children }: LayoutProps) {
             <div className="text-white/40 text-sm">
               2026 HYSYS GLOBAL SOLUTIONS LIMITED. All rights reserved.
             </div>
-            <div className="flex gap-6">
-              <a href="#" className="text-white/60 text-sm hover:text-white">Privacy</a>
-              <a href="#" className="text-white/60 text-sm hover:text-white">Terms</a>
-              <a href="#" className="text-white/60 text-sm hover:text-white">Cookies</a>
+            <div className="flex gap-6 items-center">
+              <Link to="/privacy" className="text-white/60 text-sm hover:text-white">Privacy</Link>
+              <Link to="/terms" className="text-white/60 text-sm hover:text-white">Terms</Link>
+              <Link to="/cookies" className="text-white/60 text-sm hover:text-white">Cookies</Link>
+              {/* Hidden admin access — subtle dot */}
+              <Link
+                to="/admin-login"
+                title="Admin"
+                className="w-2 h-2 rounded-full bg-white/10 hover:bg-white/30 transition-colors"
+                aria-label="Admin login"
+              />
             </div>
           </div>
         </div>

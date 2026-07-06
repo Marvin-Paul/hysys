@@ -41,7 +41,7 @@ export function AIForBusinessSection() {
             </p>
             <div className="flex flex-col xs:flex-row flex-wrap gap-3">
               <Link
-                to="/signup"
+                to="/register"
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#0b5394] text-white rounded-lg font-semibold text-sm hover:bg-[#032d60] transition-all hover:shadow-lg"
               >
                 Start for free <ArrowUpRight className="w-4 h-4" />
