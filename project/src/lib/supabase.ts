@@ -4,20 +4,28 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  console.warn(
+    'Missing Supabase environment variables. ' +
+    'Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file. ' +
+    'Auth features will not work until configured.'
+  );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = (supabaseUrl && supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 // Database types
 export interface Profile {
   id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string;
   first_name: string | null;
   last_name: string | null;
   company: string | null;
   phone: string | null;
   avatar_url: string | null;
-  role: string;
   created_at: string;
   updated_at: string;
 }

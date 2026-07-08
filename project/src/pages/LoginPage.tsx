@@ -18,21 +18,14 @@ export function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await signInWithEmail(email, password);
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-    } else {
-      // Role-based redirect — fetch profile
-      const { data: { user: u } } = await (await import('../lib/supabase')).supabase.auth.getUser();
-      if (u) {
-        const { data: profile } = await (await import('../lib/supabase')).supabase
-          .from('profiles').select('role').eq('id', u.id).single();
-        navigate(profile?.role === 'admin' ? '/dashboard' : '/crm', { replace: true });
-      } else {
-        navigate('/crm', { replace: true });
-      }
+    const { error: signInError } = await signInWithEmail(email, password);
+    if (signInError) {
+      setError(signInError.message);
+      setLoading(false);
+      return;
     }
+    // RoleRedirect component at /me handles waiting for auth state + role-based redirect
+    navigate('/me', { replace: true });
   };
 
   const handleGoogleSignIn = async () => {

@@ -8,6 +8,12 @@ export function AuthCallback() {
 
   useEffect(() => {
     const handleCallback = async () => {
+      if (!supabase) {
+        setError('Supabase is not configured');
+        setTimeout(() => navigate('/login', { replace: true }), 2000);
+        return;
+      }
+
       try {
         const { error: authError } = await supabase.auth.exchangeCodeForSession(
           window.location.search
@@ -27,7 +33,7 @@ export function AuthCallback() {
             .eq('id', user.id)
             .single();
           const role = profile?.role || 'user';
-          navigate(role === 'admin' ? '/dashboard' : '/crm', { replace: true });
+          navigate(role === 'admin' ? '/dashboard' : '/', { replace: true });
         } else {
           navigate('/login', { replace: true });
         }

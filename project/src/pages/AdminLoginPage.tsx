@@ -21,7 +21,6 @@ export function AdminLoginPage() {
     e.preventDefault();
     setError(null);
 
-    // Validate username
     if (username.toLowerCase() !== 'hysys') {
       setError('Invalid username or password.');
       return;
@@ -32,30 +31,28 @@ export function AdminLoginPage() {
     const { error: signInError } = await signInWithEmail(ADMIN_EMAIL, password);
 
     if (signInError) {
-      setLoading(false);
       setError('Invalid username or password.');
+      setLoading(false);
       return;
     }
 
-    // Confirm the user actually has admin role
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.role !== 'admin') {
-        await supabase.auth.signOut();
-        setLoading(false);
-        setError('This account does not have admin privileges.');
-        return;
+    // Ensure admin profile exists (first-time setup).
+    // The auth context's onAuthStateChange also calls ensureProfile, which
+    // defaults to role='user'. By creating/upserting as admin here first,
+    // ensureProfile sees the existing profile and skips its insert.
+    if (supabase) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('profiles').upsert(
+          { id: user.id, email: user.email, role: 'admin' },
+          { onConflict: 'id' }
+        );
       }
     }
 
-    setLoading(false);
-    navigate('/dashboard', { replace: true });
+    // RoleRedirect at /me waits for the auth context to settle, then routes
+    // admin → /dashboard, user → / (homepage).
+    navigate('/me', { replace: true });
   };
 
   return (

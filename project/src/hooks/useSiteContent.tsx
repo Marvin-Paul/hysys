@@ -30,6 +30,14 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   const { user, role } = useAuth();
 
   const fetchSection = useCallback(async (section: string) => {
+    if (!supabase) {
+      setCache((prev) => ({
+        ...prev,
+        [section]: { data: {}, loaded: true },
+      }));
+      return;
+    }
+
     const { data, error } = await supabase
       .from('site_content')
       .select('content_key, content_value')
@@ -78,7 +86,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [cache]);
 
   const updateContent = useCallback(async (section: string, key: string, value: unknown) => {
-    if (role !== 'admin') return;
+    if (role !== 'admin' || !supabase) return;
     const { error } = await supabase
       .from('site_content')
       .upsert(
@@ -106,7 +114,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [role, user]);
 
   const saveAllContent = useCallback(async (section: string, content: Record<string, unknown>) => {
-    if (role !== 'admin') return;
+    if (role !== 'admin' || !supabase) return;
 
     const upserts = Object.entries(content).map(([key, value]) => ({
       section,

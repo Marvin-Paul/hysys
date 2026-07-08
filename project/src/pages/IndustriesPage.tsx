@@ -1,68 +1,146 @@
 import { Link, useParams } from 'react-router-dom';
-import { GraduationCap, Landmark, ShoppingCart, ArrowRight, CheckCircle, Heart } from 'lucide-react';
+import { GraduationCap, Landmark, ShoppingCart, ArrowRight, CheckCircle, Heart, Sparkles } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { useTranslation } from '../lib/i18n';
 import { useSiteContent } from '../hooks/useSiteContent';
 import { SEO } from '../components/SEO';
 
-const iconMap: Record<string, LucideIcon> = {
-  Heart, GraduationCap, Landmark, ShoppingCart,
+const iconMap: Record<string, LucideIcon> = { Heart, GraduationCap, Landmark, ShoppingCart };
+
+const industriesData: Record<string, any> = {
+  'healthcare':         { icon: Heart,        title: 'Healthcare',         subtitle: 'Patient engagement',  description: 'Transform patient experiences with a unified platform. HYSYS for Healthcare helps providers deliver personalised care while streamlining operations and ensuring compliance.',    features: ['Patient 360 View','Appointment Management','Care Coordination','HIPAA Compliance','Telemedicine Integration','Patient Portal'],       stats: [{ label: 'Healthcare providers', value: '10K+' },{ label: 'Patient satisfaction increase', value: '32%' }], color: 'from-rose-500 to-pink-600',    subtitleKey: 'patientEngagement', titleKey: 'healthcare',       descriptionKey: 'healthcareDesc' },
+  'education':          { icon: GraduationCap, title: 'Education',          subtitle: 'Student success',     description: 'Empower students and educators with a connected campus. HYSYS for Education helps institutions manage student relationships from recruitment to graduation.',                    features: ['Student Recruitment','Admissions Management','Student Success Tracking','Alumni Relations','Faculty Collaboration','Financial Aid'],    stats: [{ label: 'Universities',           value: '5,000+' },{ label: 'Students reached', value: '50M+' }],                   color: 'from-amber-500 to-orange-600', subtitleKey: 'studentSuccess',    titleKey: 'education',        descriptionKey: 'educationDesc'  },
+  'financial-services': { icon: Landmark,      title: 'Financial Services', subtitle: 'Client relationships',description: 'Build trust and grow your book of business. HYSYS for Financial Services helps advisors deliver personalised experiences while managing compliance.',                         features: ['Client 360 View','Wealth Management','Loan Origination','Compliance & Security','Lead Generation','Portfolio Analytics'],              stats: [{ label: 'Financial institutions', value: '8,000+' },{ label: 'Assets managed', value: '$10T+' }],                    color: 'from-blue-600 to-indigo-700', subtitleKey: 'clientRelationships',titleKey: 'financialServices',descriptionKey: 'financialDesc'  },
+  'retail':             { icon: ShoppingCart,  title: 'Retail',             subtitle: 'Customer experience', description: 'Create memorable shopping experiences across channels. HYSYS for Retail helps you understand customers and deliver personalised experiences at every touchpoint.',              features: ['Unified Commerce','Customer Loyalty','Inventory Management','Personalization','Omnichannel Support','Demand Forecasting'],               stats: [{ label: 'Retailers',              value: '25K+' }, { label: 'Increase in repeat customers', value: '45%' }],          color: 'from-emerald-500 to-teal-600',subtitleKey: 'customerExperience', titleKey: 'retail',           descriptionKey: 'retailDesc'     },
 };
 
-const industriesData: Record<string, { icon: LucideIcon; title: string; subtitle: string; description: string; features: string[]; stats: { label: string; value: string }[]; subtitleKey: string; titleKey: string; descriptionKey: string }> = {
-  'healthcare': { icon: Heart, title: 'Healthcare', subtitle: 'Patient engagement', description: 'Transform patient experiences with a unified platform. HYSYS GLOBAL SOLUTIONS LIMITED for Healthcare helps providers deliver personalized care while streamlining operations and ensuring compliance.', features: ['Patient 360 View', 'Appointment Management', 'Care Coordination', 'HIPAA Compliance', 'Telemedicine Integration', 'Patient Portal'], stats: [{ label: 'Healthcare providers', value: '10K+' }, { label: 'Patient satisfaction increase', value: '32%' }], subtitleKey: 'patientEngagement', titleKey: 'healthcare', descriptionKey: 'healthcareDesc' },
-  'education': { icon: GraduationCap, title: 'Education', subtitle: 'Student success', description: 'Empower students and educators with a connected campus. HYSYS GLOBAL SOLUTIONS LIMITED for Education helps institutions manage student relationships from recruitment to graduation.', features: ['Student Recruitment', 'Admissions Management', 'Student Success Tracking', 'Alumni Relations', 'Faculty Collaboration', 'Financial Aid'], stats: [{ label: 'Universities', value: '5,000+' }, { label: 'Students reached', value: '50M+' }], subtitleKey: 'studentSuccess', titleKey: 'education', descriptionKey: 'educationDesc' },
-  'financial-services': { icon: Landmark, title: 'Financial Services', subtitle: 'Client relationships', description: 'Build trust and grow your book of business. HYSYS GLOBAL SOLUTIONS LIMITED for Financial Services helps advisors deliver personalized experiences while managing compliance.', features: ['Client 360 View', 'Wealth Management', 'Loan Origination', 'Compliance & Security', 'Lead Generation', 'Portfolio Analytics'], stats: [{ label: 'Financial institutions', value: '8,000+' }, { label: 'Assets managed', value: '$10T+' }], subtitleKey: 'clientRelationships', titleKey: 'financialServices', descriptionKey: 'financialDesc' },
-  'retail': { icon: ShoppingCart, title: 'Retail', subtitle: 'Customer experience', description: 'Create memorable shopping experiences across channels. HYSYS GLOBAL SOLUTIONS LIMITED for Retail helps you understand customers and deliver personalized experiences at every touchpoint.', features: ['Unified Commerce', 'Customer Loyalty', 'Inventory Management', 'Personalization', 'Omnichannel Support', 'Demand Forecasting'], stats: [{ label: 'Retailers', value: '25K+' }, { label: 'Increase in repeat customers', value: '45%' }], subtitleKey: 'customerExperience', titleKey: 'retail', descriptionKey: 'retailDesc' }
-};
+/* ── Reusable hero ── */
+function PageHero({ badge, title, subtitle, desc }: { badge: string; title: string; subtitle: string; desc: string }) {
+  return (
+    <section className="relative min-h-[60vh] overflow-hidden flex items-center">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+      <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
+      <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="absolute w-1 h-1 rounded-full animate-pulse" style={{
+          background: i % 2 === 0 ? 'rgba(0,163,224,0.4)' : 'rgba(255,255,255,0.3)',
+          top: `${20+(i*9)%60}%`, left: `${5+(i*13)%90}%`, animationDelay: `${i*0.5}s`,
+        }} />
+      ))}
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center w-full">
+        <ScrollReveal>
+          <div className="flex justify-center mb-6">
+            <span className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 rounded-full text-sm font-medium backdrop-blur-md border border-white/20 text-white">
+              <Sparkles className="w-4 h-4 text-cyan-300" />{badge}
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            </span>
+          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40 mb-4">HYSYS GLOBAL SOLUTIONS LIMITED</p>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-5">
+            {title}
+            <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-2">{subtitle}</span>
+          </h1>
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-1 rounded-full bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400" />
+          </div>
+          <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">{desc}</p>
+        </ScrollReveal>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
+          <path d="M0 80L720 40L1440 80V80H0Z" fill="white" />
+        </svg>
+      </div>
+    </section>
+  );
+}
 
+/* ── Industries List ── */
 export function IndustriesPage() {
   const { t } = useTranslation();
   const content = useSiteContent('industries');
   const rawIndustries = content.getContentRaw('industries_list') as any[] | null;
-  const resolvedIndustriesData: Record<string, any> = rawIndustries
+  const resolvedData: Record<string, any> = rawIndustries
     ? Object.fromEntries(rawIndustries.map((p: any) => [p.key, { ...p, icon: iconMap[p.iconName] || Heart }]))
     : industriesData;
+
   return (
     <div className="pt-16">
       <SEO title="Industries" />
-      <section className="bg-gradient-to-br from-[#032d60] to-[#0b5394] py-20">
-        <ScrollReveal>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">{content.getContent('industriesTitle', t('industriesTitle'))}</h1>
-            <p className="text-xl text-white/80 max-w-2xl mx-auto">{content.getContent('industriesDesc', t('industriesDesc'))}</p>
-          </div>
-        </ScrollReveal>
-      </section>
+      <PageHero badge="Industry Solutions" title={content.getContent('industriesTitle', t('industriesTitle'))} subtitle="Sector Expertise" desc={content.getContent('industriesDesc', t('industriesDesc'))} />
 
-      <section className="py-20 bg-gray-50">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
+                <Sparkles className="w-4 h-4" /> Industries We Serve
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60] mb-4">Purpose-built for your sector</h2>
+              <p className="text-lg text-gray-500 max-w-2xl mx-auto">Tailored solutions that understand the unique challenges of your industry.</p>
+            </div>
+          </ScrollReveal>
           <div className="grid md:grid-cols-2 gap-8 stagger-children">
-            {Object.entries(resolvedIndustriesData).map(([key, industry]) => (
-              <Link key={key} to={`/industries/${key}`} className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                <div className="flex items-start gap-6">
-                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                    <industry.icon className="w-8 h-8 text-white" />
+            {Object.entries(resolvedData).map(([key, industry]) => (
+              <ScrollReveal key={key}>
+                <Link to={`/industries/${key}`} className="group relative bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 overflow-hidden block">
+                  <div className="flex items-start gap-6">
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg`}>
+                      <industry.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{t(industry.subtitleKey)}</div>
+                      <h3 className="text-2xl font-extrabold text-gray-900 mb-3 group-hover:text-[#0b5394] transition-colors">{t(industry.titleKey)}</h3>
+                      <p className="text-gray-500 mb-4 text-sm leading-relaxed line-clamp-2">{t(industry.descriptionKey)}</p>
+                      {/* Mini stats */}
+                      <div className="flex gap-4 mb-4">
+                        {industry.stats.map((stat: any, si: number) => (
+                          <div key={si} className="bg-gray-50 rounded-xl px-3 py-2">
+                            <div className="text-sm font-extrabold text-[#0b5394]">{stat.value}</div>
+                            <div className="text-[10px] text-gray-400">{stat.label}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0b5394] group-hover:text-[#032d60] transition-colors">
+                        Learn more <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{content.getContent(industry.subtitleKey, t(industry.subtitleKey))}</div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{content.getContent(industry.titleKey, t(industry.titleKey))}</h3>
-                    <p className="text-gray-600 mb-4">{content.getContent(industry.descriptionKey, t(industry.descriptionKey))}</p>
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#0b5394]">
-                      Learn more <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
+                </Link>
+              </ScrollReveal>
             ))}
           </div>
         </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+        <ScrollReveal>
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Sparkles className="w-10 h-10 text-cyan-300 mx-auto mb-4" />
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Don't see your industry?</h2>
+            <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto">HYSYS adapts to any sector. Talk to our team for a custom solution.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                Contact Us <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
+                Start Free Trial
+              </Link>
+            </div>
+          </div>
+        </ScrollReveal>
       </section>
     </div>
   );
 }
 
+/* ── Industry Detail ── */
 export function IndustryDetailPage() {
   const { t } = useTranslation();
   const content = useSiteContent('industries');
@@ -74,10 +152,10 @@ export function IndustryDetailPage() {
 
   if (!industry) {
     return (
-      <div className="pt-16 min-h-screen flex items-center justify-center">
+      <div className="pt-16 min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{content.getContent('industryNotFound', t('industryNotFound'))}</h1>
-          <Link to="/industries" className="text-[#0b5394] hover:underline">{content.getContent('viewAllIndustries', t('viewAllIndustries'))}</Link>
+          <h1 className="text-2xl font-extrabold text-gray-900 mb-4">{t('industryNotFound')}</h1>
+          <Link to="/industries" className="text-[#0b5394] font-semibold hover:underline">{t('viewAllIndustries')}</Link>
         </div>
       </div>
     );
@@ -88,38 +166,67 @@ export function IndustryDetailPage() {
   return (
     <div className="pt-16">
       <SEO title={industry.title} />
-      <section className="bg-gradient-to-br from-[#032d60] to-[#0b5394] py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+
+      {/* Hero */}
+      <section className="relative min-h-[70vh] overflow-hidden flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+        <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '3s' }} />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <ScrollReveal variant="left">
               <div className="text-white">
-                <div className="text-sm font-semibold text-cyan-300 uppercase tracking-wider mb-2">{content.getContent(industry.subtitleKey, t(industry.subtitleKey))}</div>
-                <h1 className="text-4xl sm:text-5xl font-bold mb-6">{industry.title}</h1>
-                <p className="text-xl text-white/80 mb-8">{industry.description}</p>
-                <Link to="/register" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#032d60] rounded-xl font-semibold hover:bg-gray-50 transition-all hover:shadow-xl">
-                  {content.getContent('getIndustrySolution', t('getIndustrySolution'))} <ArrowRight className="w-5 h-5" />
-                </Link>
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-xs font-bold backdrop-blur-md border border-white/20 uppercase tracking-wider text-cyan-300 mb-5">
+                  {t(industry.subtitleKey)}
+                </span>
+                <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-5">
+                  {industry.title}
+                  <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-1 text-4xl sm:text-5xl">by HYSYS</span>
+                </h1>
+                <div className="w-16 h-1 rounded-full bg-gradient-to-r from-cyan-400 to-blue-300 mb-6" />
+                <p className="text-lg text-white/70 mb-10 leading-relaxed font-light max-w-lg">{industry.description}</p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link to="/register" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                    {t('getIndustrySolution')} <ArrowRight className="w-5 h-5" />
+                  </Link>
+                  <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
+                    Talk to an Expert
+                  </Link>
+                </div>
               </div>
             </ScrollReveal>
             <ScrollReveal variant="right">
               <div className="hidden lg:flex justify-center">
-                <div className="w-48 h-48 rounded-3xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-2xl">
-                  <Icon className="w-24 h-24 text-white" />
+                <div className="relative">
+                  <div className={`absolute -inset-8 bg-gradient-to-br ${industry.color} opacity-20 rounded-[50px] blur-2xl`} />
+                  <div className={`relative w-72 h-72 rounded-[40px] bg-gradient-to-br ${industry.color} flex items-center justify-center shadow-2xl`}>
+                    <Icon className="w-36 h-36 text-white" />
+                  </div>
                 </div>
               </div>
             </ScrollReveal>
           </div>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
+            <path d="M0 80L720 40L1440 80V80H0Z" fill="white" />
+          </svg>
+        </div>
       </section>
 
-      <section className="py-12 bg-white border-b border-gray-100">
+      {/* Stats bar */}
+      <section className="bg-white py-12 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {industry.stats.map((stat, idx) => (
-                <div key={idx} className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-[#0b5394] to-[#00a3e0] bg-clip-text text-transparent">{stat.value}</div>
-                  <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
+              {industry.stats.map((stat: any, idx: number) => (
+                <div key={idx} className="text-center group">
+                  <div className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#0b5394] to-[#00a3e0] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">{stat.value}</div>
+                  <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -127,18 +234,51 @@ export function IndustryDetailPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal><h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">{content.getContent('keyFeatures', t('keyFeatures'))}</h2></ScrollReveal>
-          <div className="grid md:grid-cols-2 gap-6 stagger-children">
-            {industry.features.map((feature, idx) => (
-              <div key={idx} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
-                <CheckCircle className="w-6 h-6 text-[#0b5394] flex-shrink-0" />
-                <span className="font-medium text-gray-900">{feature}</span>
-              </div>
+      {/* Features */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
+                <Sparkles className="w-4 h-4" /> Built for {industry.title}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60]">{t('keyFeatures')}</h2>
+            </div>
+          </ScrollReveal>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+            {industry.features.map((feature: string, idx: number) => (
+              <ScrollReveal key={idx}>
+                <div className="group flex items-center gap-4 p-5 bg-white rounded-2xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow`}>
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-semibold text-gray-900">{feature}</span>
+                </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+        <ScrollReveal>
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Sparkles className="w-10 h-10 text-cyan-300 mx-auto mb-4" />
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Ready for {industry.title}?</h2>
+            <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto">Start your free 14-day trial. No credit card required.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                Get Started <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link to="/industries" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
+                View All Industries
+              </Link>
+            </div>
+          </div>
+        </ScrollReveal>
       </section>
     </div>
   );

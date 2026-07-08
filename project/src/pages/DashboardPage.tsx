@@ -33,27 +33,13 @@ import {
 } from 'lucide-react';
 import { supabase, type Contact, type Activity, type SupportTicket, type Company } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
-import { DashboardOverview as DashboardOverviewImported } from './DashboardOverview';
 
 const dashboardNavItems = [
-  { icon: LayoutDashboard, label: 'Overview', path: '/dashboard' },
-  { icon: Users, label: 'Contacts', path: '/dashboard/crm' },
-  { icon: Target, label: 'Leads', path: '/dashboard/leads' },
-  { icon: TrendingUp, label: 'Pipeline', path: '/dashboard/pipeline' },
-  { icon: Zap, label: 'Automation', path: '/dashboard/automation' },
-  { icon: Brain, label: 'AI Tools', path: '/dashboard/ai-tools' },
-  { icon: BarChart3, label: 'Analytics', path: '/dashboard/analytics' },
-  { icon: FileText, label: 'Reports', path: '/dashboard/reports' },
-  { icon: HelpCircle, label: 'Service', path: '/dashboard/service' },
-  { icon: Mail, label: 'Marketing', path: '/dashboard/marketing' },
-  { icon: DollarSign, label: 'Commerce', path: '/dashboard/commerce' },
-  { icon: ArrowRight, label: 'Integrations', path: '/dashboard/integrations' },
-  { icon: CheckCircle, label: 'Data Governance', path: '/dashboard/data-governance' },
-  { icon: Globe, label: 'Site Content', path: '/dashboard/site-content' },
-  { icon: Mail, label: 'Submissions', path: '/dashboard/submissions' },
-  { icon: Settings, label: 'Admin', path: '/dashboard/admin' },
-  { icon: Settings, label: 'Account Settings', path: '/dashboard/settings' },
-  { icon: HelpCircle, label: 'Support', path: '/dashboard/support' },
+  { icon: LayoutDashboard, label: 'Overview',         path: '/dashboard' },
+  { icon: Globe,           label: 'Site Content',     path: '/dashboard/site-content' },
+  { icon: Mail,            label: 'Submissions',      path: '/dashboard/submissions' },
+  { icon: Settings,        label: 'Admin',            path: '/dashboard/admin' },
+  { icon: Settings,        label: 'Account Settings', path: '/dashboard/settings' },
 ];
 
 function DashboardLayout() {
