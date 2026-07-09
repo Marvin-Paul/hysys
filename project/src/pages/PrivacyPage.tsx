@@ -1,4 +1,5 @@
 import { useTranslation } from '../lib/i18n';
+import { PageHero } from '../components/PageHero';
 import { SEO } from '../components/SEO';
 
 export function PrivacyPage() {
@@ -6,12 +7,14 @@ export function PrivacyPage() {
   return (
     <div className="pt-16">
       <SEO title="Privacy Statement" />
-      <section className="bg-gradient-to-br from-[#032d60] to-[#0b5394] py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">{t('privacyTitle')}</h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">{t('lastUpdated')}</p>
-        </div>
-      </section>
+      <PageHero
+        badge="Privacy Statement"
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title={t('privacyTitle')}
+        subtitle="Data protection & trust"
+        description="Learn how we collect, safeguard, and use your information responsibly."
+        primaryCta={{ label: 'Contact Privacy Team', to: '/contact' }}
+      />
 
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,7 +23,7 @@ export function PrivacyPage() {
               HYSYS GLOBAL SOLUTIONS LIMITED ("HYSYS," "we," "us," or "our") is committed to protecting your privacy. This Privacy Statement explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">1. Information We Collect</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">1. Information We Collect</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               We collect information that you voluntarily provide to us when you register for an account, fill out a form, request a demo, subscribe to our newsletter, or contact us. This may include:
             </p>
@@ -32,7 +35,7 @@ export function PrivacyPage() {
               <li>Content you submit through our platform</li>
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">2. How We Use Your Information</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">2. How We Use Your Information</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               We use the information we collect for the following purposes:
             </p>
@@ -45,7 +48,7 @@ export function PrivacyPage() {
               <li>To comply with legal obligations and enforce our terms</li>
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">3. Data Sharing and Disclosure</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">3. Data Sharing and Disclosure</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               We do not sell your personal information. We may share your data with:
             </p>
@@ -56,17 +59,17 @@ export function PrivacyPage() {
               <li><strong>Corporate affiliates</strong> in connection with a merger, acquisition, or asset sale</li>
             </ul>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">4. Data Security</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">4. Data Security</h2>
             <p className="text-gray-700 leading-relaxed mb-6">
               We implement industry-standard security measures including encryption in transit and at rest, access controls, regular security audits, and SOC 2 Type II compliance to protect your data. However, no method of transmission over the Internet is 100% secure, and we cannot guarantee absolute security.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">5. Data Retention</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">5. Data Retention</h2>
             <p className="text-gray-700 leading-relaxed mb-6">
               We retain your personal information for as long as your account is active or as needed to provide you services. We may retain certain data as required by law, for legitimate business purposes, or until you request deletion.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">6. Your Rights and Choices</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">6. Your Rights and Choices</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               Depending on your jurisdiction, you may have the right to:
             </p>
@@ -78,20 +81,20 @@ export function PrivacyPage() {
               <li>Lodge a complaint with a data protection authority</li>
             </ul>
             <p className="text-gray-700 leading-relaxed mb-6">
-              To exercise these rights, contact us at <a href="mailto:privacy@hysysglobal.com" className="text-[#0b5394] underline">privacy@hysysglobal.com</a>.
+              To exercise these rights, contact us at <a href="mailto:privacy@hysysglobal.com" className="text-[var(--color-primary)] underline">privacy@hysysglobal.com</a>.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">7. International Data Transfers</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">7. International Data Transfers</h2>
             <p className="text-gray-700 leading-relaxed mb-6">
               Your information may be transferred to and processed in countries outside your own. We ensure appropriate safeguards are in place through Standard Contractual Clauses and other mechanisms to protect your data in accordance with applicable laws.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">8. Changes to This Privacy Statement</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">8. Changes to This Privacy Statement</h2>
             <p className="text-gray-700 leading-relaxed mb-6">
               We may update this Privacy Statement from time to time. We will notify you of material changes by posting the updated version on this page and, where appropriate, by email.
             </p>
 
-            <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">9. Contact Us</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">9. Contact Us</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               If you have questions or concerns about this Privacy Statement, please contact us:
             </p>
@@ -100,7 +103,7 @@ export function PrivacyPage() {
                 <strong>HYSYS GLOBAL SOLUTIONS LIMITED</strong><br />
                 Plot 19 Sir Albert Cook Road, MENGO - KAMPALA<br />
                 P.O.Box 16435 K'la<br />
-                Email: <a href="mailto:privacy@hysysglobal.com" className="text-[#0b5394] underline">privacy@hysysglobal.com</a><br />
+                Email: <a href="mailto:privacy@hysysglobal.com" className="text-[var(--color-primary)] underline">privacy@hysysglobal.com</a><br />
                 Tel: 0782-602854
               </p>
             </div>

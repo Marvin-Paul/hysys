@@ -1,7 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
-import { Building2, TrendingUp, Sparkles, Heart, ArrowRight, CheckCircle } from 'lucide-react';
+import { Building2, TrendingUp, Sparkles, Heart, ArrowRight, CheckCircle, FileText, Phone, Mail } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { PageHero } from '../components/PageHero';
 import { useTranslation } from '../lib/i18n';
 import { useSiteContent } from '../hooks/useSiteContent';
 import { SEO } from '../components/SEO';
@@ -15,118 +16,149 @@ const solutionsData: Record<string, any> = {
   'nonprofits':     { icon: Heart,      title: 'Nonprofits',    subtitle: 'Amplify impact',   description: 'Purpose-built for nonprofits. HYSYS helps organizations manage donors, volunteers, and programs efficiently. Special pricing available.',            features: ['Donor Management','Volunteer Coordination','Program Tracking','Grant Management','Impact Measurement','Special Nonprofit Pricing'],                       benefits: ['Increase donations','Engage volunteers','Track impact','Special discounts'],                    color: 'from-rose-500 to-pink-600',     subtitleKey: 'amplifyImpact',    titleKey: 'nonprofits',             descriptionKey: 'nonprofitsDesc'           },
 };
 
-/* ── Hero background (reusable) ── */
-function Hero({ badge, title, subtitle, desc }: { badge: string; title: string; subtitle: string; desc: string }) {
-  return (
-    <section className="relative min-h-[60vh] overflow-hidden flex items-center">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-      <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
-      <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="absolute w-1 h-1 rounded-full animate-pulse" style={{
-          background: i % 2 === 0 ? 'rgba(0,163,224,0.4)' : 'rgba(255,255,255,0.3)',
-          top: `${20+(i*9)%60}%`, left: `${5+(i*13)%90}%`, animationDelay: `${i*0.5}s`,
-        }} />
-      ))}
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center w-full">
-        <ScrollReveal>
-          <div className="flex justify-center mb-6">
-            <span className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 rounded-full text-sm font-medium backdrop-blur-md border border-white/20 text-white">
-              <Sparkles className="w-4 h-4 text-cyan-300" />{badge}
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            </span>
-          </div>
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40 mb-4">HYSYS GLOBAL SOLUTIONS LIMITED</p>
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-5">
-            {title}
-            <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-2">{subtitle}</span>
-          </h1>
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-1 rounded-full bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400" />
-          </div>
-          <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">{desc}</p>
-        </ScrollReveal>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
-          <path d="M0 80L720 40L1440 80V80H0Z" fill="white" />
-        </svg>
-      </div>
-    </section>
-  );
-}
-
 /* ── Solutions List ── */
 export function SolutionsPage() {
-  const { t } = useTranslation();
-  const content = useSiteContent('solutions');
-  const rawSolutions = content.getContentRaw('solutions_list') as any[] | null;
-  const resolvedData: Record<string, any> = rawSolutions
-    ? Object.fromEntries(rawSolutions.map((p: any) => [p.key, { ...p, icon: iconMap[p.iconName] || Heart }]))
-    : solutionsData;
+  const supportItems = [
+    {
+      key: 'email',
+      title: 'Email Support',
+      description: 'Reach our support team by email for account help, technical issues, and implementation questions.',
+      icon: FileText,
+      action: { label: 'Email Support', to: 'mailto:support@hysysglobal.com' },
+      badge: 'Fast response',
+    },
+    {
+      key: 'phone',
+      title: 'Phone Support',
+      description: 'Call our support center for urgent assistance and guided troubleshooting.',
+      icon: Phone,
+      action: { label: 'Call Support', to: 'tel:+256782602854' },
+      badge: 'Available 8am–6pm EAT',
+    },
+    {
+      key: 'documentation',
+      title: 'Product Documentation',
+      description: 'Browse technical guides, setup instructions, and best practices for every HYSYS product.',
+      icon: FileText,
+      action: { label: 'View Docs', to: '/contact' },
+      badge: 'Self-service resources',
+    },
+    {
+      key: 'ticketing',
+      title: 'Open a Support Ticket',
+      description: 'Submit an issue and track your request through our support portal.',
+      icon: Sparkles,
+      action: { label: 'Submit Ticket', to: '/contact' },
+      badge: 'Track every request',
+    },
+  ];
 
   return (
     <div className="pt-16">
-      <SEO title="Solutions" />
-      <Hero badge="Solutions for Every Business" title={content.getContent('solutionsTitle', t('solutionsTitle'))} subtitle="Tailored for You" desc={content.getContent('solutionsDesc', t('solutionsDesc'))} />
+      <SEO title="Support" />
+      <PageHero
+        badge="Support & Help"
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title="Support Center"
+        subtitle="We’re here to help"
+        description="Find help, documentation, and direct access to our support team for every product and request."
+        primaryCta={{ label: 'Contact Support', to: '/contact' }}
+        secondaryCta={{ label: 'Get Started', to: '/register' }}
+      />
 
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
-                <Sparkles className="w-4 h-4" /> Choose Your Path
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-4">
+                <Sparkles className="w-4 h-4" /> Support Options
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60] mb-4">Solutions built for your needs</h2>
-              <p className="text-lg text-gray-500 max-w-2xl mx-auto">Whether you're a startup or an enterprise, HYSYS has the right solution for you.</p>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-secondary)] mb-4">Find the help you need</h2>
+              <p className="text-lg text-gray-500 max-w-2xl mx-auto">Our support team and knowledge resources are ready to assist you across every stage of your journey.</p>
             </div>
           </ScrollReveal>
+
           <div className="grid md:grid-cols-2 gap-8 stagger-children">
-            {Object.entries(resolvedData).map(([key, solution]) => (
-              <ScrollReveal key={key}>
-                <Link to={`/solutions/${key}`} className="group relative bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 overflow-hidden block">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }} />
-                  <div className="flex items-start gap-6">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${solution.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg`}>
-                      <solution.icon className="w-8 h-8 text-white" />
+            {supportItems.map((item) => (
+              <ScrollReveal key={item.key}>
+                <div className="group relative bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                  <div className="flex items-center gap-4 mb-5">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg">
+                      <item.icon className="w-7 h-7 text-white" />
                     </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{t(solution.subtitleKey)}</div>
-                      <h3 className="text-2xl font-extrabold text-gray-900 mb-3 group-hover:text-[#0b5394] transition-colors">{t(solution.titleKey)}</h3>
-                      <p className="text-gray-500 mb-4 text-sm leading-relaxed">{t(solution.descriptionKey)}</p>
-                      <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0b5394] group-hover:text-[#032d60] transition-colors">
-                        Learn more <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-                      </span>
+                    <div>
+                      <div className="text-xs font-semibold uppercase tracking-wide text-[var(--color-primary)] mb-1">{item.badge}</div>
+                      <h3 className="text-2xl font-extrabold text-gray-900">{item.title}</h3>
                     </div>
                   </div>
-                </Link>
+                  <p className="text-gray-500 mb-8 leading-relaxed">{item.description}</p>
+                  <a
+                    href={item.action.to}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-secondary)]"
+                  >
+                    {item.action.label} <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <ScrollReveal>
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Sparkles className="w-10 h-10 text-cyan-300 mx-auto mb-4" />
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Not sure which solution fits?</h2>
-            <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto">Our team will help you find the perfect fit for your business size and goals.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                Talk to Sales <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
-                Start Free Trial
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+              <h3 className="text-xl font-bold text-[var(--color-secondary)] mb-4">Need urgent help?</h3>
+              <p className="text-gray-500 leading-relaxed mb-6">If you have an urgent issue, our support team is available Monday through Friday from 8:00 AM to 6:00 PM EAT.</p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 w-10 h-10 rounded-2xl bg-[var(--color-primary)] text-white flex items-center justify-center">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Phone Support</p>
+                    <p className="text-sm text-gray-500">0782-602854 · 0752-602857</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 w-10 h-10 rounded-2xl bg-[var(--color-primary)] text-white flex items-center justify-center">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Email Support</p>
+                    <p className="text-sm text-gray-500">support@hysysglobal.com</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 w-10 h-10 rounded-2xl bg-[var(--color-primary)] text-white flex items-center justify-center">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Documentation</p>
+                    <p className="text-sm text-gray-500">Browse guides and product docs anytime.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] rounded-3xl p-8 text-white shadow-2xl">
+              <h3 className="text-2xl font-extrabold mb-4">Still need help?</h3>
+              <p className="text-white/80 mb-8 leading-relaxed">Our team is ready to support every customer, whether you need platform setup, integration advice, or incident response.</p>
+              <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[var(--color-secondary)] rounded-2xl font-bold hover:bg-white/90 transition-all">
+                Contact Support <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+              <h3 className="text-xl font-bold text-[var(--color-secondary)] mb-4">Helpful resources</h3>
+              <ul className="space-y-4 text-gray-500 text-sm">
+                <li>Knowledge base articles for quick answers.</li>
+                <li>Step-by-step onboarding checklists.</li>
+                <li>Release notes and product updates.</li>
+                <li>Best practices for security and governance.</li>
+              </ul>
+            </div>
           </div>
-        </ScrollReveal>
+        </div>
       </section>
     </div>
   );
@@ -138,8 +170,9 @@ export function SolutionDetailPage() {
   const content = useSiteContent('solutions');
   const { solutionId } = useParams<{ solutionId: string }>();
   const rawSolutionsDetail = content.getContentRaw('solutions_list') as any[] | null;
+  const toArray = (v: any) => typeof v === 'string' ? v.split(',').map((s: string) => s.trim()).filter(Boolean) : (Array.isArray(v) ? v : []);
   const solution = rawSolutionsDetail
-    ? Object.fromEntries(rawSolutionsDetail.map((p: any) => [p.key, { ...p, icon: iconMap[p.iconName] || Heart }]))[solutionId || '']
+    ? Object.fromEntries(rawSolutionsDetail.map((p: any) => [p.key, { ...p, features: toArray(p.features), icon: iconMap[p.iconName] || Heart }]))[solutionId || '']
     : solutionsData[solutionId || ''];
 
   if (!solution) {
@@ -147,70 +180,25 @@ export function SolutionDetailPage() {
       <div className="pt-16 min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <h1 className="text-2xl font-extrabold text-gray-900 mb-4">{t('solutionNotFound')}</h1>
-          <Link to="/solutions" className="text-[#0b5394] font-semibold hover:underline">{t('viewAllSolutions')}</Link>
+          <Link to="/solutions" className="text-[var(--color-primary)] font-semibold hover:underline">{t('viewAllSolutions')}</Link>
         </div>
       </div>
     );
   }
 
-  const Icon = solution.icon;
-
   return (
     <div className="pt-16">
       <SEO title={solution.title} />
 
-      {/* Hero */}
-      <section className="relative min-h-[70vh] overflow-hidden flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
-        <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '3s' }} />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <ScrollReveal variant="left">
-              <div className="text-white">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-xs font-bold backdrop-blur-md border border-white/20 uppercase tracking-wider text-cyan-300 mb-5">
-                  {t(solution.subtitleKey)}
-                </span>
-                <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-5">
-                  {solution.title}
-                  <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-1 text-4xl sm:text-5xl">
-                    by HYSYS
-                  </span>
-                </h1>
-                <div className="w-16 h-1 rounded-full bg-gradient-to-r from-cyan-400 to-blue-300 mb-6" />
-                <p className="text-lg text-white/70 mb-10 leading-relaxed font-light max-w-lg">{solution.description}</p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/register" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    {t('getStarted')} <ArrowRight className="w-5 h-5" />
-                  </Link>
-                  <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
-                    Talk to Sales
-                  </Link>
-                </div>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal variant="right">
-              <div className="hidden lg:flex justify-center">
-                <div className="relative">
-                  <div className={`absolute -inset-8 bg-gradient-to-br ${solution.color} opacity-20 rounded-[50px] blur-2xl`} />
-                  <div className={`relative w-72 h-72 rounded-[40px] bg-gradient-to-br ${solution.color} flex items-center justify-center shadow-2xl`}>
-                    <Icon className="w-36 h-36 text-white" />
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
-            <path d="M0 80L720 40L1440 80V80H0Z" fill="white" />
-          </svg>
-        </div>
-      </section>
+      <PageHero
+        badge={t(solution.subtitleKey)}
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title={t(solution.titleKey)}
+        subtitle="by HYSYS"
+        description={solution.description}
+        primaryCta={{ label: t('getStarted'), to: '/register' }}
+        secondaryCta={{ label: t('contactSales'), to: '/contact' }}
+      />
 
       {/* Features + Benefits */}
       <section className="py-24 bg-white">
@@ -219,10 +207,10 @@ export function SolutionDetailPage() {
             {/* Features */}
             <div>
               <ScrollReveal>
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-5">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-5">
                   <Sparkles className="w-4 h-4" /> Key Features
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#032d60] mb-8">{t('keyFeaturesTitle')}</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-secondary)] mb-8">{t('keyFeaturesTitle')}</h2>
               </ScrollReveal>
               <div className="space-y-4 stagger-children">
                 {solution.features.map((feature: string, idx: number) => (
@@ -244,12 +232,12 @@ export function SolutionDetailPage() {
                 <span className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full text-sm font-semibold text-emerald-700 mb-5">
                   ✦ Benefits
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#032d60] mb-8">{t('benefitsTitle')}</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-secondary)] mb-8">{t('benefitsTitle')}</h2>
               </ScrollReveal>
               <div className="space-y-4 stagger-children">
                 {solution.benefits.map((benefit: string, idx: number) => (
                   <ScrollReveal key={idx}>
-                    <div className="group flex items-center gap-4 p-4 bg-gradient-to-r from-[#0b5394]/5 to-transparent rounded-2xl hover:from-[#0b5394]/10 hover:shadow-md transition-all duration-300 border border-transparent hover:border-[#0b5394]/10">
+                    <div className="group flex items-center gap-4 p-4 bg-gradient-to-r from-[var(--color-primary)]/5 to-transparent rounded-2xl hover:from-[var(--color-primary)]/10 hover:shadow-md transition-all duration-300 border border-transparent hover:border-[var(--color-primary)]/10">
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow">
                         <ArrowRight className="w-5 h-5 text-white" />
                       </div>
@@ -265,7 +253,7 @@ export function SolutionDetailPage() {
 
       {/* CTA */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <ScrollReveal>
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -273,7 +261,7 @@ export function SolutionDetailPage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Ready to {solution.title}?</h2>
             <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto">Start your free 14-day trial today. No credit card required.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                 {t('getStarted')} <ArrowRight className="w-5 h-5" />
               </Link>
               <Link to="/solutions" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">

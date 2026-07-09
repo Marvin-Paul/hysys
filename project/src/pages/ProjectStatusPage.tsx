@@ -1,4 +1,6 @@
 import { CheckCircle, Clock, Loader2, Code2, Database, Globe, Shield, BarChart3, Zap, Server, Navigation, Layers, TrendingUp, Users, FileCode, GitBranch, Calendar, Building2, ChevronRight } from 'lucide-react';
+import { PageHero } from '../components/PageHero';
+import { SEO } from '../components/SEO';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -121,8 +123,8 @@ function ProgressBar({ progress, status }: { progress: number; status: Phase['st
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-6">
-      <h2 className="text-lg font-bold text-[#032d60] uppercase tracking-widest">{children}</h2>
-      <div className="flex-1 h-px bg-gradient-to-r from-[#0b5394]/30 to-transparent" />
+      <h2 className="text-lg font-bold text-[var(--color-secondary)] uppercase tracking-widest">{children}</h2>
+      <div className="flex-1 h-px bg-gradient-to-r from-[var(--color-primary)]/30 to-transparent" />
     </div>
   );
 }
@@ -138,7 +140,7 @@ export function ProjectStatusPage() {
   const overallProgress = Math.round(phases.reduce((sum, p) => sum + p.progress, 0) / phases.length);
 
   return (
-    <div className="min-h-screen bg-white font-sans print:bg-white" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+    <div className="min-h-screen bg-white print:bg-white" style={{ fontFamily: 'var(--font-family)' }}>
 
       {/* ── Print styles injected via style tag ── */}
       <style>{`
@@ -149,48 +151,55 @@ export function ProjectStatusPage() {
         }
       `}</style>
 
-      {/* ── Header / Hero ── */}
-      <header className="bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0] text-white">
-        <div className="max-w-5xl mx-auto px-8 py-10">
-          <div className="flex items-start justify-between flex-wrap gap-6">
-            {/* Branding */}
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
-                <Building2 className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <p className="text-[#00a3e0] text-xs font-semibold uppercase tracking-widest mb-0.5">HYSYS Global Solutions</p>
-                <h1 className="text-2xl font-extrabold leading-tight">Project Status Report</h1>
-                <p className="text-white/70 text-sm mt-0.5">CRM Web Application</p>
-              </div>
-            </div>
+      <SEO title="Project Status" />
 
-            {/* Status pill */}
-            <div className="flex flex-col items-end gap-2">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-sm font-semibold">
-                <Loader2 className="w-4 h-4 animate-spin" /> In Progress
-              </span>
-              <div className="text-right">
-                <p className="text-white/60 text-xs">Overall Completion</p>
-                <p className="text-3xl font-black text-white">{overallProgress}%</p>
-              </div>
-            </div>
-          </div>
+      <PageHero
+        badge="Project Status"
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title="Project Status Report"
+        subtitle="Current development progress"
+        description="Track the development phases, milestones, and work remaining for the HYSYS CRM application."
+        primaryCta={{ label: 'Contact Project Team', to: '/contact' }}
+        secondaryCta={{ label: 'Back to Homepage', to: '/' }}
+      />
 
-          {/* Overall progress bar */}
-          <div className="mt-6">
-            <div className="w-full bg-white/10 rounded-full h-2.5 overflow-hidden">
-              <div
-                className="h-2.5 rounded-full bg-gradient-to-r from-[#00a3e0] to-emerald-400 transition-all duration-700"
-                style={{ width: `${overallProgress}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ── Body ── */}
+      {/* ── Progress summary ── */}
       <main className="max-w-5xl mx-auto px-8 py-10 space-y-12">
+        <section className="bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)] text-white rounded-3xl overflow-hidden shadow-2xl">
+          <div className="px-8 py-10">
+            <div className="flex items-start justify-between flex-wrap gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center backdrop-blur-sm shrink-0">
+                  <Building2 className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <p className="text-[var(--color-accent)] text-xs font-semibold uppercase tracking-widest mb-0.5">HYSYS Global Solutions</p>
+                  <h2 className="text-2xl font-extrabold leading-tight">Project Status Report</h2>
+                  <p className="text-white/70 text-sm mt-0.5">CRM Web Application</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-2">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-sm font-semibold">
+                  <Loader2 className="w-4 h-4 animate-spin" /> In Progress
+                </span>
+                <div className="text-right">
+                  <p className="text-white/60 text-xs">Overall Completion</p>
+                  <p className="text-3xl font-black text-white">{overallProgress}%</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <div className="w-full bg-white/10 rounded-full h-2.5 overflow-hidden">
+                <div
+                  className="h-2.5 rounded-full bg-gradient-to-r from-[var(--color-accent)] to-emerald-400 transition-all duration-700"
+                  style={{ width: `${overallProgress}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* ── 1. Project Overview ── */}
         <section>
@@ -205,11 +214,11 @@ export function ProjectStatusPage() {
               { label: 'Target Launch',   value: 'Q3 2025',                         icon: <Clock className="w-4 h-4" /> },
             ].map(({ label, value, icon }) => (
               <div key={label} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                <div className="flex items-center gap-2 text-[#0b5394] mb-1">
+                <div className="flex items-center gap-2 text-[var(--color-primary)] mb-1">
                   {icon}
                   <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">{label}</span>
                 </div>
-                <p className="text-sm font-semibold text-[#032d60]">{value}</p>
+                <p className="text-sm font-semibold text-[var(--color-secondary)]">{value}</p>
               </div>
             ))}
           </div>
@@ -247,7 +256,7 @@ export function ProjectStatusPage() {
                       {phase.number}
                     </div>
                     <div>
-                      <p className="font-semibold text-[#032d60] text-sm leading-tight">Phase {phase.number}: {phase.name}</p>
+                      <p className="font-semibold text-[var(--color-secondary)] text-sm leading-tight">Phase {phase.number}: {phase.name}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{phase.description}</p>
                     </div>
                   </div>
@@ -271,7 +280,7 @@ export function ProjectStatusPage() {
           <div>
             <SectionTitle>Features Completed</SectionTitle>
             <div className="space-y-2">
-              {completedFeatures.map(({ name, icon }) => (
+              {completedFeatures.map(({ name }) => (
                 <div key={name} className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-lg px-4 py-2.5">
                   <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span className="text-sm text-emerald-800 font-medium">{name}</span>
@@ -284,7 +293,7 @@ export function ProjectStatusPage() {
           <div>
             <SectionTitle>Features In Progress</SectionTitle>
             <div className="space-y-2">
-              {inProgressFeatures.map(({ name, icon }) => (
+              {inProgressFeatures.map(({ name }) => (
                 <div key={name} className="flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-lg px-4 py-2.5">
                   <Loader2 className="w-4 h-4 text-amber-500 shrink-0 animate-spin" />
                   <span className="text-sm text-amber-800 font-medium">{name}</span>
@@ -310,10 +319,10 @@ export function ProjectStatusPage() {
           <SectionTitle>Key Metrics</SectionTitle>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: 'Pages Built',        value: '25+',     icon: <Globe className="w-6 h-6" />,    accent: '#0b5394' },
-              { label: 'Components Created', value: '40+',     icon: <Layers className="w-6 h-6" />,   accent: '#00a3e0' },
-              { label: 'Database Tables',    value: '20+',     icon: <Database className="w-6 h-6" />, accent: '#032d60' },
-              { label: 'Lines of Code',      value: '10,000+', icon: <Code2 className="w-6 h-6" />,    accent: '#0b5394' },
+              { label: 'Pages Built',        value: '25+',     icon: <Globe className="w-6 h-6" />,    accent: 'var(--color-primary)' },
+              { label: 'Components Created', value: '40+',     icon: <Layers className="w-6 h-6" />,   accent: 'var(--color-accent)' },
+              { label: 'Database Tables',    value: '20+',     icon: <Database className="w-6 h-6" />, accent: 'var(--color-secondary)' },
+              { label: 'Lines of Code',      value: '10,000+', icon: <Code2 className="w-6 h-6" />,    accent: 'var(--color-primary)' },
             ].map(({ label, value, icon, accent }) => (
               <div
                 key={label}
@@ -324,7 +333,7 @@ export function ProjectStatusPage() {
                   style={{ backgroundColor: accent }}
                 />
                 <div className="mb-3" style={{ color: accent }}>{icon}</div>
-                <p className="text-3xl font-extrabold text-[#032d60]">{value}</p>
+                <p className="text-3xl font-extrabold text-[var(--color-secondary)]">{value}</p>
                 <p className="text-xs text-gray-500 mt-1 font-medium">{label}</p>
               </div>
             ))}
@@ -336,8 +345,8 @@ export function ProjectStatusPage() {
           <SectionTitle>Next Steps</SectionTitle>
           <div className="space-y-3">
             {nextSteps.map(({ step, action }) => (
-              <div key={step} className="flex items-start gap-4 bg-[#032d60]/[0.03] border border-[#032d60]/10 rounded-xl px-5 py-4">
-                <div className="w-7 h-7 rounded-full bg-[#0b5394] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+              <div key={step} className="flex items-start gap-4 bg-[var(--color-secondary)]/[0.03] border border-[var(--color-secondary)]/10 rounded-xl px-5 py-4">
+                <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                   {step}
                 </div>
                 <p className="text-sm text-gray-700 leading-relaxed">{action}</p>
@@ -353,8 +362,8 @@ export function ProjectStatusPage() {
       <footer className="border-t border-gray-200 bg-gray-50 mt-8 print:mt-4">
         <div className="max-w-5xl mx-auto px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
           <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#0b5394]" />
-            <span className="font-semibold text-[#0b5394]">HYSYS Global Solutions</span>
+            <Building2 className="w-4 h-4 text-[var(--color-primary)]" />
+            <span className="font-semibold text-[var(--color-primary)]">HYSYS Global Solutions</span>
             <span>·</span>
             <span>CRM Web Application — Internal Project Report</span>
           </div>

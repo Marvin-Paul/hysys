@@ -7,62 +7,35 @@ import 'swiper/css/pagination';
 
 import { VideoCard } from './VideoCard';
 import { CarouselControls } from './CarouselControls';
+import { useSiteContent } from '../hooks/useSiteContent';
 
-const stories = [
-  {
-    logoText: 'AC',
-    name: 'Alex Carter',
-    title: 'VP of Customer Success',
-    company: 'Cloudly Inc.',
-    thumbnail: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80',
-    quote: 'The customer success stories carousel helped our brand stand out while showcasing measurable growth and alignment across distributed teams.',
-  },
-  {
-    logoText: 'TR',
-    name: 'Tina Ramirez',
-    title: 'Global Marketing Director',
-    company: 'NovaWave',
-    thumbnail: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80',
-    quote: 'We reduced campaign cycle time by 38% and earned stronger executive buy-in through consistent, shareable customer video stories.',
-  },
-  {
-    logoText: 'JP',
-    name: 'Jordan Patel',
-    title: 'Head of Sales Operations',
-    company: 'Vertex Dynamics',
-    thumbnail: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80',
-    quote: 'The video carousel is smooth, responsive, and instantly communicates trust to prospects across our enterprise funnel.',
-  },
-  {
-    logoText: 'MK',
-    name: 'Maya Kim',
-    title: 'Chief Growth Officer',
-    company: 'Zenith Systems',
-    thumbnail: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80',
-    quote: 'This section became our highest-performing homepage asset, with longer engagement times and stronger demo requests.',
-  },
-  {
-    logoText: 'LB',
-    name: 'Liam Brooks',
-    title: 'VP of Operations',
-    company: 'Sapphire Labs',
-    thumbnail: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?auto=format&fit=crop&w=900&q=80',
-    quote: 'The carousel delivers a polished enterprise feel and keeps our success stories accessible on all device sizes.',
-  },
+const fallbackStories = [
+  { logoText: 'AC', name: 'Alex Carter', title: 'VP of Customer Success', company: 'Cloudly Inc.', thumbnail: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80', quote: 'The customer success stories carousel helped our brand stand out.' },
+  { logoText: 'TR', name: 'Tina Ramirez', title: 'Global Marketing Director', company: 'NovaWave', thumbnail: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80', quote: 'We reduced campaign cycle time by 38%.' },
+  { logoText: 'JP', name: 'Jordan Patel', title: 'Head of Sales Operations', company: 'Vertex Dynamics', thumbnail: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80', quote: 'The video carousel is smooth, responsive.' },
+  { logoText: 'MK', name: 'Maya Kim', title: 'Chief Growth Officer', company: 'Zenith Systems', thumbnail: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80', quote: 'This section became our highest-performing homepage asset.' },
+  { logoText: 'LB', name: 'Liam Brooks', title: 'VP of Operations', company: 'Sapphire Labs', thumbnail: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?auto=format&fit=crop&w=900&q=80', quote: 'The carousel delivers a polished enterprise feel.' },
 ];
 
+function getInitials(name: string) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
 export function CustomerStoriesSection() {
+  const content = useSiteContent('stories');
+  const raw = content.getContentRaw('customer_stories') as any[] | null;
+  const stories = raw?.length ? raw : fallbackStories;
   const sliderSlides = useMemo(
     () => stories.map((story) => (
       <SwiperSlide key={story.name}>
-        <VideoCard {...story} />
+        <VideoCard {...story} logoText={story.logoText || getInitials(story.name)} />
       </SwiperSlide>
     )),
-    []
+    [stories]
   );
 
   return (
-    <section className="relative py-20 bg-gradient-to-b from-[#0052CC] to-[#032D60] text-white overflow-hidden border-t border-blue-900">
+    <section className="relative py-20 bg-gradient-to-b from-[#0052CC] to-[var(--color-secondary)] text-white overflow-hidden border-t border-blue-900">
       {/* Decorative wave shapes at bottom */}
       <div className="absolute inset-x-0 bottom-0 h-32">
         <svg viewBox="0 0 1440 120" fill="none" className="w-full h-full" preserveAspectRatio="none">

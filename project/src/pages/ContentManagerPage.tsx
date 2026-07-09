@@ -1,566 +1,408 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Globe, Save, RefreshCw, CheckCircle, AlertCircle, ChevronRight,
-  Eye, Type, AlignLeft, Hash, List, Trash2, Plus, GripVertical, Edit3, X, Check,
+  Globe, RefreshCw,
+  Eye,
+  LayoutDashboard, Palette, Image, ExternalLink, Upload,
+  Server, HardDrive, MessageSquare, Clock,
+  Home, Info, Package, Compass, Building2, CreditCard, Phone, BookOpen,
+  Sparkles, Zap, CheckCircle2, TrendingUp, Activity, Layers,
 } from 'lucide-react';
 import { useAdminContent } from '../hooks/useSiteContent';
+import { supabase } from '../lib/supabase';
+import { DesignManager } from '../components/DesignManager';
+import { MediaLibrary } from '../components/MediaLibrary';
+import { LivePreview } from '../components/LivePreview';
+import { SectionEditor } from '../components/SectionEditor';
+
+type Tab = 'dashboard' | 'content' | 'design' | 'media';
 
 const SECTIONS = [
-  { id: 'homepage',      label: 'Homepage' },
-  { id: 'about',         label: 'About' },
-  { id: 'products',      label: 'Products' },
-  { id: 'solutions',     label: 'Solutions' },
-  { id: 'industries',    label: 'Industries' },
-  { id: 'pricing',       label: 'Pricing' },
-  { id: 'contact',       label: 'Contact' },
-  { id: 'learning',      label: 'Learning' },
-  { id: 'stories',       label: 'Customer Stories' },
+  { id: 'homepage',      label: 'Homepage',         icon: Home },
+  { id: 'about',         label: 'About',            icon: Info },
+  { id: 'products',      label: 'Products',         icon: Package },
+  { id: 'solutions',     label: 'Solutions',        icon: Compass },
+  { id: 'industries',    label: 'Industries',       icon: Building2 },
+  { id: 'pricing',       label: 'Pricing',          icon: CreditCard },
+  { id: 'contact',       label: 'Contact',          icon: Phone },
+  { id: 'stories',       label: 'Customer Stories', icon: BookOpen },
 ];
 
-interface EditableField {
-  key: string;
-  value: unknown;
-  originalValue: unknown;
-}
+const TABS: { id: Tab; label: string; icon: typeof LayoutDashboard; desc: string }[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, desc: 'Site overview & stats' },
+  { id: 'content',   label: 'Content', icon: Globe, desc: 'Edit page content' },
+  { id: 'design',    label: 'Design', icon: Palette, desc: 'Customize appearance' },
+  { id: 'media',     label: 'Media', icon: Image, desc: 'Upload & manage files' },
+];
 
-function guessFieldType(key: string, value: unknown): 'text' | 'textarea' | 'number' | 'list' {
-  if (typeof value === 'number') return 'number';
-  if (Array.isArray(value)) return 'list';
-  if (typeof value === 'string' && value.length > 80) return 'textarea';
-  if (key.endsWith('_desc') || key.endsWith('_text') || key.includes('description')) return 'textarea';
-  return 'text';
-}
-
-function formatKey(key: string): string {
-  return key
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function ArrayEditor({
-  value, onChange,
-}: {
-  value: unknown[];
-  onChange: (v: unknown[]) => void;
-}) {
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editForm, setEditForm] = useState<Record<string, string> | string>('');
-  const [adding, setAdding] = useState(false);
-  const [addForm, setAddForm] = useState<Record<string, string> | string>('');
-  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
-
-  const isArrayOfObjects = value.length > 0 && typeof value[0] === 'object' && !Array.isArray(value[0]);
-  const keys = isArrayOfObjects && value.length > 0
-    ? [...new Set(value.flatMap((item) => Object.keys(item as Record<string, unknown>)))]
-    : [];
-
-  const startEdit = (index: number) => {
-    const item = value[index];
-    if (isArrayOfObjects) {
-      const form: Record<string, string> = {};
-      for (const k of keys) {
-        form[k] = String((item as Record<string, unknown>)[k] ?? '');
-      }
-      setEditForm(form);
-    } else {
-      setEditForm(String(item ?? ''));
-    }
-    setEditingIndex(index);
-  };
-
-  const saveEdit = () => {
-    if (editingIndex === null) return;
-    const newArr = [...value];
-    newArr[editingIndex] = isArrayOfObjects
-      ? Object.fromEntries(
-          Object.entries(editForm as Record<string, string>).map(([k, v]) => [k, tryParse(v)])
-        )
-      : tryParse(editForm as string);
-    onChange(newArr);
-    setEditingIndex(null);
-    setEditForm('');
-  };
-
-  const startAdd = () => {
-    if (isArrayOfObjects) {
-      const form: Record<string, string> = {};
-      for (const k of keys) form[k] = '';
-      setAddForm(form);
-    } else {
-      setAddForm('');
-    }
-    setAdding(true);
-  };
-
-  const saveAdd = () => {
-    const newItem = isArrayOfObjects
-      ? Object.fromEntries(
-          Object.entries(addForm as Record<string, string>).map(([k, v]) => [k, tryParse(v)])
-        )
-      : tryParse(addForm as string);
-    onChange([...value, newItem]);
-    setAdding(false);
-    setAddForm('');
-  };
-
-  const deleteItem = (index: number) => {
-    const newArr = value.filter((_, i) => i !== index);
-    onChange(newArr);
-    setConfirmDelete(null);
-  };
-
-  const moveItem = (index: number, direction: -1 | 1) => {
-    const target = index + direction;
-    if (target < 0 || target >= value.length) return;
-    const newArr = [...value];
-    [newArr[index], newArr[target]] = [newArr[target], newArr[index]];
-    onChange(newArr);
-  };
-
-  const renderFormFields = (
-    form: Record<string, string> | string,
-    setter: typeof setEditForm | typeof setAddForm,
-    isObject: boolean,
-  ) => {
-    if (!isObject) {
-      return (
-        <input
-          type="text"
-          value={form as string}
-          onChange={(e) => setter(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm"
-          placeholder="Enter value"
-        />
-      );
-    }
-    const formObj = form as Record<string, string>;
-    return keys.map((k) => (
-      <div key={k}>
-        <label className="block text-xs font-medium text-gray-600 mb-1">{formatKey(k)}</label>
-        <input
-          type="text"
-          value={formObj[k] ?? ''}
-          onChange={(e) => setter({ ...formObj, [k]: e.target.value })}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm"
-        />
-      </div>
-    ));
-  };
-
+function LoadingScreen() {
   return (
-    <div className="space-y-2">
-      {isArrayOfObjects ? (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                {keys.map((k) => (
-                  <th key={k} className="text-left px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {formatKey(k)}
-                  </th>
-                ))}
-                <th className="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {value.map((item, idx) => (
-                <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50/50">
-                  {keys.map((k) => (
-                    <td key={k} className="px-3 py-2.5 text-gray-700 max-w-[200px] truncate">
-                      {String((item as Record<string, unknown>)[k] ?? '')}
-                    </td>
-                  ))}
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => moveItem(idx, -1)} disabled={idx === 0}
-                        className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed">
-                        <GripVertical className="w-3.5 h-3.5 rotate-90" />
-                      </button>
-                      <button onClick={() => moveItem(idx, 1)} disabled={idx === value.length - 1}
-                        className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed">
-                        <GripVertical className="w-3.5 h-3.5 -rotate-90" />
-                      </button>
-                      <button onClick={() => startEdit(idx)}
-                        className="p-1 rounded hover:bg-blue-50 text-blue-500 hover:text-blue-700">
-                        <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-                      {confirmDelete === idx ? (
-                        <>
-                          <button onClick={() => deleteItem(idx)}
-                            className="p-1 rounded hover:bg-red-50 text-red-500">
-                            <Check className="w-3.5 h-3.5" />
-                          </button>
-                          <button onClick={() => setConfirmDelete(null)}
-                            className="p-1 rounded hover:bg-gray-100 text-gray-400">
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </>
-                      ) : (
-                        <button onClick={() => setConfirmDelete(idx)}
-                          className="p-1 rounded hover:bg-red-50 text-red-400 hover:text-red-600">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {value.length === 0 && (
-            <p className="text-sm text-gray-400 text-center py-4">Array is empty</p>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-1">
-          {value.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700">
-              <div className="flex-1">{String(item ?? '')}</div>
-              <button onClick={() => moveItem(idx, -1)} disabled={idx === 0}
-                className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed">
-                <GripVertical className="w-3.5 h-3.5 rotate-90" />
-              </button>
-              <button onClick={() => moveItem(idx, 1)} disabled={idx === value.length - 1}
-                className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed">
-                <GripVertical className="w-3.5 h-3.5 -rotate-90" />
-              </button>
-              <button onClick={() => startEdit(idx)}
-                className="p-1 rounded hover:bg-blue-50 text-blue-500">
-                <Edit3 className="w-3.5 h-3.5" />
-              </button>
-              {confirmDelete === idx ? (
-                <>
-                  <button onClick={() => deleteItem(idx)}
-                    className="p-1 rounded hover:bg-red-50 text-red-500">
-                    <Check className="w-3.5 h-3.5" />
-                  </button>
-                  <button onClick={() => setConfirmDelete(null)}
-                    className="p-1 rounded hover:bg-gray-100 text-gray-400">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </>
-              ) : (
-                <button onClick={() => setConfirmDelete(idx)}
-                  className="p-1 rounded hover:bg-red-50 text-red-400 hover:text-red-600">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          ))}
-          {value.length === 0 && (
-            <p className="text-sm text-gray-400 text-center py-2">Array is empty</p>
-          )}
-        </div>
-      )}
-
-      {/* Inline edit modal */}
-      {editingIndex !== null && (
-        <div className="mt-3 p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
-          <p className="text-sm font-medium text-gray-700">Edit Item #{editingIndex + 1}</p>
-          {renderFormFields(editForm, setEditForm, isArrayOfObjects)}
-          <div className="flex items-center gap-2 pt-1">
-            <button onClick={saveEdit}
-              className="px-3 py-1.5 text-xs font-medium text-white bg-[#0b5394] rounded-lg hover:bg-[#032d60] transition-colors flex items-center gap-1">
-              <Check className="w-3.5 h-3.5" /> Save
-            </button>
-            <button onClick={() => { setEditingIndex(null); setEditForm(''); }}
-              className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-1">
-              <X className="w-3.5 h-3.5" /> Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Add new item */}
-      {adding ? (
-        <div className="mt-3 p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
-          <p className="text-sm font-medium text-gray-700">Add New Item</p>
-          {renderFormFields(addForm, setAddForm, isArrayOfObjects)}
-          <div className="flex items-center gap-2 pt-1">
-            <button onClick={saveAdd}
-              className="px-3 py-1.5 text-xs font-medium text-white bg-[#0b5394] rounded-lg hover:bg-[#032d60] transition-colors flex items-center gap-1">
-              <Plus className="w-3.5 h-3.5" /> Add
-            </button>
-            <button onClick={() => { setAdding(false); setAddForm(''); }}
-              className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-1">
-              <X className="w-3.5 h-3.5" /> Cancel
-            </button>
-          </div>
-        </div>
-      ) : (
-        <button onClick={startAdd}
-          className="w-full px-3 py-2 text-sm font-medium text-[#0b5394] border border-dashed border-gray-300 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-          <Plus className="w-4 h-4" /> Add Item
-        </button>
-      )}
+    <div className="flex items-center justify-center py-20">
+      <div className="relative">
+        <div className="w-10 h-10 border-[3px] border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+        <div className="absolute inset-0 w-10 h-10 border-[3px] border-[var(--color-accent)] border-b-transparent rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '0.8s' }} />
+      </div>
     </div>
   );
 }
 
-function tryParse(val: string): unknown {
-  if (val === 'true') return true;
-  if (val === 'false') return false;
-  if (val === '' || val === 'null') return null;
-  const num = Number(val);
-  if (!Number.isNaN(num) && val.trim() !== '') return num;
-  return val;
+function StatCard({ icon: Icon, label, value, sub, gradient }: {
+  icon: typeof Globe; label: string; value: string | number; sub?: string; gradient?: string;
+}) {
+  return (
+    <div className="group relative bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br opacity-[0.02] group-hover:opacity-[0.04] transition-opacity pointer-events-none"
+        style={{ backgroundImage: gradient || 'linear-gradient(135deg, var(--color-primary), var(--color-accent))' }} />
+      <div className="relative">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.12em]">{label}</span>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-md"
+            style={{ background: `linear-gradient(135deg, ${gradient ? 'var(--color-primary)' : 'var(--color-primary)'}12, ${gradient ? 'var(--color-accent)' : 'var(--color-accent)'}08)` }}>
+            <Icon className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+          </div>
+        </div>
+        <p className="text-2xl font-bold text-gray-900 tracking-tight">{value}</p>
+        {sub && <p className="text-xs text-gray-400 mt-1.5 font-medium">{sub}</p>}
+      </div>
+    </div>
+  );
 }
 
-export function ContentManagerPage() {
-  const [activeSection, setActiveSection] = useState('homepage');
-  const [fields, setFields] = useState<EditableField[]>([]);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [dirtyCount, setDirtyCount] = useState(0);
-
-  const { refreshSection, saveAllContent, getAllContent, sectionLoaded } = useAdminContent();
-
-  const loadSection = useCallback((sectionId: string) => {
-    const content = getAllContent(sectionId);
-    const fieldList: EditableField[] = Object.entries(content).map(([key, value]) => ({
-      key,
-      value,
-      originalValue: value,
-    }));
-    fieldList.sort((a, b) => a.key.localeCompare(b.key));
-    setFields(fieldList);
-    setDirtyCount(0);
-    setSaved(false);
-    setError(null);
-  }, [getAllContent]);
+function DashboardTab() {
+  const [stats, setStats] = useState({
+    sections: 0,
+    fields: 0,
+    mediaCount: 0,
+    storageUsed: '0 MB',
+    messages: 0,
+    lastUpdated: 'Never',
+  });
+  const [loading, setLoading] = useState(true);
+  const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
-    loadSection(activeSection);
-  }, [activeSection, loadSection, sectionLoaded(activeSection)]);
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good morning');
+    else if (hour < 18) setGreeting('Good afternoon');
+    else setGreeting('Good evening');
+  }, []);
 
-  const handleRefresh = async () => {
-    await refreshSection(activeSection);
-    loadSection(activeSection);
-  };
+  useEffect(() => {
+    async function load() {
+      if (!supabase) { setLoading(false); return; }
+      try {
+        const [contentRes, mediaRes, messagesRes] = await Promise.all([
+          supabase.from('site_content').select('section, updated_at', { count: 'exact', head: false }),
+          supabase.from('media_library').select('id, file_size', { count: 'exact' }),
+          supabase.from('contact_submissions').select('id', { count: 'exact' }),
+        ]);
 
-  const handleValueChange = (fieldKey: string, newValue: unknown) => {
-    setFields((prev) => {
-      const updated = prev.map((f) =>
-        f.key === fieldKey ? { ...f, value: newValue } : f
-      );
-      const dirty = updated.filter(
-        (f) => JSON.stringify(f.value) !== JSON.stringify(f.originalValue)
-      ).length;
-      setDirtyCount(dirty);
-      return updated;
-    });
-    setSaved(false);
-    setError(null);
-  };
+        const sections = new Set(contentRes.data?.map(r => r.section) || []);
+        const totalSize = (mediaRes.data as { file_size: number }[] | undefined)?.reduce((acc, m) => acc + (m.file_size || 0), 0) || 0;
+        const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
 
-  const handleSave = async () => {
-    setSaving(true);
-    setError(null);
-    try {
-      const content: Record<string, unknown> = {};
-      fields.forEach((f) => {
-        content[f.key] = f.value;
-      });
-      await saveAllContent(activeSection, content);
-      setFields((prev) => prev.map((f) => ({ ...f, originalValue: f.value })));
-      setDirtyCount(0);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save content');
-    } finally {
-      setSaving(false);
+        const dates = contentRes.data?.map(r => r.updated_at).filter(Boolean) as string[] || [];
+        const lastUpd = dates.length > 0 ? new Date(Math.max(...dates.map(d => new Date(d).getTime()))).toLocaleDateString() : 'Never';
+
+        setStats({
+          sections: sections.size,
+          fields: contentRes.count || 0,
+          mediaCount: mediaRes.count || 0,
+          storageUsed: `${sizeMB} MB`,
+          messages: messagesRes.count || 0,
+          lastUpdated: lastUpd,
+        });
+      } catch { /* ignore */ }
+      setLoading(false);
     }
-  };
+    load();
+  }, []);
 
-  const hasDirtyFields = dirtyCount > 0;
+  if (loading) return <LoadingScreen />;
+
+  const QUICK_ACTIONS = [
+    { label: 'Edit Homepage', tab: 'content' as Tab, section: 'homepage', icon: Globe, desc: 'Update hero, features & more' },
+    { label: 'Upload Media', tab: 'media' as Tab, section: undefined, icon: Upload, desc: 'Images, videos & documents' },
+    { label: 'Customize Design', tab: 'design' as Tab, section: undefined, icon: Palette, desc: 'Colors, fonts & layout' },
+    { label: 'View Live Site', tab: undefined, section: undefined, icon: ExternalLink, href: '/', desc: 'Open in new tab' },
+  ];
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Site Content Manager</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Edit text content for all marketing pages. Changes appear live after saving.
-          </p>
+    <div className="space-y-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-accent)] p-6 sm:p-8">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-white/5" />
+          <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-white/5" />
+          <div className="absolute top-1/2 left-1/3 w-32 h-32 rounded-full bg-white/[0.03]" />
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleRefresh}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-          >
-            <RefreshCw className="w-4 h-4" /> Refresh
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={!hasDirtyFields || saving}
-            className={`px-5 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${
-              hasDirtyFields && !saving
-                ? 'bg-[#0b5394] text-white hover:bg-[#032d60] shadow-sm'
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            <Save className="w-4 h-4" />
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+        <div className="relative flex items-start justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-white/80 text-[11px] font-medium mb-3">
+              <Sparkles className="w-3 h-3" /> Site Manager
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{greeting}, Admin</h2>
+            <p className="text-sm text-white/70 mt-1 max-w-md">Here&apos;s what&apos;s happening with your site today.</p>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl backdrop-blur-sm">
+            <Activity className="w-4 h-4 text-green-300" />
+            <span className="text-xs text-white/80 font-medium">All systems active</span>
+          </div>
         </div>
       </div>
 
-      {saved && (
-        <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700 text-sm">
-          <CheckCircle className="w-4 h-4" /> Content saved successfully!
-        </div>
-      )}
+      <div className="grid grid-cols-3 gap-4">
+        <StatCard icon={Globe} label="Content Sections" value={stats.sections} sub={`${stats.fields} total fields`} gradient="linear-gradient(135deg, var(--color-primary), #6366f1)" />
+        <StatCard icon={Image} label="Media Files" value={stats.mediaCount} sub={`${stats.storageUsed} used`} gradient="linear-gradient(135deg, #8b5cf6, #ec4899)" />
+        <StatCard icon={MessageSquare} label="Contact Messages" value={stats.messages} sub="From lead forms" gradient="linear-gradient(135deg, #06b6d4, #10b981)" />
+        <StatCard icon={Clock} label="Last Updated" value={stats.lastUpdated} gradient="linear-gradient(135deg, #f59e0b, #ef4444)" />
+        <StatCard icon={HardDrive} label="Storage" value={stats.storageUsed} sub="Across all media" gradient="linear-gradient(135deg, #6366f1, #8b5cf6)" />
+        <StatCard icon={Server} label="Site Status" value="Live" sub="All systems operational" gradient="linear-gradient(135deg, #10b981, #06b6d4)" />
+      </div>
 
-      {error && (
-        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
-          <AlertCircle className="w-4 h-4" /> {error}
-        </div>
-      )}
-
-      {dirtyCount > 0 && (
-        <div className="mb-4 px-4 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm flex items-center gap-2">
-          <AlertCircle className="w-4 h-4" /> {dirtyCount} unsaved change{dirtyCount !== 1 ? 's' : ''}
-        </div>
-      )}
-
-      <div className="flex gap-6">
-        {/* Section sidebar */}
-        <div className="w-56 flex-shrink-0">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100">
-              <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <Globe className="w-4 h-4" /> Sections
-              </h2>
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)]/70 flex items-center justify-center">
+              <Zap className="w-4 h-4 text-white" />
             </div>
-            <nav className="p-2">
-              {SECTIONS.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between ${
-                    activeSection === section.id
-                      ? 'bg-[#0b5394] text-white'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  <span>{section.label}</span>
-                  <ChevronRight className={`w-4 h-4 ${activeSection === section.id ? 'opacity-100' : 'opacity-0'}`} />
-                </button>
-              ))}
-            </nav>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">Quick Actions</h3>
+              <p className="text-xs text-gray-400">Common tasks to manage your site</p>
+            </div>
           </div>
-        </div>
-
-        {/* Content editor */}
-        <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {SECTIONS.find((s) => s.id === activeSection)?.label || activeSection}
-              </h2>
-              <span className="text-xs text-gray-400">{fields.length} fields</span>
-            </div>
-
-            {fields.length === 0 ? (
-              <div className="px-6 py-12 text-center text-gray-500">
-                <Globe className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p>No content loaded for this section.</p>
-                <p className="text-sm mt-1">Run the database migration to seed default content, then click Refresh.</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-100">
-                {fields.map((field) => (
-                  <FieldEditor
-                    key={field.key}
-                    fieldKey={field.key}
-                    value={field.value}
-                    originalValue={field.originalValue}
-                    onChange={(v) => handleValueChange(field.key, v)}
-                  />
-                ))}
-              </div>
+          <div className="grid grid-cols-2 gap-3">
+            {QUICK_ACTIONS.map((action) =>
+              action.href ? (
+                <a key={action.label} href={action.href} target="_blank" rel="noopener noreferrer"
+                  className="group relative flex items-center gap-3 px-4 py-3.5 bg-gray-50/80 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:shadow-sm border border-transparent hover:border-gray-200 overflow-hidden">
+                  <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <action.icon className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-800">{action.label}</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{action.desc}</p>
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0" />
+                </a>
+              ) : (
+                <div key={action.label}
+                  className="group relative flex items-center gap-3 px-4 py-3.5 bg-gray-50/80 hover:bg-gray-100 rounded-xl transition-all duration-200 hover:shadow-sm border border-transparent hover:border-gray-200 cursor-pointer overflow-hidden">
+                  <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <action.icon className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{action.label}</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{action.desc}</p>
+                  </div>
+                </div>
+              )
             )}
           </div>
         </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">Website Status</h3>
+              <p className="text-xs text-gray-400">Health overview of your site</p>
+            </div>
+          </div>
+          <div className="space-y-1">
+            {[
+              { label: 'Content', status: stats.sections > 0, detail: `${stats.sections} sections published`, icon: Globe },
+              { label: 'Media', status: stats.mediaCount > 0, detail: `${stats.mediaCount} files uploaded`, icon: Image },
+              { label: 'Design', status: true, detail: 'Custom theme applied', icon: Palette },
+              { label: 'Contact Form', status: true, detail: `${stats.messages} messages received`, icon: MessageSquare },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-gray-50 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full ${item.status ? 'bg-emerald-500 shadow-sm shadow-emerald-200' : 'bg-gray-300'}`} />
+                  <item.icon className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                  <span className="text-sm text-gray-700 font-medium">{item.label}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400">{item.detail}</span>
+                  {item.status && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function FieldEditor({
-  fieldKey, value, originalValue, onChange,
-}: {
-  fieldKey: string;
-  value: unknown;
-  originalValue: unknown;
-  onChange: (v: unknown) => void;
-}) {
-  const type = guessFieldType(fieldKey, value);
-  const isDirty = JSON.stringify(value) !== JSON.stringify(originalValue);
-  const strValue = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
-  const numValue = typeof value === 'number' ? value : Number(strValue) || 0;
+function ContentTab() {
+  const [activeSection, setActiveSection] = useState('homepage');
+  const [showPreview, setShowPreview] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const { refreshSection } = useAdminContent();
 
-  const typeIcon = type === 'text' ? <Type className="w-3 h-3" /> :
-    type === 'textarea' ? <AlignLeft className="w-3 h-3" /> :
-    type === 'number' ? <Hash className="w-3 h-3" /> :
-    <List className="w-3 h-3" />;
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refreshSection(activeSection);
+    setTimeout(() => setRefreshing(false), 400);
+  };
+
+  const activeSectionMeta = SECTIONS.find(s => s.id === activeSection);
+  const SectionIcon = activeSectionMeta?.icon || Globe;
 
   return (
-    <div className={`px-6 py-4 ${isDirty ? 'bg-amber-50/50' : ''}`}>
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400 flex items-center gap-1">{typeIcon} {type}</span>
-          <label className="text-sm font-medium text-gray-800">{formatKey(fieldKey)}</label>
-          {isDirty && <span className="text-xs text-amber-600 font-medium">(modified)</span>}
+    <div>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 mb-6">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/[0.03]" />
+          <div className="absolute -bottom-5 -left-5 w-24 h-24 rounded-full bg-white/[0.03]" />
         </div>
-        <code className="text-[10px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded">{fieldKey}</code>
+        <div className="relative flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm">
+              <SectionIcon className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-bold text-white">{activeSectionMeta?.label || 'Content'} Editor</h2>
+                <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 rounded-md">Live Edit</span>
+              </div>
+              <p className="text-sm text-white/60 mt-0.5">Edit content for this page section</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowPreview(!showPreview)}
+              className={`px-3.5 py-2 text-xs font-medium rounded-xl transition-all duration-200 flex items-center gap-1.5 ${
+                showPreview
+                  ? 'bg-white text-gray-900 shadow-lg'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-sm'
+              }`}>
+              <Eye className="w-3.5 h-3.5" /> {showPreview ? 'Edit' : 'Preview'}
+            </button>
+            <button onClick={handleRefresh} disabled={refreshing}
+              className="px-3.5 py-2 text-xs font-medium bg-white/10 text-white/80 hover:bg-white/20 rounded-xl backdrop-blur-sm flex items-center gap-1.5 disabled:opacity-50 transition-all duration-200">
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+        </div>
       </div>
 
-      {Array.isArray(value) ? (
-        <ArrayEditor value={value} onChange={(v) => onChange(v)} />
-      ) : typeof value === 'object' && value !== null ? (
-        <div className="space-y-2">
-          <p className="text-xs text-gray-400 flex items-center gap-1">
-            <Eye className="w-3 h-3" /> JSON object — edit raw below
-          </p>
-          <textarea
-            value={strValue}
-            onChange={(e) => {
-              try {
-                const parsed = JSON.parse(e.target.value);
-                onChange(parsed);
-              } catch {
-                onChange(e.target.value);
-              }
-            }}
-            rows={6}
-            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm font-mono resize-y"
-          />
+      <div className="flex gap-6">
+        <div className="w-56 flex-shrink-0">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <Layers className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+                <h2 className="text-xs font-bold text-gray-600 uppercase tracking-[0.1em]">Page Sections</h2>
+              </div>
+            </div>
+            <nav className="p-2.5 space-y-1">
+              {SECTIONS.map((section) => {
+                const Icon = section.icon;
+                const isActive = activeSection === section.id;
+                return (
+                  <button key={section.id} onClick={() => setActiveSection(section.id)}
+                    className={`w-full text-left px-3.5 py-3 rounded-xl text-sm transition-all duration-200 flex items-center gap-3 group ${
+                      isActive
+                        ? 'text-white shadow-md'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    style={isActive ? { background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))' } : {}}>
+                    <div className={`p-1.5 rounded-lg transition-all duration-200 ${
+                      isActive ? 'bg-white/20' : 'bg-gray-100 group-hover:bg-gray-200'
+                    }`}>
+                      <Icon className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="flex-1 font-medium">{section.label}</span>
+                    {isActive && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+          <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-2xl border border-blue-100/60">
+            <div className="flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-semibold text-blue-800 mb-1">Auto-Save Active</p>
+                <p className="text-[11px] text-blue-600/80 leading-relaxed">
+                  Changes save automatically. Use <strong>Publish</strong> to create a version snapshot.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      ) : type === 'textarea' ? (
-        <textarea
-          value={strValue}
-          onChange={(e) => onChange(e.target.value)}
-          rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm resize-y"
-        />
-      ) : type === 'number' ? (
-        <input
-          type="number"
-          value={numValue}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full max-w-xs px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm"
-        />
-      ) : (
-        <input
-          type="text"
-          value={strValue}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none text-sm"
-        />
-      )}
+        <div className="flex-1 min-w-0">
+          {showPreview ? (
+            <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+              <LivePreview section={activeSection} />
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200" />
+                  <span className="text-xs font-medium text-gray-500">Editing: <span className="text-gray-700 font-semibold">{activeSectionMeta?.label}</span></span>
+                </div>
+              </div>
+              <div className="p-6">
+                <SectionEditor section={activeSection} onRefresh={handleRefresh} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ContentManagerPage() {
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+
+  return (
+    <div className="min-h-screen">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/20">
+              <LayoutDashboard className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Site Content Manager</h1>
+              <p className="text-sm text-gray-400 mt-0.5">Manage your website content, design, and media.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <div className="inline-flex items-center gap-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-1.5">
+          {TABS.map((tab, idx) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`relative px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2.5 ${
+                activeTab === tab.id
+                  ? 'text-white shadow-md'
+                  : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+              }`}
+              style={activeTab === tab.id ? { background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))' } : {}}>
+              <tab.icon className="w-4 h-4" />
+              <span>{tab.label}</span>
+              {idx < TABS.length - 1 && activeTab !== tab.id && activeTab !== TABS[idx + 1]?.id && (
+                <span className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-gray-200" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {activeTab === 'dashboard' && <DashboardTab />}
+      {activeTab === 'content' && <ContentTab />}
+      {activeTab === 'design' && <DesignManager />}
+      {activeTab === 'media' && <MediaLibrary />}
     </div>
   );
 }

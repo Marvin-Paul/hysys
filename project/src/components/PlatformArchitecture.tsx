@@ -2,7 +2,7 @@
 
 /* ─────────────────────────────────────────────────────────────────────────
    PlatformArchitecture  –  compact, brand-matched architecture diagram
-   Brand palette: #032d60 (dark navy) · #0b5394 (blue) · #00a3e0 (cyan)
+   Brand palette: var(--color-secondary) (dark navy) · var(--color-primary) (blue) · var(--color-accent) (cyan)
    ───────────────────────────────────────────────────────────────────────── */
 
 const topAgents = [
@@ -13,7 +13,7 @@ const topAgents = [
 
 const headlessRow = [
   {
-    accent: '#00a3e0',
+    accent: 'var(--color-accent)',
     icon: '⚡',
     brand: 'Agentforce',
     tag: 'System of agency',
@@ -67,7 +67,7 @@ export function PlatformArchitecture() {
       className="relative py-16 overflow-hidden"
       style={{
         /* matches the site hero: deep navy → mid blue → cyan, same direction */
-        background: 'linear-gradient(160deg, #032d60 0%, #0b5394 55%, #006fa8 100%)',
+        background: 'linear-gradient(160deg, var(--color-secondary) 0%, var(--color-primary) 55%, #006fa8 100%)',
       }}
     >
       {/* ── subtle background texture ── */}
@@ -160,7 +160,7 @@ export function PlatformArchitecture() {
                   MCPs · APIs · Experience Layer · Identity
                 </span>
                 <span className="text-base font-extrabold tracking-tight"
-                  style={{ background: 'linear-gradient(90deg,#00a3e0,#7dd3fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  style={{ background: 'linear-gradient(90deg,var(--color-accent),#7dd3fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   Headless 360
                 </span>
                 <span className="text-[10px] font-medium text-blue-300 tracking-wide">
@@ -211,7 +211,7 @@ export function PlatformArchitecture() {
                 <div className="flex items-center gap-2 px-4 py-2.5"
                   style={{ background: 'rgba(0,163,224,0.08)', borderBottom: '1px solid rgba(0,163,224,0.15)' }}>
                   <span className="w-5 h-5 rounded flex items-center justify-center text-xs"
-                    style={{ background: 'linear-gradient(135deg,#0b5394,#00a3e0)' }}>⚙️</span>
+                    style={{ background: 'linear-gradient(135deg,var(--color-primary),var(--color-accent))' }}>⚙️</span>
                   <span className="text-white font-bold text-sm">Customer 360</span>
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold text-cyan-300"
                     style={{ background: 'rgba(0,163,224,0.15)', border: '1px solid rgba(0,163,224,0.25)' }}>
@@ -235,7 +235,7 @@ export function PlatformArchitecture() {
                 <div className="flex items-center gap-2 px-4 py-2.5"
                   style={{ background: 'rgba(0,163,224,0.08)', borderBottom: '1px solid rgba(0,163,224,0.15)' }}>
                   <span className="w-5 h-5 rounded flex items-center justify-center text-xs"
-                    style={{ background: 'linear-gradient(135deg,#0b5394,#00a3e0)' }}>🗄️</span>
+                    style={{ background: 'linear-gradient(135deg,var(--color-primary),var(--color-accent))' }}>🗄️</span>
                   <span className="text-white font-bold text-sm">Data 360</span>
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold text-cyan-300"
                     style={{ background: 'rgba(0,163,224,0.15)', border: '1px solid rgba(0,163,224,0.25)' }}>
@@ -258,7 +258,7 @@ export function PlatformArchitecture() {
             <div
               className="relative mt-2 rounded-xl overflow-hidden"
               style={{
-                background: 'linear-gradient(90deg,#032d60,#0b5394,#032d60)',
+                background: 'linear-gradient(90deg,var(--color-secondary),var(--color-primary),var(--color-secondary))',
                 border: '1.5px solid rgba(0,163,224,0.35)',
                 boxShadow: '0 0 24px rgba(0,163,224,0.18)',
               }}
@@ -284,7 +284,7 @@ export function PlatformArchitecture() {
               <div
                 className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-white text-[11px] font-bold"
                 style={{
-                  background: 'linear-gradient(135deg,#0b5394,#032d60)',
+                  background: 'linear-gradient(135deg,var(--color-primary),var(--color-secondary))',
                   border: '1px solid rgba(0,163,224,0.45)',
                   boxShadow: '0 3px 12px rgba(0,163,224,0.3)',
                 }}
@@ -297,7 +297,7 @@ export function PlatformArchitecture() {
             <div
               className="mt-1.5 rounded-xl px-6 py-3"
               style={{
-                background: 'linear-gradient(90deg,#021a40,#032d60,#021a40)',
+                background: 'linear-gradient(90deg,#021a40,var(--color-secondary),#021a40)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 boxShadow: '0 16px 40px rgba(2,10,40,0.6)',
               }}

@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react';
 import { supabase, type SiteContent } from '../lib/supabase';
-import { useAuth } from '../lib/auth';
 
 interface ContentMap {
   [key: string]: unknown;
@@ -27,7 +26,6 @@ const SiteContentContext = createContext<SiteContentContextType | null>(null);
 
 export function SiteContentProvider({ children }: { children: ReactNode }) {
   const [cache, setCache] = useState<SectionCache>({});
-  const { user, role } = useAuth();
 
   const fetchSection = useCallback(async (section: string) => {
     if (!supabase) {
@@ -86,7 +84,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [cache]);
 
   const updateContent = useCallback(async (section: string, key: string, value: unknown) => {
-    if (role !== 'admin' || !supabase) return;
+    if (!supabase) return;
     const { error } = await supabase
       .from('site_content')
       .upsert(
@@ -94,7 +92,6 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
           section,
           content_key: key,
           content_value: value,
-          updated_by: user?.id,
         },
         { onConflict: 'section,content_key' }
       );
@@ -111,16 +108,15 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
         data: { ...(prev[section]?.data || {}), [key]: value },
       },
     }));
-  }, [role, user]);
+  }, []);
 
   const saveAllContent = useCallback(async (section: string, content: Record<string, unknown>) => {
-    if (role !== 'admin' || !supabase) return;
+    if (!supabase) return;
 
     const upserts = Object.entries(content).map(([key, value]) => ({
       section,
       content_key: key,
       content_value: value,
-      updated_by: user?.id,
     }));
 
     const { error } = await supabase
@@ -136,7 +132,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
       ...prev,
       [section]: { loaded: true, data: { ...(prev[section]?.data || {}), ...content } },
     }));
-  }, [role, user]);
+  }, []);
 
   return (
     <SiteContentContext.Provider value={{

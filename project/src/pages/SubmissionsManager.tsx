@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Mail, Trash2, Eye, EyeOff, RefreshCw, ChevronDown, Search } from 'lucide-react';
+import { Mail, Trash2, Eye, EyeOff, RefreshCw, Search } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Submission {
@@ -24,6 +24,7 @@ export function SubmissionsManager() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const fetchSubmissions = useCallback(async () => {
+    if (!supabase) return;
     setLoading(true);
     const { data, error } = await supabase
       .from('contact_submissions')
@@ -38,6 +39,7 @@ export function SubmissionsManager() {
   }, [fetchSubmissions]);
 
   const toggleRead = async (id: string, current: boolean) => {
+    if (!supabase) return;
     await supabase.from('contact_submissions').update({ is_read: !current }).eq('id', id);
     setSubmissions((prev) =>
       prev.map((s) => (s.id === id ? { ...s, is_read: !current } : s))
@@ -47,6 +49,7 @@ export function SubmissionsManager() {
 
   const deleteSubmission = async (id: string) => {
     if (!confirm('Delete this submission?')) return;
+    if (!supabase) return;
     await supabase.from('contact_submissions').delete().eq('id', id);
     setSubmissions((prev) => prev.filter((s) => s.id !== id));
     if (selected?.id === id) setSelected(null);
@@ -108,14 +111,14 @@ export function SubmissionsManager() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search submissions..."
-            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none"
+            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none"
           />
         </div>
       </div>
 
       {loading ? (
         <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-100">
-          <div className="w-8 h-8 border-4 border-[#0b5394] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-100">
@@ -133,12 +136,12 @@ export function SubmissionsManager() {
                 onClick={() => setSelected(s)}
                 className={`w-full text-left px-5 py-4 hover:bg-gray-50 transition-colors ${
                   selected?.id === s.id ? 'bg-blue-50' : ''
-                } ${!s.is_read ? 'border-l-2 border-l-[#0b5394]' : ''}`}
+                } ${!s.is_read ? 'border-l-2 border-l-[var(--color-primary)]' : ''}`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      {!s.is_read && <span className="w-2 h-2 rounded-full bg-[#0b5394] flex-shrink-0" />}
+                      {!s.is_read && <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] flex-shrink-0" />}
                       <span className="font-medium text-gray-900 text-sm truncate">
                         {s.first_name} {s.last_name}
                       </span>
@@ -166,7 +169,7 @@ export function SubmissionsManager() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleRead(selected.id, selected.is_read)}
-                      className="p-2 text-gray-500 hover:text-[#0b5394] hover:bg-gray-100 rounded-lg transition-colors"
+                      className="p-2 text-gray-500 hover:text-[var(--color-primary)] hover:bg-gray-100 rounded-lg transition-colors"
                       title={selected.is_read ? 'Mark as unread' : 'Mark as read'}
                     >
                       {selected.is_read ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -195,7 +198,7 @@ export function SubmissionsManager() {
 
                   <div>
                     <label className="text-xs text-gray-500 uppercase tracking-wider">Email</label>
-                    <a href={`mailto:${selected.email}`} className="text-sm font-medium text-[#0b5394] hover:underline block">
+                    <a href={`mailto:${selected.email}`} className="text-sm font-medium text-[var(--color-primary)] hover:underline block">
                       {selected.email}
                     </a>
                   </div>

@@ -40,8 +40,8 @@ const stats = [
 export function AboutPage() {
   const { t } = useTranslation();
   const content = useSiteContent('about');
-  const resolvedLeadership = content.getContentRaw('leadership_team') ?? leadership;
-  const resolvedMilestones = content.getContentRaw('milestones') ?? milestones;
+  const resolvedLeadership = (content.getContentRaw('leadership_team') ?? leadership) as typeof leadership;
+  const resolvedMilestones = (content.getContentRaw('milestones') ?? milestones) as typeof milestones;
   const rawValues = content.getContentRaw('values') as any[] | null;
   const resolvedValues = rawValues
     ? rawValues.map((v: any) => ({ ...v, icon: iconMap[v.iconName] || Heart }))
@@ -51,61 +51,23 @@ export function AboutPage() {
     <div className="pt-16">
       <SEO title="About Us" />
 
-      {/* ── Hero ── */}
-      <section className="relative min-h-[70vh] overflow-hidden flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-
-        {/* Animated background elements */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
-        <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
-        {[...Array(8)].map((_, i) => (
-          <div key={i} className="absolute w-1 h-1 rounded-full animate-pulse" style={{
-            background: i % 2 === 0 ? 'rgba(0,163,224,0.4)' : 'rgba(255,255,255,0.3)',
-            top: `${20 + (i * 9) % 60}%`, left: `${5 + (i * 13) % 90}%`,
-            animationDelay: `${i * 0.5}s`,
-          }} />
-        ))}
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center w-full">
-          <ScrollReveal>
-            <div className="flex justify-center mb-6">
-              <span className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 rounded-full text-sm font-medium backdrop-blur-md border border-white/20 text-white">
-                <Sparkles className="w-4 h-4 text-cyan-300" />
-                Our Story
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              </span>
-            </div>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40 mb-4">HYSYS GLOBAL SOLUTIONS LIMITED</p>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-5">
-              {content.getContent('hero_title', t('aboutTitle'))}
-              <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-2">
-                Since 2010
-              </span>
-            </h1>
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-1 rounded-full bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400" />
-            </div>
-            <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">
-              {content.getContent('hero_desc', t('aboutDesc'))}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
-              <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                Get in Touch <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
-                Start Free Trial
-              </Link>
-            </div>
-          </ScrollReveal>
-        </div>
-
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
-            <path d="M0 80L720 40L1440 80V80H0Z" fill="white" />
-          </svg>
+      <section className="products-hero">
+        <div className="products-container">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-6">
+            <Sparkles className="w-4 h-4" /> About Us
+          </span>
+          <h1>{content.getContent('hero_title', t('aboutTitle'))}</h1>
+          <p className="max-w-2xl mx-auto mt-6 text-base sm:text-lg text-[#0a2540] leading-8">
+            {content.getContent('hero_desc', t('aboutDesc'))}
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-primary)] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[var(--color-primary)]/20 transition hover:bg-[#08407a]">
+              Get in Touch <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link to="/register" className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--color-primary)]/15 bg-white px-8 py-4 text-sm font-semibold text-[var(--color-primary)] transition hover:border-[var(--color-primary)] hover:bg-[#f5f9fc]">
+              Start Free Trial
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -116,10 +78,10 @@ export function AboutPage() {
             {stats.map((stat, idx) => (
               <ScrollReveal key={idx}>
                 <div className="text-center group">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                     <stat.icon className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#0b5394] to-[#00a3e0] bg-clip-text text-transparent mb-1">
+                  <div className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent mb-1">
                     {stat.value}
                   </div>
                   <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
@@ -136,10 +98,10 @@ export function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <ScrollReveal variant="left">
               <div>
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-6">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-6">
                   <Sparkles className="w-4 h-4" /> Our Mission
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60] mb-6 leading-tight">
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-secondary)] mb-6 leading-tight">
                   {content.getContent('mission_title', t('ourMission'))}
                 </h2>
                 <p className="text-lg text-gray-600 mb-4 leading-relaxed">
@@ -151,20 +113,20 @@ export function AboutPage() {
                 <div className="space-y-3 mb-8">
                   {['Customer-first mindset', 'Enterprise-grade security', 'Continuous innovation', 'Global reach, local expertise'].map(item => (
                     <div key={item} className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-[#0b5394] flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-[var(--color-primary)] flex-shrink-0" />
                       <span className="text-gray-700 font-medium">{item}</span>
                     </div>
                   ))}
                 </div>
-                <Link to="/register" className="inline-flex items-center gap-2 px-8 py-4 bg-[#0b5394] text-white rounded-2xl font-bold hover:bg-[#032d60] transition-all hover:shadow-xl hover:-translate-y-1">
+                <Link to="/register" className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white rounded-2xl font-bold hover:bg-[var(--color-secondary)] transition-all hover:shadow-xl hover:-translate-y-1">
                   {t('joinJourney')} <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
             </ScrollReveal>
             <ScrollReveal variant="right">
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-[#0b5394]/10 to-[#00a3e0]/10 rounded-3xl blur-2xl" />
-                <div className="relative bg-gradient-to-br from-[#032d60] to-[#0b5394] rounded-3xl p-8 text-white overflow-hidden">
+                <div className="absolute -inset-4 bg-gradient-to-r from-[var(--color-primary)]/10 to-[var(--color-accent)]/10 rounded-3xl blur-2xl" />
+                <div className="relative bg-gradient-to-br from-[var(--color-secondary)] to-[var(--color-primary)] rounded-3xl p-8 text-white overflow-hidden">
                   <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-16 translate-x-16" />
                   <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-12 -translate-x-12" />
                   <div className="relative">
@@ -191,14 +153,14 @@ export function AboutPage() {
 
       {/* ── Values ── */}
       <section className="py-24 bg-gray-50 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(11,83,148,0.06) 0%, transparent 60%)' }} />
+        <div className="absolute inset-0 opacity-30 about-values-bg" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-4">
                 <Sparkles className="w-4 h-4" /> What We Stand For
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60] mb-4">{content.getContent('values_title', t('ourValues'))}</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-secondary)] mb-4">{content.getContent('values_title', t('ourValues'))}</h2>
               <p className="text-lg text-gray-500 max-w-2xl mx-auto">The principles that guide everything we do.</p>
             </div>
           </ScrollReveal>
@@ -206,9 +168,9 @@ export function AboutPage() {
             {resolvedValues.map((value, idx) => (
               <ScrollReveal key={idx}>
                 <div className="group bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0b5394]/5 to-[#00a3e0]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-[var(--color-accent)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center mx-auto mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center mx-auto mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
                       <value.icon className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="font-bold text-gray-900 mb-3 text-lg">{t(value.titleKey)}</h3>
@@ -226,10 +188,10 @@ export function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-4">
                 <Users className="w-4 h-4" /> The Team
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60] mb-4">{content.getContent('leadership_title', t('leadershipTeam'))}</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-secondary)] mb-4">{content.getContent('leadership_title', t('leadershipTeam'))}</h2>
               <p className="text-lg text-gray-500 max-w-2xl mx-auto">World-class leaders driving HYSYS forward.</p>
             </div>
           </ScrollReveal>
@@ -237,11 +199,11 @@ export function AboutPage() {
             {resolvedLeadership.map((leader, idx) => (
               <ScrollReveal key={idx}>
                 <div className="group text-center bg-gray-50 rounded-3xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 border border-gray-100">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center text-white text-2xl font-extrabold mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center text-white text-2xl font-extrabold mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     {leader.name.split(' ').map((n: string) => n[0]).join('')}
                   </div>
                   <h3 className="font-extrabold text-gray-900 text-lg">{leader.name}</h3>
-                  <p className="text-[#0b5394] font-semibold text-sm mb-3">{leader.role}</p>
+                  <p className="text-[var(--color-primary)] font-semibold text-sm mb-3">{leader.role}</p>
                   <p className="text-gray-500 text-sm leading-relaxed">{leader.bio}</p>
                 </div>
               </ScrollReveal>
@@ -255,21 +217,21 @@ export function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-4">
                 <TrendingUp className="w-4 h-4" /> Our Journey
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60]">{content.getContent('journey_title', t('ourJourney'))}</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-secondary)]">{content.getContent('journey_title', t('ourJourney'))}</h2>
             </div>
           </ScrollReveal>
           <div className="relative">
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#0b5394] to-[#00a3e0]" />
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[var(--color-primary)] to-[var(--color-accent)]" />
             <div className="space-y-8">
               {resolvedMilestones.map((milestone, idx) => (
                 <ScrollReveal key={idx}>
                   <div className="flex items-start gap-8 pl-8">
-                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#0b5394] to-[#00a3e0] -ml-2 mt-1.5 z-10 flex-shrink-0 shadow-lg" />
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] -ml-2 mt-1.5 z-10 flex-shrink-0 shadow-lg" />
                     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex-1 hover:shadow-md transition-shadow">
-                      <div className="text-sm font-extrabold text-[#0b5394] mb-1">{milestone.year}</div>
+                      <div className="text-sm font-extrabold text-[var(--color-primary)] mb-1">{milestone.year}</div>
                       <div className="font-semibold text-gray-900">{t(milestone.eventKey)}</div>
                     </div>
                   </div>
@@ -282,8 +244,8 @@ export function AboutPage() {
 
       {/* ── CTA ── */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
+        <div className="absolute inset-0 opacity-[0.04] about-cta-grid-bg" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-32 translate-x-32 blur-3xl" />
         <ScrollReveal>
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -291,7 +253,7 @@ export function AboutPage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">{content.getContent('cta_title', t('joinOurTeam'))}</h2>
             <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">{content.getContent('cta_desc', t('joinOurTeamDesc'))}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+              <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                 {content.getContent('cta_button', t('viewOpenPositions'))} <ArrowRight className="w-5 h-5" />
               </Link>
               <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">

@@ -11,7 +11,7 @@ export function CoreValuesSection() {
 
           {/* LEFT */}
           <div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#032d60] leading-tight mb-4 sm:mb-5">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight mb-4 sm:mb-5">
               We believe that business is the greatest platform for change
             </h2>
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8">
@@ -23,11 +23,11 @@ export function CoreValuesSection() {
             </p>
             <div className="flex flex-col xs:flex-row flex-wrap gap-3">
               <Link to="/about"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#0b5394] text-white rounded-lg font-semibold text-sm hover:bg-[#032d60] transition-all hover:shadow-lg">
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[var(--color-primary)] text-white rounded-lg font-semibold text-sm hover:bg-[var(--color-secondary)] transition-all hover:shadow-lg">
                 See what drives us <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/about"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[#0b5394] rounded-lg font-semibold text-sm border-2 border-[#0b5394] hover:bg-blue-50 transition-all">
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[var(--color-primary)] rounded-lg font-semibold text-sm border-2 border-[var(--color-primary)] hover:bg-blue-50 transition-all">
                 Take the pledge <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -37,7 +37,7 @@ export function CoreValuesSection() {
           <div className="relative flex items-center justify-center">
             <div
               className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden flex items-center justify-center py-10 sm:py-12 px-6 sm:px-8"
-              style={{ background: 'linear-gradient(135deg,#032d60 0%,#0b5394 60%,#00a3e0 100%)', minHeight: 260 }}
+              style={{ background: 'linear-gradient(135deg,var(--color-secondary) 0%,var(--color-primary) 60%,var(--color-accent) 100%)', minHeight: 260 }}
             >
               <div className="absolute w-40 h-40 rounded-full bg-white/5 -top-10 -left-10" />
               <div className="absolute w-28 h-28 rounded-full bg-white/5 -bottom-8 -right-8" />
@@ -75,7 +75,7 @@ export function CoreValuesSection() {
                 AJ
               </div>
               <div className="absolute right-3 sm:right-4 bottom-6 sm:bottom-8 w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg"
-                style={{ background: 'linear-gradient(135deg,#0891b2,#0b5394)', border: '2px solid rgba(255,255,255,0.3)' }}>
+                style={{ background: 'linear-gradient(135deg,#0891b2,var(--color-primary))', border: '2px solid rgba(255,255,255,0.3)' }}>
                 KL
               </div>
             </div>

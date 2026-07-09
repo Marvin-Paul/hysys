@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
@@ -11,12 +11,7 @@ import {
   Award,
   Sparkles,
   X,
-  CheckCircle2,
-  TrendingUp,
-  Activity,
-  DollarSign,
-  Star,
-  ChevronRight
+  CheckCircle2
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -56,22 +51,18 @@ const iconMap: Record<string, LucideIcon> = {
   Users, Zap, BarChart3, Shield, Globe, Award,
 };
 
-const features = [
-  { icon: Zap, titleKey: 'lightningFast', descriptionKey: 'lightningFastDesc' },
-  { icon: Shield, titleKey: 'enterpriseSecurity', descriptionKey: 'enterpriseSecurityDesc' },
-  { icon: Globe, titleKey: 'globalScale', descriptionKey: 'globalScaleDesc' },
-  { icon: Award, titleKey: 'awardWinning', descriptionKey: 'awardWinningDesc' }
-];
-
 export function HomePage() {
   const { t } = useTranslation();
   const content = useSiteContent('homepage');
-  const resolvedTrustedBrands = content.getContentRaw('trusted_brands') ?? trustedBrands;
-  const resolvedStats = content.getContentRaw('stats') ?? stats;
+  const resolvedTrustedBrands = (content.getContentRaw('trusted_brands') ?? trustedBrands) as typeof trustedBrands;
+  const resolvedStats = (content.getContentRaw('stats') ?? stats) as typeof stats;
   const rawProductCards = content.getContentRaw('product_cards') as any[] | null;
   const resolvedProductCards = rawProductCards
     ? rawProductCards.map((p: any) => ({ ...p, icon: iconMap[p.iconName] || Shield }))
     : productCards;
+  const videoUrl = content.getContentRaw('video_url') as string | null;
+  const defaultVideoUrl = 'https://www.youtube.com/embed/ScMzIvxBSi4';
+  const demoVideoUrl = videoUrl ? `${videoUrl}${videoUrl.includes('?') ? '&' : '?'}autoplay=1&mute=1` : `${defaultVideoUrl}?autoplay=1&mute=1`;
   const [searchParams, setSearchParams] = useSearchParams();
   const isDemoOpen = searchParams.get('demo') === '1';
 
@@ -86,17 +77,6 @@ export function HomePage() {
   const { ref: statsRef, isVisible: statsVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.3 });
   const { ref: introRef, isVisible: introVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
   const { ref: productsRef, isVisible: productsVisible } = useScrollReveal<HTMLDivElement>({ threshold: 0.1 });
-
-  /* Mouse parallax on dashboard mockup */
-  const mockupRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!mockupRef.current) return;
-    const rect = mockupRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setMousePos({ x: x * 8, y: y * 8 });
-  }, []);
 
   /* Counter animation */
   const Counter = ({ value }: { value: string }) => {
@@ -137,7 +117,7 @@ export function HomePage() {
       <SEO title="Home" />
       {/* ── Premium Hero ── */}
       <section className="relative min-h-screen overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
         {/* Animated grid overlay */}
@@ -220,7 +200,7 @@ export function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Link
                 to="/register"
-                className="group relative inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold text-base overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                className="group relative inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold text-base overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
                 <span className="relative flex items-center gap-2">
@@ -294,7 +274,7 @@ export function HomePage() {
                 <div className="relative aspect-video bg-black">
                   <iframe
                     className="absolute inset-0 h-full w-full"
-                    src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1&mute=1"
+                    src={demoVideoUrl}
                     title="HYSYS demo video"
                     allow="autoplay; encrypted-media; picture-in-picture"
                     allowFullScreen
@@ -304,7 +284,7 @@ export function HomePage() {
 
               <div className="flex flex-col justify-between gap-6 rounded-3xl bg-slate-50 p-6 sm:p-8">
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full bg-[#0b5394] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
                     <Play className="w-4 h-4" />
                     {t('demoExperience')}
                   </div>
@@ -328,7 +308,7 @@ export function HomePage() {
                   <Link
                     to="/register"
                     onClick={closeDemo}
-                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#0b5394] px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#032d60] hover:-translate-y-0.5"
+                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-primary)] px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[var(--color-secondary)] hover:-translate-y-0.5"
                   >
                     {t('demoStartTrial')}
                   </Link>
@@ -349,7 +329,7 @@ export function HomePage() {
               const statLabelKeys = ['stats_companies_label', 'stats_integrations_label', 'stats_users_label', 'stats_countries_label'];
               return (
                 <div key={idx} className="text-center group">
-                  <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#0b5394] to-[#00a3e0] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-500">
+                  <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-500">
                     <Counter value={content.getContent(statValueKeys[idx], stat.value)} />
                   </div>
                   <div className="text-sm text-gray-500 font-medium group-hover:text-gray-700 transition-colors duration-300">{content.getContent(statLabelKeys[idx], t(stat.labelKey))}</div>
@@ -366,11 +346,11 @@ export function HomePage() {
           background: 'radial-gradient(circle at 30% 50%, rgba(11,83,148,0.08) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(0,163,224,0.06) 0%, transparent 50%)'
         }} />
         <div ref={introRef} className={`relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${introVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-6">
             <Sparkles className="w-4 h-4" />
             {t('platformIntroBadge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#032d60] mb-6 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-secondary)] mb-6 leading-tight">
             {t('platformIntroTitle')}{' '}
             <span className="gradient-text">Agentic Enterprise</span>
           </h2>
@@ -379,7 +359,7 @@ export function HomePage() {
           </p>
           <Link
             to="/products"
-            className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#0b5394] text-white rounded-2xl font-semibold hover:bg-[#032d60] transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+            className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--color-primary)] text-white rounded-2xl font-semibold hover:bg-[var(--color-secondary)] transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
           >
             {t('exploreAllProducts')}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -410,9 +390,9 @@ export function HomePage() {
                       <card.icon className="w-8 h-8 text-white" />
                     </div>
                     <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t(card.subtitleKey)}</div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#0b5394] transition-colors">{t(card.titleKey)}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors">{t(card.titleKey)}</h3>
                     <p className="text-gray-500 text-sm mb-5 leading-relaxed">{t(card.descriptionKey)}</p>
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#0b5394] group-hover:text-[#032d60] transition-colors">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] group-hover:text-[var(--color-secondary)] transition-colors">
                       {t('learnMore')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
                     </span>
                   </div>
@@ -426,9 +406,9 @@ export function HomePage() {
 
       <CustomerStoriesSection />
 
-      <AIForBusinessSection />
+      <AIForBusinessSection videoUrl={videoUrl} />
 
-      <AgentforceStatsSection />
+      <AgentforceStatsSection videoUrl={videoUrl} />
 
       <IndustriesSection />
 

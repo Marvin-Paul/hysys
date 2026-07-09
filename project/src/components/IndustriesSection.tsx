@@ -46,7 +46,7 @@ export function IndustriesSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#032d60] leading-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight mb-4">
             Launch faster with 16+ Agentforce solutions, built for your industry
           </h2>
           <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
@@ -88,7 +88,7 @@ export function IndustriesSection() {
 
         <div className="flex justify-center">
           <Link to="/industries"
-            className="inline-flex items-center gap-2 px-8 sm:px-10 py-3 sm:py-3.5 rounded-xl font-bold text-[#0b5394] text-sm border-2 border-[#0b5394] bg-white hover:bg-blue-50 transition-all hover:shadow-md">
+            className="inline-flex items-center gap-2 px-8 sm:px-10 py-3 sm:py-3.5 rounded-xl font-bold text-[var(--color-primary)] text-sm border-2 border-[var(--color-primary)] bg-white hover:bg-blue-50 transition-all hover:shadow-md">
             See all industries <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

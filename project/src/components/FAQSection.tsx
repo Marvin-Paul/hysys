@@ -44,12 +44,12 @@ export function FAQSection() {
         <ScrollReveal>
           <div className="mb-16">
             <div className="flex justify-center mb-4">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394]">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)]">
                 <Sparkles className="w-4 h-4" />
                 {t('faqBadge')}
               </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#032d60] mb-6 text-center">{t('faqSectionTitle')}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-secondary)] mb-6 text-center">{t('faqSectionTitle')}</h2>
             <p className="text-base text-gray-600 leading-relaxed mb-4 text-center max-w-3xl mx-auto">
               {t('faqIntro1')}
             </p>
@@ -67,12 +67,12 @@ export function FAQSection() {
                 onClick={() => toggleFAQ(index)}
                 className="w-full flex items-center justify-between py-4 text-left hover:opacity-70 transition"
               >
-                <h3 className="text-lg sm:text-xl font-bold text-[#032d60]">{t(faq.questionKey)}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-[var(--color-secondary)]">{t(faq.questionKey)}</h3>
                 <div className="flex-shrink-0 ml-4">
                   {openIndex === index ? (
-                    <Minus className="h-6 w-6 text-[#0b5394]" />
+                    <Minus className="h-6 w-6 text-[var(--color-primary)]" />
                   ) : (
-                    <Plus className="h-6 w-6 text-[#0b5394]" />
+                    <Plus className="h-6 w-6 text-[var(--color-primary)]" />
                   )}
                 </div>
               </button>

@@ -1,4 +1,5 @@
 import { useTranslation } from '../lib/i18n';
+import { PageHero } from '../components/PageHero';
 import { SEO } from '../components/SEO';
 
 export function TermsPage() {
@@ -6,12 +7,14 @@ export function TermsPage() {
   return (
     <div className="pt-16">
       <SEO title="Terms of Service" />
-      <section className="bg-gradient-to-br from-[#032d60] to-[#0b5394] py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">{t('termsTitle')}</h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">{t('lastUpdated')}</p>
-        </div>
-      </section>
+      <PageHero
+        badge="Terms of Service"
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title={t('termsTitle')}
+        subtitle="Legal terms & usage policies"
+        description="Review the rules that govern access to our platform, services, and website."
+        primaryCta={{ label: 'Contact Legal', to: '/contact' }}
+      />
 
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,12 +22,12 @@ export function TermsPage() {
             These Terms of Service ("Terms") govern your access to and use of the HYSYS GLOBAL SOLUTIONS LIMITED ("HYSYS," "we," "us," or "our") website, platform, and services. By accessing or using our services, you agree to be bound by these Terms.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">1. Acceptance of Terms</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">1. Acceptance of Terms</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             By creating an account, accessing, or using the HYSYS platform, you confirm that you have read, understood, and agree to be bound by these Terms and our Privacy Statement. If you are using the platform on behalf of an organisation, you represent that you have the authority to bind that organisation.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">2. Account Registration and Security</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">2. Account Registration and Security</h2>
           <ul className="list-disc list-inside text-gray-700 space-y-2 mb-6 ml-4">
             <li>You must provide accurate, current, and complete information during registration</li>
             <li>You are responsible for maintaining the confidentiality of your login credentials</li>
@@ -33,7 +36,7 @@ export function TermsPage() {
             <li>Accounts are not transferable without our prior written consent</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">3. Licence and Access</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">3. Licence and Access</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             Subject to these Terms, we grant you a limited, non-exclusive, non-transferable, revocable licence to:
           </p>
@@ -43,7 +46,7 @@ export function TermsPage() {
             <li>Upload and manage your data within the platform</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">4. Subscription and Billing</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">4. Subscription and Billing</h2>
           <ul className="list-disc list-inside text-gray-700 space-y-2 mb-6 ml-4">
             <li>Subscription fees are billed in advance on a monthly or annual basis as selected</li>
             <li>Fees are non-refundable except as expressly stated in our refund policy</li>
@@ -52,7 +55,7 @@ export function TermsPage() {
             <li>All fees are exclusive of applicable taxes</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">5. Acceptable Use</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">5. Acceptable Use</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             You agree not to:
           </p>
@@ -65,17 +68,17 @@ export function TermsPage() {
             <li>Use the platform to send unsolicited communications (spam)</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">6. Intellectual Property</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">6. Intellectual Property</h2>
           <p className="text-gray-700 leading-relaxed mb-6">
             The HYSYS platform, including its code, design, logos, trademarks, and content, is owned by HYSYS GLOBAL SOLUTIONS LIMITED and protected by intellectual property laws. You retain ownership of any data you upload to the platform. We claim no ownership over your data.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">7. Data Protection</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">7. Data Protection</h2>
           <p className="text-gray-700 leading-relaxed mb-6">
             We process your data in accordance with our Privacy Statement and applicable data protection laws. We implement appropriate technical and organisational measures to protect your data. As between you and HYSYS, you control your data and we act as a data processor.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">8. Service Level and Availability</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">8. Service Level and Availability</h2>
           <ul className="list-disc list-inside text-gray-700 space-y-2 mb-6 ml-4">
             <li>We strive for 99.9% uptime for our platform</li>
             <li>Scheduled maintenance will be communicated in advance</li>
@@ -83,33 +86,33 @@ export function TermsPage() {
             <li>Support response times vary by subscription tier</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">9. Limitation of Liability</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">9. Limitation of Liability</h2>
           <p className="text-gray-700 leading-relaxed mb-6">
             To the maximum extent permitted by law, HYSYS GLOBAL SOLUTIONS LIMITED shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of the platform. Our total liability is limited to the amount you have paid us in the 12 months preceding the claim.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">10. Termination</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">10. Termination</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             Either party may terminate the agreement at any time with written notice. We may suspend or terminate your access immediately if you violate these Terms. Upon termination, your right to access the platform ceases, and we will delete your data within 90 days unless legally required to retain it.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">11. Governing Law</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">11. Governing Law</h2>
           <p className="text-gray-700 leading-relaxed mb-6">
             These Terms are governed by the laws of the Republic of Uganda. Any disputes arising from these Terms shall be resolved in the courts of Kampala, Uganda.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">12. Changes to Terms</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">12. Changes to Terms</h2>
           <p className="text-gray-700 leading-relaxed mb-6">
             We may modify these Terms at any time. We will notify you of material changes via email or through the platform. Continued use after changes take effect constitutes acceptance of the modified Terms.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">13. Contact</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">13. Contact</h2>
           <div className="bg-gray-50 rounded-2xl p-6 mb-8">
             <p className="text-gray-700">
               <strong>HYSYS GLOBAL SOLUTIONS LIMITED</strong><br />
               Plot 19 Sir Albert Cook Road, MENGO - KAMPALA<br />
               P.O.Box 16435 K'la<br />
-              Email: <a href="mailto:legal@hysysglobal.com" className="text-[#0b5394] underline">legal@hysysglobal.com</a><br />
+              Email: <a href="mailto:legal@hysysglobal.com" className="text-[var(--color-primary)] underline">legal@hysysglobal.com</a><br />
               Tel: 0782-602854
             </p>
           </div>

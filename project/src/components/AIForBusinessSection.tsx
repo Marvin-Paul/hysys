@@ -11,8 +11,10 @@ const avatars = [
   { initials: 'NG', color: '#06b6d4', bottom: '10%', right: '-1%' },
 ];
 
-export function AIForBusinessSection() {
+export function AIForBusinessSection({ videoUrl: v }: { videoUrl?: string | null }) {
   const [playing, setPlaying] = useState(false);
+  const url = v || 'https://www.youtube.com/embed/ScMzIvxBSi4';
+  const autoplayUrl = `${url}${url.includes('?') ? '&' : '?'}autoplay=1&mute=0`;
 
   return (
     <section className="py-12 sm:py-16 bg-white border-t border-gray-200">
@@ -21,12 +23,12 @@ export function AIForBusinessSection() {
 
           {/* LEFT */}
           <div className="order-2 lg:order-1">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#032d60] leading-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight mb-4">
               Built-in AI for every part of your business
             </h2>
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
               Put AI to work across sales, service, and marketing with{' '}
-              <Link to="/products" className="text-[#0b5394] underline underline-offset-2 hover:text-[#032d60] font-medium">
+              <Link to="/products" className="text-[var(--color-primary)] underline underline-offset-2 hover:text-[var(--color-secondary)] font-medium">
                 Starter Suite
               </Link>
               {' '}– a CRM that knows your business and can automate the kind of customer
@@ -35,21 +37,21 @@ export function AIForBusinessSection() {
             </p>
             <p className="text-gray-700 text-sm mb-6 sm:mb-8">
               <span className="font-semibold">$25 USD/user/month.</span>{' '}
-              <Link to="/pricing" className="text-[#0b5394] underline underline-offset-2 hover:text-[#032d60]">
+              <Link to="/pricing" className="text-[var(--color-primary)] underline underline-offset-2 hover:text-[var(--color-secondary)]">
                 See full pricing
               </Link>.
             </p>
             <div className="flex flex-col xs:flex-row flex-wrap gap-3">
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#0b5394] text-white rounded-lg font-semibold text-sm hover:bg-[#032d60] transition-all hover:shadow-lg"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[var(--color-primary)] text-white rounded-lg font-semibold text-sm hover:bg-[var(--color-secondary)] transition-all hover:shadow-lg"
               >
                 Start for free <ArrowUpRight className="w-4 h-4" />
               </Link>
               <button
                 type="button"
                 onClick={() => setPlaying(true)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[#0b5394] rounded-lg font-semibold text-sm border-2 border-[#0b5394] hover:bg-blue-50 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[var(--color-primary)] rounded-lg font-semibold text-sm border-2 border-[var(--color-primary)] hover:bg-blue-50 transition-all"
               >
                 Watch demo <ArrowUpRight className="w-4 h-4" />
               </button>
@@ -81,14 +83,14 @@ export function AIForBusinessSection() {
               {playing ? (
                 <iframe
                   className="absolute inset-0 w-full h-full"
-                  src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1&mute=0"
+                  src={autoplayUrl}
                   title="HYSYS AI for business demo"
                   allow="autoplay; encrypted-media; picture-in-picture"
                   allowFullScreen
                 />
               ) : (
                 <>
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg,#032d60 0%,#0b5394 45%,#00a3e0 100%)' }} />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg,var(--color-secondary) 0%,var(--color-primary) 45%,var(--color-accent) 100%)' }} />
                   <div className="absolute inset-0 overflow-hidden">
                     {[
                       { w:120,h:120,top:'-10%',left:'10%',o:0.12 },

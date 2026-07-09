@@ -1,4 +1,5 @@
 import { useTranslation } from '../lib/i18n';
+import { PageHero } from '../components/PageHero';
 import { SEO } from '../components/SEO';
 
 export function CookiesPage() {
@@ -6,12 +7,14 @@ export function CookiesPage() {
   return (
     <div className="pt-16">
       <SEO title="Cookie Statement" />
-      <section className="bg-gradient-to-br from-[#032d60] to-[#0b5394] py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">{t('cookiesTitle')}</h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">{t('lastUpdated')}</p>
-        </div>
-      </section>
+      <PageHero
+        badge="Cookie Statement"
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title={t('cookiesTitle')}
+        subtitle="How cookies are used"
+        description="Understand the cookies we use on our site and how you can manage your preferences."
+        primaryCta={{ label: 'Manage Cookies', to: '/contact' }}
+      />
 
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,7 +22,7 @@ export function CookiesPage() {
             HYSYS GLOBAL SOLUTIONS LIMITED ("HYSYS," "we," "us," or "our") uses cookies and similar tracking technologies on our website and platform. This Cookie Statement explains what cookies are, how we use them, and your choices regarding their use.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">1. What Are Cookies?</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">1. What Are Cookies?</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             Cookies are small text files that are stored on your device (computer, tablet, or mobile) when you visit a website. They are widely used to make websites work more efficiently, provide a better user experience, and give website owners information about how their site is being used.
           </p>
@@ -27,12 +30,12 @@ export function CookiesPage() {
             Cookies can be "persistent" (remain on your device until deleted) or "session" (expire when you close your browser). They may be set by the website you visit ("first-party cookies") or by third parties such as analytics or advertising providers ("third-party cookies").
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">2. How We Use Cookies</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">2. How We Use Cookies</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             We use cookies for the following purposes:
           </p>
 
-          <h3 className="text-xl font-semibold text-[#032d60] mt-6 mb-3">Essential Cookies</h3>
+          <h3 className="text-xl font-semibold text-[var(--color-secondary)] mt-6 mb-3">Essential Cookies</h3>
           <p className="text-gray-700 leading-relaxed mb-3">
             These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and account authentication. Without these cookies, some services cannot be provided.
           </p>
@@ -43,7 +46,7 @@ export function CookiesPage() {
             <li>Load balancing to ensure site availability</li>
           </ul>
 
-          <h3 className="text-xl font-semibold text-[#032d60] mt-6 mb-3">Analytics and Performance Cookies</h3>
+          <h3 className="text-xl font-semibold text-[var(--color-secondary)] mt-6 mb-3">Analytics and Performance Cookies</h3>
           <p className="text-gray-700 leading-relaxed mb-3">
             These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our website and measure the effectiveness of campaigns.
           </p>
@@ -54,7 +57,7 @@ export function CookiesPage() {
             <li>A/B testing and feature evaluation</li>
           </ul>
 
-          <h3 className="text-xl font-semibold text-[#032d60] mt-6 mb-3">Functional Cookies</h3>
+          <h3 className="text-xl font-semibold text-[var(--color-secondary)] mt-6 mb-3">Functional Cookies</h3>
           <p className="text-gray-700 leading-relaxed mb-3">
             These cookies allow the website to remember choices you make and provide enhanced, more personalised features.
           </p>
@@ -64,7 +67,7 @@ export function CookiesPage() {
             <li>Remembering chat or support session details</li>
           </ul>
 
-          <h3 className="text-xl font-semibold text-[#032d60] mt-6 mb-3">Marketing and Targeting Cookies</h3>
+          <h3 className="text-xl font-semibold text-[var(--color-secondary)] mt-6 mb-3">Marketing and Targeting Cookies</h3>
           <p className="text-gray-700 leading-relaxed mb-3">
             These cookies are used to deliver relevant advertisements and track the effectiveness of marketing campaigns. They may be set by third-party advertising networks with our permission.
           </p>
@@ -75,12 +78,12 @@ export function CookiesPage() {
             <li>Social media sharing and integration</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">3. Third-Party Cookies</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">3. Third-Party Cookies</h2>
           <p className="text-gray-700 leading-relaxed mb-6">
             We work with trusted third-party service providers who may set their own cookies on our website. These include analytics providers (such as Google Analytics), advertising networks, social media platforms, and customer support tools. These third parties have their own privacy and cookie policies governing the use of your information.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">4. Your Cookie Choices</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">4. Your Cookie Choices</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             You have control over how cookies are used on your device:
           </p>
@@ -91,23 +94,23 @@ export function CookiesPage() {
             <li><strong>Do Not Track:</strong> Some browsers support "Do Not Track" signals. We honour these signals where feasible.</li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">5. How to Manage Cookies</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">5. How to Manage Cookies</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             Below are links to manage cookie settings in common browsers:
           </p>
           <ul className="list-disc list-inside text-gray-700 space-y-2 mb-6 ml-4">
-            <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-[#0b5394] underline">Google Chrome</a></li>
-            <li><a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer" className="text-[#0b5394] underline">Mozilla Firefox</a></li>
-            <li><a href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-[#0b5394] underline">Safari</a></li>
-            <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-[#0b5394] underline">Microsoft Edge</a></li>
+            <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] underline">Google Chrome</a></li>
+            <li><a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] underline">Mozilla Firefox</a></li>
+            <li><a href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] underline">Safari</a></li>
+            <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] underline">Microsoft Edge</a></li>
           </ul>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">6. Updates to This Cookie Statement</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">6. Updates to This Cookie Statement</h2>
           <p className="text-gray-700 leading-relaxed mb-6">
             We may update this Cookie Statement from time to time to reflect changes in technology, regulation, or our business practices. We encourage you to review this page periodically.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#032d60] mt-10 mb-4">7. Contact Us</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-secondary)] mt-10 mb-4">7. Contact Us</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             If you have questions about our use of cookies, please contact us:
           </p>
@@ -116,7 +119,7 @@ export function CookiesPage() {
               <strong>HYSYS GLOBAL SOLUTIONS LIMITED</strong><br />
               Plot 19 Sir Albert Cook Road, MENGO - KAMPALA<br />
               P.O.Box 16435 K'la<br />
-              Email: <a href="mailto:privacy@hysysglobal.com" className="text-[#0b5394] underline">privacy@hysysglobal.com</a>
+              Email: <a href="mailto:privacy@hysysglobal.com" className="text-[var(--color-primary)] underline">privacy@hysysglobal.com</a>
             </p>
           </div>
         </div>

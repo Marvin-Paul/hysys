@@ -7,24 +7,24 @@ const reports = [
     title: 'Agentforce delivers ROI faster and at a lower cost than a DIY approach',
     stat1: { value: '75%', label: 'increased accuracy' },
     stat2: { value: '14×', label: 'faster deployment' },
-    accent: 'from-[#032d60] to-[#0b5394]',
-    link: '/learning',
+    accent: 'from-[var(--color-secondary)] to-[var(--color-primary)]',
+    link: '/solutions',
   },
   {
     tag: 'Report',
     title: 'HYSYS named a Leader in the 2025 Gartner Magic Quadrant for CRM',
     stat1: { value: '#1', label: 'CRM platform globally' },
     stat2: { value: '10×', label: 'years running' },
-    accent: 'from-[#0b5394] to-[#00a3e0]',
-    link: '/learning',
+    accent: 'from-[var(--color-primary)] to-[var(--color-accent)]',
+    link: '/solutions',
   },
   {
     tag: 'Analyst Report',
     title: 'Forrester Total Economic Impact™ study: 362% ROI with HYSYS',
     stat1: { value: '362%', label: 'ROI achieved' },
     stat2: { value: '$5.2M', label: 'net present value' },
-    accent: 'from-[#1e3a8a] to-[#0b5394]',
-    link: '/learning',
+    accent: 'from-[#1e3a8a] to-[var(--color-primary)]',
+    link: '/solutions',
   },
 ];
 
@@ -34,7 +34,7 @@ export function AnalystReportSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center mb-10 sm:mb-14">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#032d60] leading-tight max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight max-w-2xl mx-auto">
             See why analysts agree HYSYS should be your Agentic AI partner
           </h2>
         </div>
@@ -63,8 +63,8 @@ export function AnalystReportSection() {
                 <span className="inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold text-gray-500 border border-gray-200 mb-3 w-fit">
                   {r.tag}
                 </span>
-                <h3 className="text-[#032d60] font-bold text-sm leading-snug flex-1">{r.title}</h3>
-                <div className="mt-4 flex items-center gap-1 text-[#0b5394] text-sm font-semibold group-hover:gap-2 transition-all">
+                <h3 className="text-[var(--color-secondary)] font-bold text-sm leading-snug flex-1">{r.title}</h3>
+                <div className="mt-4 flex items-center gap-1 text-[var(--color-primary)] text-sm font-semibold group-hover:gap-2 transition-all">
                   Read report <ArrowRight className="w-4 h-4" />
                 </div>
               </div>

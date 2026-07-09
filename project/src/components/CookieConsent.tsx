@@ -25,14 +25,14 @@ export function CookieConsent() {
     <div className="fixed bottom-0 left-0 right-0 z-[100] p-4">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
         <div className="flex items-start gap-4 flex-1">
-          <div className="w-10 h-10 rounded-xl bg-[#0b5394]/10 flex items-center justify-center flex-shrink-0">
-            <Cookie className="w-5 h-5 text-[#0b5394]" />
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center flex-shrink-0">
+            <Cookie className="w-5 h-5 text-[var(--color-primary)]" />
           </div>
           <div>
             <p className="text-sm text-gray-700">
               We use cookies to enhance your experience, analyze traffic, and deliver personalized content. 
               By clicking "Accept All", you consent to our use of cookies.{' '}
-              <a href="/cookies" className="text-[#0b5394] underline hover:text-[#032d60]">Learn more</a>
+              <a href="/cookies" className="text-[var(--color-primary)] underline hover:text-[var(--color-secondary)]">Learn more</a>
             </p>
           </div>
         </div>
@@ -45,7 +45,7 @@ export function CookieConsent() {
           </button>
           <button
             onClick={acceptAll}
-            className="flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold text-white bg-[#0b5394] rounded-xl hover:bg-[#032d60] transition-colors"
+            className="flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold text-white bg-[var(--color-primary)] rounded-xl hover:bg-[var(--color-secondary)] transition-colors"
           >
             Accept All
           </button>

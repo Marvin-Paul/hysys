@@ -6,7 +6,7 @@ import { useTranslation } from '../lib/i18n';
 export function GetStartedSection() {
   const { t } = useTranslation();
   return (
-    <section className="relative py-24 overflow-hidden bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]">
+    <section className="relative py-24 overflow-hidden bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]">
       <div className="absolute inset-0">
         <div className="absolute top-10 right-10 w-64 h-64 bg-cyan-400/10 rounded-full blur-3xl animate-float-slow" />
         <div className="absolute bottom-10 left-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: '2s' }} />
@@ -27,7 +27,7 @@ export function GetStartedSection() {
           </h2>
           <Link
             to="/register"
-            className="group inline-flex items-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold text-base hover:bg-gray-50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+            className="group inline-flex items-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold text-base hover:bg-gray-50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
           >
             {t('tryForFree')}
             <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

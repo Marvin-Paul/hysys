@@ -20,12 +20,9 @@ import {
   TrendingUp,
   Heart,
   ShoppingCart,
-  Landmark,
-  BookOpen,
-  User,
-  Play
+  Landmark
 } from 'lucide-react';
-import { languages, translations, TranslationContext, Language, useTranslation } from '../lib/i18n';
+import { languages, translations, TranslationContext, Language } from '../lib/i18n';
 
 interface LayoutProps {
   children: ReactNode;
@@ -58,8 +55,8 @@ const navItems = [
 
 const moreItems = [
   { icon: Landmark, title: 'Industries', desc: 'Solutions by sector', path: '/industries' },
-  { icon: BookOpen, title: 'Learning', desc: 'Training and resources', path: '/learning' },
-  { icon: FileText, title: 'Pricing', desc: 'Plans and packages', path: '/pricing' },
+  { icon: FileText, title: 'Support', desc: 'Help and documentation', path: '/solutions' },
+  { icon: FileText, title: 'Pricing', desc: 'Events and experiences', path: '/pricing' },
   { icon: Sparkles, title: 'Customer Stories', desc: 'Success stories', path: '/customer-stories' },
   { icon: Building2, title: 'About', desc: 'Company overview', path: '/about' },
 ];
@@ -76,6 +73,12 @@ export function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
+
+  const isActive = (path: string) => {
+    if (!path) return false;
+    if (path === '/') return location.pathname === '/';
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   const setLanguage = (lang: Language) => setLanguageCode(lang.code);
   const t = (key: string) => translations[languageCode]?.[key] ?? translations.en[key] ?? key;
@@ -131,13 +134,13 @@ export function Layout({ children }: LayoutProps) {
       'financial': '/industries/financial-services',
       'finance': '/industries/financial-services',
       'retail': '/industries/retail',
-      'trailhead': '/learning/trailhead',
-      'certification': '/learning/certifications',
-      'certifications': '/learning/certifications',
-      'webinar': '/learning/webinars',
-      'webinars': '/learning/webinars',
-      'docs': '/learning/documentation',
-      'documentation': '/learning/documentation',
+      'trailhead': '/solutions/documentation',
+      'certification': '/solutions/documentation',
+      'certifications': '/solutions/documentation',
+      'webinar': '/solutions/documentation',
+      'webinars': '/solutions/documentation',
+      'docs': '/solutions/documentation',
+      'documentation': '/solutions/documentation',
       'pricing': '/pricing',
       'plans': '/pricing',
       'cost': '/pricing',
@@ -146,11 +149,11 @@ export function Layout({ children }: LayoutProps) {
       'about': '/about',
       'company': '/about',
       'contact': '/contact',
-      'support': '/contact',
+      'support': '/solutions',
       'products': '/products',
       'solutions': '/solutions',
       'industries': '/industries',
-      'learning': '/learning',
+      'learning': '/solutions',
       'crm': '/products/sales-cloud',
     };
 
@@ -194,10 +197,11 @@ export function Layout({ children }: LayoutProps) {
                 >
                   <Link
                     to={item.path}
+                    aria-current={isActive(item.path) ? 'page' : undefined}
                     className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                       isScrolled || !isHome
-                        ? 'text-gray-700 hover:bg-gray-100 hover:text-[#0b5394]'
-                        : 'text-white/90 hover:bg-white/10'
+                        ? `${isActive(item.path) ? 'bg-gray-100 text-[var(--color-primary)]' : 'text-gray-700 hover:bg-gray-100 hover:text-[var(--color-primary)]'}`
+                        : `${isActive(item.path) ? 'bg-white/10 text-white' : 'text-white/90 hover:bg-white/10'}`
                     }`}
                   >
                     {t(item.label.toLowerCase())}
@@ -212,12 +216,11 @@ export function Layout({ children }: LayoutProps) {
                   <div className="absolute top-full left-0 w-full h-3" />
 
                   <div
-                    className={`absolute top-[calc(100%+8px)] left-0 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
+                    className={`absolute top-[calc(100%+8px)] left-0 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 z-50 ${
                       activeDropdown === item.label
                         ? 'opacity-100 translate-y-0 pointer-events-auto'
                         : 'opacity-0 -translate-y-2 pointer-events-none'
                     }`}
-                    style={{ zIndex: 100 }}
                   >
                     <div className="p-4 grid grid-cols-2 gap-3">
                       {item.items.map((subItem, idx) => (
@@ -226,7 +229,7 @@ export function Layout({ children }: LayoutProps) {
                           to={subItem.path}
                           className="flex items-start gap-3 p-3 rounded-2xl hover:bg-gray-50 transition-colors group"
                         >
-                          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                             <subItem.icon className="w-5 h-5 text-white" />
                           </div>
                           <div>
@@ -237,7 +240,7 @@ export function Layout({ children }: LayoutProps) {
                       ))}
                     </div>
                     <div className="bg-gray-50 px-4 py-3 border-t border-gray-100">
-                      <Link to={item.path} className="flex items-center gap-2 text-sm font-medium text-[#0b5394] hover:text-[#032d60]">
+                      <Link to={item.path} className="flex items-center gap-2 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-secondary)]">
                         View all {item.label.toLowerCase()} <ChevronRight className="w-4 h-4" />
                       </Link>
                     </div>
@@ -268,21 +271,21 @@ export function Layout({ children }: LayoutProps) {
                 {/* Invisible bridge */}
                 <div className="absolute top-full left-0 w-full h-3" />
                 <div
-                  className={`absolute top-[calc(100%+8px)] left-0 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
+                  className={`absolute top-[calc(100%+8px)] left-0 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 z-50 ${
                     activeDropdown === 'More'
                       ? 'opacity-100 translate-y-0 pointer-events-auto'
                       : 'opacity-0 -translate-y-2 pointer-events-none'
                   }`}
-                  style={{ zIndex: 100 }}
                 >
                   <div className="p-3 space-y-1">
                     {moreItems.map((item) => (
-                      <Link
-                        key={item.title}
-                        to={item.path}
-                        className="flex items-center gap-3 rounded-xl px-3 py-3 hover:bg-gray-50 transition-colors"
-                      >
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center text-white">
+                          <Link
+                            key={item.title}
+                            to={item.path}
+                            aria-current={isActive(item.path) ? 'page' : undefined}
+                            className={`flex items-center gap-3 rounded-xl px-3 py-3 transition-colors ${isActive(item.path) ? 'bg-gray-50' : 'hover:bg-gray-50'}`}
+                          >
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center text-white">
                           <item.icon className="w-4 h-4" />
                         </div>
                         <div>
@@ -318,12 +321,11 @@ export function Layout({ children }: LayoutProps) {
                 </button>
                 <div className="absolute top-full left-0 w-full h-3" />
                 <div
-                  className={`absolute top-[calc(100%+8px)] left-0 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 ${
+                  className={`absolute top-[calc(100%+8px)] left-0 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-200 z-50 ${
                     activeDropdown === 'language'
                       ? 'opacity-100 translate-y-0 pointer-events-auto'
                       : 'opacity-0 -translate-y-2 pointer-events-none'
                   }`}
-                  style={{ zIndex: 100 }}
                 >
                   <div className="p-2 space-y-1">
                     {languages.map((lang) => (
@@ -336,15 +338,15 @@ export function Layout({ children }: LayoutProps) {
                         }`}
                       >
                         <span>{lang.label}</span>
-                        {languageCode === lang.code && <span className="text-xs text-[#0b5394]">Selected</span>}
+                        {languageCode === lang.code && <span className="text-xs text-[var(--color-primary)]">Selected</span>}
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white/95 px-4 py-2 shadow-sm hover:shadow-md transition-shadow duration-300 focus-within:ring-2 focus-within:ring-[#0b5394]/20 focus-within:border-[#0b5394]/30">
-                <Search className="w-5 h-5 text-gray-400 cursor-pointer hover:text-[#0b5394] transition-colors" onClick={handleSearch} />
+              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-white/95 px-4 py-2 shadow-sm hover:shadow-md transition-shadow duration-300 focus-within:ring-2 focus-within:ring-[var(--color-primary)]/20 focus-within:border-[var(--color-primary)]/30">
+                <Search className="w-5 h-5 text-gray-400 cursor-pointer hover:text-[var(--color-primary)] transition-colors" onClick={handleSearch} />
                 <input
                   type="search"
                   value={searchQuery}
@@ -366,25 +368,15 @@ export function Layout({ children }: LayoutProps) {
                 {t('contact')}
               </Link>
               <Link
-                to="/login"
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                  isScrolled || !isHome
-                    ? 'text-gray-700 hover:bg-gray-100 hover:text-[#0b5394]'
-                    : 'text-white/90 hover:bg-white/10'
-                }`}
-              >
-                <User className="w-4 h-4" />
-                Login
-              </Link>
-              <Link
-                to="/register"
+                to="/contact"
                 className="px-5 py-2.5 text-sm font-semibold text-white bg-green-600 rounded-full hover:bg-green-700 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
               >
-                Get Started
+                Contact Us
               </Link>
             </div>
 
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2"
               aria-label="Toggle navigation"
@@ -406,7 +398,7 @@ export function Layout({ children }: LayoutProps) {
                   <div className="text-lg font-semibold text-gray-900">Navigation</div>
                   <div className="text-sm text-gray-500">Explore HYSYS products and services</div>
                 </div>
-                <button onClick={() => setMobileMenuOpen(false)} className="p-2 rounded-full bg-gray-100 text-gray-700">
+                <button type="button" onClick={() => setMobileMenuOpen(false)} aria-label="Close navigation" className="p-2 rounded-full bg-gray-100 text-gray-700">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -421,7 +413,7 @@ export function Layout({ children }: LayoutProps) {
                       onClick={() => setLanguage(lang)}
                       className={`rounded-2xl px-3 py-2 text-sm text-left transition ${
                         languageCode === lang.code
-                          ? 'bg-[#0b5394] text-white'
+                          ? 'bg-[var(--color-primary)] text-white'
                           : 'bg-white text-gray-700 hover:bg-gray-100'
                       }`}
                     >
@@ -432,41 +424,40 @@ export function Layout({ children }: LayoutProps) {
               </div>
 
               <div className="border border-gray-100 rounded-3xl p-3">
-                <Link to="/industries" className="flex items-center justify-between text-gray-900 font-semibold py-2">
+                <Link to="/industries" aria-current={isActive('/industries') ? 'page' : undefined} className="flex items-center justify-between text-gray-900 font-semibold py-2">
                   Industries
                   <ChevronRight className="w-4 h-4 text-gray-400" />
                 </Link>
                 <div className="mt-2 space-y-2 pl-3">
-                  <Link to="/industries/healthcare" className="block text-sm text-gray-600 hover:text-gray-900">Healthcare</Link>
-                  <Link to="/industries/education" className="block text-sm text-gray-600 hover:text-gray-900">Education</Link>
-                  <Link to="/industries/financial-services" className="block text-sm text-gray-600 hover:text-gray-900">Financial Services</Link>
-                  <Link to="/industries/retail" className="block text-sm text-gray-600 hover:text-gray-900">Retail</Link>
+                  <Link to="/industries/healthcare" aria-current={isActive('/industries/healthcare') ? 'page' : undefined} className="block text-sm text-gray-600 hover:text-gray-900">Healthcare</Link>
+                  <Link to="/industries/education" aria-current={isActive('/industries/education') ? 'page' : undefined} className="block text-sm text-gray-600 hover:text-gray-900">Education</Link>
+                  <Link to="/industries/financial-services" aria-current={isActive('/industries/financial-services') ? 'page' : undefined} className="block text-sm text-gray-600 hover:text-gray-900">Financial Services</Link>
+                  <Link to="/industries/retail" aria-current={isActive('/industries/retail') ? 'page' : undefined} className="block text-sm text-gray-600 hover:text-gray-900">Retail</Link>
                 </div>
               </div>
 
               <div className="border border-gray-100 rounded-3xl p-3">
-                <Link to="/learning" className="flex items-center justify-between text-gray-900 font-semibold py-2">
-                  Learning
+                <Link to="/solutions" className="flex items-center justify-between text-gray-900 font-semibold py-2">
+                  Support
                   <ChevronRight className="w-4 h-4 text-gray-400" />
                 </Link>
                 <div className="mt-2 space-y-2 pl-3">
-                  <Link to="/learning/trailhead" className="block text-sm text-gray-600 hover:text-gray-900">Trailhead</Link>
-                  <Link to="/learning/certifications" className="block text-sm text-gray-600 hover:text-gray-900">Certifications</Link>
-                  <Link to="/learning/webinars" className="block text-sm text-gray-600 hover:text-gray-900">Webinars</Link>
-                  <Link to="/learning/documentation" className="block text-sm text-gray-600 hover:text-gray-900">Documentation</Link>
+                  <Link to="/solutions/documentation" className="block text-sm text-gray-600 hover:text-gray-900">Documentation</Link>
+                  <Link to="/solutions/email" className="block text-sm text-gray-600 hover:text-gray-900">Email Support</Link>
+                  <Link to="/solutions/phone" className="block text-sm text-gray-600 hover:text-gray-900">Phone Support</Link>
+                  <Link to="/solutions/ticketing" className="block text-sm text-gray-600 hover:text-gray-900">Open Ticket</Link>
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 pt-4 space-y-3">
+                <div className="border-t border-gray-200 pt-4 space-y-3">
                 {moreItems.map((item) => (
-                  <Link key={item.title} to={item.path} className="block text-gray-900 font-medium">{item.title}</Link>
+                  <Link key={item.title} to={item.path} aria-current={isActive(item.path) ? 'page' : undefined} className={`block text-gray-900 font-medium ${isActive(item.path) ? 'underline' : ''}`}>{item.title}</Link>
                 ))}
-                <Link to="/login" className="flex items-center gap-2 text-gray-900 font-medium"><User className="w-4 h-4" /> Login</Link>
-                <Link to="/contact" className="block text-gray-900 font-medium">Contact Us</Link>
+                <Link to="/contact" aria-current={isActive('/contact') ? 'page' : undefined} className={`block text-gray-900 font-medium ${isActive('/contact') ? 'underline' : ''}`}>Contact Us</Link>
               </div>
 
               <div className="pt-4 border-t border-gray-200 space-y-2">
-                <Link to="/register" className="block py-3 text-center text-white bg-green-600 rounded-xl hover:bg-green-700 font-semibold">Get Started</Link>
+                <Link to="/contact" className="block py-3 text-center text-white bg-green-600 rounded-xl hover:bg-green-700 font-semibold">Contact Us</Link>
               </div>
             </div>
           </div>
@@ -479,7 +470,7 @@ export function Layout({ children }: LayoutProps) {
 
       <Chatbot />
 
-      <footer className="bg-[#032d60] text-white">
+      <footer className="bg-[var(--color-secondary)] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
             <div className="col-span-2">
@@ -531,10 +522,10 @@ export function Layout({ children }: LayoutProps) {
             <div>
               <h4 className="font-semibold mb-4">Resources</h4>
               <ul className="space-y-2">
-                <li><Link to="/learning/trailhead" className="text-white/60 text-sm hover:text-white">Trailhead</Link></li>
-                <li><Link to="/learning/certifications" className="text-white/60 text-sm hover:text-white">Certifications</Link></li>
-                <li><Link to="/learning/webinars" className="text-white/60 text-sm hover:text-white">Webinars</Link></li>
-                <li><Link to="/learning/documentation" className="text-white/60 text-sm hover:text-white">Docs</Link></li>
+                <li><Link to="/solutions/documentation" className="text-white/60 text-sm hover:text-white">Documentation</Link></li>
+                <li><Link to="/contact" className="text-white/60 text-sm hover:text-white">Email Support</Link></li>
+                <li><Link to="/contact" className="text-white/60 text-sm hover:text-white">Phone Support</Link></li>
+                <li><Link to="/contact" className="text-white/60 text-sm hover:text-white">Open Ticket</Link></li>
               </ul>
             </div>
 
@@ -557,12 +548,12 @@ export function Layout({ children }: LayoutProps) {
               <Link to="/privacy" className="text-white/60 text-sm hover:text-white">Privacy</Link>
               <Link to="/terms" className="text-white/60 text-sm hover:text-white">Terms</Link>
               <Link to="/cookies" className="text-white/60 text-sm hover:text-white">Cookies</Link>
-              {/* Hidden admin access — subtle dot */}
+              {/* Admin dashboard access */}
               <Link
-                to="/admin-login"
-                title="Admin"
+                to="/dashboard"
+                title="Dashboard"
                 className="w-2 h-2 rounded-full bg-white/10 hover:bg-white/30 transition-colors"
-                aria-label="Admin login"
+                aria-label="Dashboard"
               />
             </div>
           </div>

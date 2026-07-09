@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Search, X, ChevronRight, Globe, Users, Shield, Zap, BookOpen, Building2 } from 'lucide-react';
+import { Search, X, ChevronRight, Globe, Users, Shield, Zap, FileText, Building2 } from 'lucide-react';
+import { PageHero } from '../components/PageHero';
 
 const searchCategories = [
   { id: 'products', label: 'Products', icon: Globe, paths: ['/products/sales-cloud', '/products/service-cloud', '/products/marketing-cloud', '/products/commerce-cloud', '/products/data-cloud', '/products/platform-cloud'] },
   { id: 'solutions', label: 'Solutions', icon: Users, paths: ['/solutions/small-business', '/solutions/enterprise', '/solutions/startups', '/solutions/nonprofits'] },
   { id: 'industries', label: 'Industries', icon: Building2, paths: ['/industries/healthcare', '/industries/education', '/industries/financial-services', '/industries/retail'] },
-  { id: 'learning', label: 'Learning', icon: BookOpen, paths: ['/learning/trailhead', '/learning/certifications', '/learning/webinars', '/learning/documentation'] },
+  { id: 'support', label: 'Support', icon: FileText, paths: ['/contact', '/solutions', '/about'] },
 ];
 
 const allContent = [
@@ -18,17 +19,14 @@ const allContent = [
   { title: 'Small Business', desc: 'Grow faster with CRM built for small teams', category: 'Solutions', path: '/solutions/small-business', icon: Building2 },
   { title: 'Enterprise', desc: 'Scale operations with enterprise-grade CRM', category: 'Solutions', path: '/solutions/enterprise', icon: Building2 },
   { title: 'Startups', desc: 'Launch strong with startup-friendly pricing', category: 'Solutions', path: '/solutions/startups', icon: Zap },
-  { title: 'Healthcare', desc: 'Industry solutions for healthcare organizations', category: 'Industries', path: '/industries/healthcare', icon: Users },
-  { title: 'Financial Services', desc: 'Banking, insurance, and wealth management solutions', category: 'Industries', path: '/industries/financial-services', icon: Shield },
-  { title: 'Trailhead', desc: 'Free online learning platform', category: 'Learning', path: '/learning/trailhead', icon: BookOpen },
-  { title: 'Certifications', desc: 'Validate your CRM expertise', category: 'Learning', path: '/learning/certifications', icon: BookOpen },
+  { title: 'Support Center', desc: 'Get help from our customer support team and support knowledge resources', category: 'Support', path: '/contact', icon: FileText },
+  { title: 'Product Documentation', desc: 'Browse technical guides and platform resources to get started fast', category: 'Support', path: '/solutions', icon: FileText },
 ];
 
 export function SearchResultsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const [filteredResults, setFilteredResults] = useState<typeof allContent>([]);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   useEffect(() => {
     if (query.trim()) {
@@ -60,6 +58,14 @@ export function SearchResultsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
+      <PageHero
+        badge="Search"
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title="Find what you need"
+        subtitle="Search HYSYS content"
+        description="Discover products, solutions, industries, and support resources across the HYSYS site."
+      />
+
       <section className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-4 mb-6">
@@ -100,7 +106,7 @@ export function SearchResultsPage() {
 
           {query && (
             <div className="text-sm text-gray-600 mb-6">
-              Showing results for <span className="font-medium text-[#032d60]">"{query}"</span>
+              Showing results for <span className="font-medium text-[var(--color-secondary)]">"{query}"</span>
               {filteredResults.length > 0 && (
                 <span className="ml-2">({filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''})</span>
               )}
@@ -128,7 +134,7 @@ export function SearchResultsPage() {
                   <div key={category.id}>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <category.icon className="w-6 h-6 text-[#0b5394]" />
+                        <category.icon className="w-6 h-6 text-[var(--color-primary)]" />
                         {category.label} ({results.length})
                       </h3>
                     </div>
@@ -137,13 +143,13 @@ export function SearchResultsPage() {
                         <Link
                           key={`${item.path}-${idx}`}
                           to={item.path}
-                          className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#0b5394]/30"
+                          className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[var(--color-primary)]/30"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
                             <item.icon className="w-6 h-6 text-white" />
                           </div>
                           <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{item.category}</div>
-                          <h4 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#0b5394] transition-colors">{item.title}</h4>
+                          <h4 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[var(--color-primary)] transition-colors">{item.title}</h4>
                           <p className="text-gray-600 text-sm line-clamp-2">{item.desc}</p>
                         </Link>
                       ))}
@@ -174,7 +180,7 @@ export function SearchResultsPage() {
                     to={`/search?q=${cat.label.toLowerCase()}`}
                     className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 text-center"
                   >
-                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
+                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform">
                       <cat.icon className="w-7 h-7 text-white" />
                     </div>
                     <h4 className="font-semibold text-gray-900">{cat.label}</h4>

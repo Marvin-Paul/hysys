@@ -7,7 +7,7 @@ const cards = [
     tag: 'Events',
     title: 'Dreamforce 2025',
     desc: "Join 40,000+ trailblazers for the world's largest AI & CRM conference.",
-    bg: 'linear-gradient(135deg,#032d60 0%,#0b5394 60%,#00a3e0 100%)',
+    bg: 'linear-gradient(135deg,var(--color-secondary) 0%,var(--color-primary) 60%,var(--color-accent) 100%)',
     avatars: ['AJ','MS','KL','RD'],
     link: '/contact',
     sparkle: true,
@@ -17,7 +17,7 @@ const cards = [
     tag: 'Community',
     title: 'Trailblazer Community',
     desc: 'Connect, learn, and grow with millions of Trailblazers worldwide.',
-    bg: 'linear-gradient(135deg,#0891b2 0%,#0b5394 100%)',
+    bg: 'linear-gradient(135deg,#0891b2 0%,var(--color-primary) 100%)',
     avatars: ['PW','NG','RD'],
     link: '/contact',
     sparkle: true,
@@ -40,7 +40,7 @@ export function AISuccessSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center mb-10 sm:mb-14">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#032d60] leading-tight max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight max-w-2xl mx-auto">
             Find the insights, experts, and tools to fuel your AI success
           </h2>
         </div>
@@ -84,9 +84,9 @@ export function AISuccessSection() {
               {/* text area */}
               <div className="bg-white px-5 sm:px-6 py-4 sm:py-5 border-t border-gray-100 flex-1 flex flex-col">
                 <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{c.tag}</span>
-                <h3 className="text-[#032d60] font-bold text-sm sm:text-base mt-1 mb-1 leading-snug">{c.title}</h3>
+                <h3 className="text-[var(--color-secondary)] font-bold text-sm sm:text-base mt-1 mb-1 leading-snug">{c.title}</h3>
                 <p className="text-gray-500 text-xs sm:text-sm leading-snug mb-3 flex-1">{c.desc}</p>
-                <span className="inline-flex items-center gap-1 text-[#0b5394] text-sm font-semibold group-hover:gap-2 transition-all">
+                <span className="inline-flex items-center gap-1 text-[var(--color-primary)] text-sm font-semibold group-hover:gap-2 transition-all">
                   Learn more <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>

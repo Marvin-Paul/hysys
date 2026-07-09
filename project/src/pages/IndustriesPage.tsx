@@ -1,7 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
-import { GraduationCap, Landmark, ShoppingCart, ArrowRight, CheckCircle, Heart, Sparkles } from 'lucide-react';
+import { GraduationCap, Landmark, ShoppingCart, ArrowRight, Heart, Sparkles } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { PageHero } from '../components/PageHero';
 import { useTranslation } from '../lib/i18n';
 import { useSiteContent } from '../hooks/useSiteContent';
 import { SEO } from '../components/SEO';
@@ -15,97 +16,74 @@ const industriesData: Record<string, any> = {
   'retail':             { icon: ShoppingCart,  title: 'Retail',             subtitle: 'Customer experience', description: 'Create memorable shopping experiences across channels. HYSYS for Retail helps you understand customers and deliver personalised experiences at every touchpoint.',              features: ['Unified Commerce','Customer Loyalty','Inventory Management','Personalization','Omnichannel Support','Demand Forecasting'],               stats: [{ label: 'Retailers',              value: '25K+' }, { label: 'Increase in repeat customers', value: '45%' }],          color: 'from-emerald-500 to-teal-600',subtitleKey: 'customerExperience', titleKey: 'retail',           descriptionKey: 'retailDesc'     },
 };
 
-/* ── Reusable hero ── */
-function PageHero({ badge, title, subtitle, desc }: { badge: string; title: string; subtitle: string; desc: string }) {
-  return (
-    <section className="relative min-h-[60vh] overflow-hidden flex items-center">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-      <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
-      <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="absolute w-1 h-1 rounded-full animate-pulse" style={{
-          background: i % 2 === 0 ? 'rgba(0,163,224,0.4)' : 'rgba(255,255,255,0.3)',
-          top: `${20+(i*9)%60}%`, left: `${5+(i*13)%90}%`, animationDelay: `${i*0.5}s`,
-        }} />
-      ))}
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center w-full">
-        <ScrollReveal>
-          <div className="flex justify-center mb-6">
-            <span className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 rounded-full text-sm font-medium backdrop-blur-md border border-white/20 text-white">
-              <Sparkles className="w-4 h-4 text-cyan-300" />{badge}
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            </span>
-          </div>
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40 mb-4">HYSYS GLOBAL SOLUTIONS LIMITED</p>
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-5">
-            {title}
-            <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-2">{subtitle}</span>
-          </h1>
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-1 rounded-full bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400" />
-          </div>
-          <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">{desc}</p>
-        </ScrollReveal>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
-          <path d="M0 80L720 40L1440 80V80H0Z" fill="white" />
-        </svg>
-      </div>
-    </section>
-  );
-}
-
 /* ── Industries List ── */
 export function IndustriesPage() {
   const { t } = useTranslation();
   const content = useSiteContent('industries');
   const rawIndustries = content.getContentRaw('industries_list') as any[] | null;
+  const toArray = (v: any) => typeof v === 'string' ? v.split(',').map((s: string) => s.trim()).filter(Boolean) : (Array.isArray(v) ? v : []);
   const resolvedData: Record<string, any> = rawIndustries
-    ? Object.fromEntries(rawIndustries.map((p: any) => [p.key, { ...p, icon: iconMap[p.iconName] || Heart }]))
+    ? Object.fromEntries(rawIndustries.map((p: any) => [p.key, { ...p, features: toArray(p.features), icon: iconMap[p.iconName] || Heart }]))
     : industriesData;
 
   return (
     <div className="pt-16">
       <SEO title="Industries" />
-      <PageHero badge="Industry Solutions" title={content.getContent('industriesTitle', t('industriesTitle'))} subtitle="Sector Expertise" desc={content.getContent('industriesDesc', t('industriesDesc'))} />
 
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="products-hero">
+        <div className="products-container">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-6">
+            <Sparkles className="w-4 h-4" /> Industry Solutions
+          </span>
+          <h1>{content.getContent('industriesTitle', t('industriesTitle'))}</h1>
+          <p className="max-w-2xl mx-auto mt-6 text-base sm:text-lg text-[#0a2540] leading-8">
+            {content.getContent('industriesDesc', t('industriesDesc'))}
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-primary)] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[var(--color-primary)]/20 transition hover:bg-[#08407a]">
+              Contact Sales <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link to="/industries" className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--color-primary)]/15 bg-white px-8 py-4 text-sm font-semibold text-[var(--color-primary)] transition hover:border-[var(--color-primary)] hover:bg-[#f5f9fc]">
+              Explore Industries
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="products-catalog">
+        <div className="products-container">
           <ScrollReveal>
             <div className="text-center mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-4">
                 <Sparkles className="w-4 h-4" /> Industries We Serve
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60] mb-4">Purpose-built for your sector</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-secondary)] mb-4">Purpose-built for your sector</h2>
               <p className="text-lg text-gray-500 max-w-2xl mx-auto">Tailored solutions that understand the unique challenges of your industry.</p>
             </div>
           </ScrollReveal>
-          <div className="grid md:grid-cols-2 gap-8 stagger-children">
+
+          <div className="product-grid">
             {Object.entries(resolvedData).map(([key, industry]) => (
               <ScrollReveal key={key}>
-                <Link to={`/industries/${key}`} className="group relative bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 overflow-hidden block">
+                <Link to={`/industries/${key}`} className="product-card group">
                   <div className="flex items-start gap-6">
                     <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg`}>
                       <industry.icon className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
                       <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{t(industry.subtitleKey)}</div>
-                      <h3 className="text-2xl font-extrabold text-gray-900 mb-3 group-hover:text-[#0b5394] transition-colors">{t(industry.titleKey)}</h3>
+                      <h3 className="text-2xl font-extrabold text-gray-900 mb-3 group-hover:text-[var(--color-primary)] transition-colors">{t(industry.titleKey)}</h3>
                       <p className="text-gray-500 mb-4 text-sm leading-relaxed line-clamp-2">{t(industry.descriptionKey)}</p>
-                      {/* Mini stats */}
-                      <div className="flex gap-4 mb-4">
+                      <div className="flex gap-4 mb-4 flex-wrap">
                         {industry.stats.map((stat: any, si: number) => (
                           <div key={si} className="bg-gray-50 rounded-xl px-3 py-2">
-                            <div className="text-sm font-extrabold text-[#0b5394]">{stat.value}</div>
+                            <div className="text-sm font-extrabold text-[var(--color-primary)]">{stat.value}</div>
                             <div className="text-[10px] text-gray-400">{stat.label}</div>
                           </div>
                         ))}
                       </div>
-                      <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0b5394] group-hover:text-[#032d60] transition-colors">
-                        Learn more <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                      <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-primary)] group-hover:text-[var(--color-secondary)] transition-colors">
+                        Learn more <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>
                   </div>
@@ -118,7 +96,7 @@ export function IndustriesPage() {
 
       {/* CTA */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <ScrollReveal>
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -126,7 +104,7 @@ export function IndustriesPage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Don't see your industry?</h2>
             <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto">HYSYS adapts to any sector. Talk to our team for a custom solution.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+              <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                 Contact Us <ArrowRight className="w-5 h-5" />
               </Link>
               <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
@@ -155,114 +133,29 @@ export function IndustryDetailPage() {
       <div className="pt-16 min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <h1 className="text-2xl font-extrabold text-gray-900 mb-4">{t('industryNotFound')}</h1>
-          <Link to="/industries" className="text-[#0b5394] font-semibold hover:underline">{t('viewAllIndustries')}</Link>
+          <Link to="/industries" className="text-[var(--color-primary)] font-semibold hover:underline">{t('viewAllIndustries')}</Link>
         </div>
       </div>
     );
   }
 
-  const Icon = industry.icon;
-
   return (
     <div className="pt-16">
       <SEO title={industry.title} />
 
-      {/* Hero */}
-      <section className="relative min-h-[70vh] overflow-hidden flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
-        <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '3s' }} />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <ScrollReveal variant="left">
-              <div className="text-white">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-xs font-bold backdrop-blur-md border border-white/20 uppercase tracking-wider text-cyan-300 mb-5">
-                  {t(industry.subtitleKey)}
-                </span>
-                <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-5">
-                  {industry.title}
-                  <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-1 text-4xl sm:text-5xl">by HYSYS</span>
-                </h1>
-                <div className="w-16 h-1 rounded-full bg-gradient-to-r from-cyan-400 to-blue-300 mb-6" />
-                <p className="text-lg text-white/70 mb-10 leading-relaxed font-light max-w-lg">{industry.description}</p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/register" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    {t('getIndustrySolution')} <ArrowRight className="w-5 h-5" />
-                  </Link>
-                  <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">
-                    Talk to an Expert
-                  </Link>
-                </div>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal variant="right">
-              <div className="hidden lg:flex justify-center">
-                <div className="relative">
-                  <div className={`absolute -inset-8 bg-gradient-to-br ${industry.color} opacity-20 rounded-[50px] blur-2xl`} />
-                  <div className={`relative w-72 h-72 rounded-[40px] bg-gradient-to-br ${industry.color} flex items-center justify-center shadow-2xl`}>
-                    <Icon className="w-36 h-36 text-white" />
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
-            <path d="M0 80L720 40L1440 80V80H0Z" fill="white" />
-          </svg>
-        </div>
-      </section>
-
-      {/* Stats bar */}
-      <section className="bg-white py-12 border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {industry.stats.map((stat: any, idx: number) => (
-                <div key={idx} className="text-center group">
-                  <div className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#0b5394] to-[#00a3e0] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">{stat.value}</div>
-                  <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-4">
-                <Sparkles className="w-4 h-4" /> Built for {industry.title}
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#032d60]">{t('keyFeatures')}</h2>
-            </div>
-          </ScrollReveal>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
-            {industry.features.map((feature: string, idx: number) => (
-              <ScrollReveal key={idx}>
-                <div className="group flex items-center gap-4 p-5 bg-white rounded-2xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100">
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${industry.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow`}>
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="font-semibold text-gray-900">{feature}</span>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PageHero
+        badge={t(industry.subtitleKey)}
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title={t(industry.titleKey)}
+        subtitle="by HYSYS"
+        description={industry.description}
+        primaryCta={{ label: t('getIndustrySolution'), to: '/register' }}
+        secondaryCta={{ label: t('contactSales'), to: '/contact' }}
+      />
 
       {/* CTA */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <ScrollReveal>
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -270,7 +163,7 @@ export function IndustryDetailPage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">Ready for {industry.title}?</h2>
             <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto">Start your free 14-day trial. No credit card required.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[#032d60] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+              <Link to="/register" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                 Get Started <ArrowRight className="w-5 h-5" />
               </Link>
               <Link to="/industries" className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-white/10 border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all duration-300">

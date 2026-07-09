@@ -86,9 +86,9 @@ const faq: FaqEntry[] = [
     link: { text: 'Talk to Sales →', to: '/contact' },
   },
   {
-    keywords: ['training', 'learn', 'certification', 'trailhead', 'course', 'tutorial', 'learning'],
-    answer: `## Learning & Certifications\n\nBuild expertise through **HYSYS University**.\n\n**Available resources:**\n- **Trailhead** — Free interactive learning modules\n- **Certifications** — Admin, Developer, Architect tracks\n- **Webinars** — Live sessions with product experts\n- **Documentation** — Comprehensive technical guides\n\nAll resources are accessible from our Learning Hub.`,
-    link: { text: 'Start Learning →', to: '/learning' },
+    keywords: ['training', 'learn', 'certification', 'course', 'tutorial'],
+    answer: `## Training & Support\n\nWe provide comprehensive **training and support** for all our products.\n\n- **Onboarding** — Guided setup for new customers\n- **Documentation** — Product guides and best practices\n- **Support** — Dedicated support team\n\nContact our team to learn more.`,
+    link: { text: 'Contact Support →', to: '/contact' },
   },
   {
     keywords: ['small business', 'startup', 'nonprofit', 'non-profit', 'charity', 'ngo'],
@@ -119,7 +119,7 @@ const THANKS_RESPONSE = `You're welcome! 😊 Is there anything else I can help 
 
 // ── Fallback responses ───────────────────────────────────────────────────────
 const fallbackResponses = [
-  `I'm not able to verify that specific detail right now.\n\n**Here are a few options:**\n- Try rephrasing your question\n- Browse our [Help Centre](/learning) for documentation\n- Contact our team directly at **info@hysysglobal.com**`,
+  `I'm not able to verify that specific detail right now.\n\n**Here are a few options:**\n- Try rephrasing your question\n- Contact our support team for direct guidance\n- Visit our [Support Center](/contact) for help`,
   `That falls outside my current knowledge area. I want to make sure you get accurate information.\n\n**I'd recommend:**\n- Reaching out to our support team\n- Visiting our Contact page for direct assistance`,
   `I don't have a confident answer for that one. Rather than guessing, I'd suggest connecting with our team who can give you a verified, detailed response.\n\n📞 **0782-602854** · 📧 **info@hysysglobal.com**`,
 ];
@@ -157,9 +157,9 @@ function renderMarkdown(text: string): JSX.Element {
         <div key={key++} className="overflow-x-auto my-2">
           <table className="w-full text-xs border-collapse">
             <thead>
-              <tr className="bg-[#0b5394]/10">
+              <tr className="bg-[var(--color-primary)]/10">
                 {tableHeaders.map((h, i) => (
-                  <th key={i} className="px-2 py-1.5 text-left font-semibold text-[#032d60] border border-gray-200">
+                  <th key={i} className="px-2 py-1.5 text-left font-semibold text-[var(--color-secondary)] border border-gray-200">
                     {renderInline(h)}
                   </th>
                 ))}
@@ -199,16 +199,16 @@ function renderMarkdown(text: string): JSX.Element {
 
     // H2
     if (trimmed.startsWith('## ')) {
-      elements.push(<h2 key={key++} className="font-bold text-[#032d60] text-sm mt-1 mb-1">{trimmed.slice(3)}</h2>);
+      elements.push(<h2 key={key++} className="font-bold text-[var(--color-secondary)] text-sm mt-1 mb-1">{trimmed.slice(3)}</h2>);
     }
     // H3
     else if (trimmed.startsWith('### ')) {
-      elements.push(<h3 key={key++} className="font-semibold text-[#0b5394] text-xs mt-1 mb-0.5">{trimmed.slice(4)}</h3>);
+      elements.push(<h3 key={key++} className="font-semibold text-[var(--color-primary)] text-xs mt-1 mb-0.5">{trimmed.slice(4)}</h3>);
     }
     // Blockquote
     else if (trimmed.startsWith('> ')) {
       elements.push(
-        <blockquote key={key++} className="border-l-2 border-[#0b5394] pl-2 my-1 text-gray-500 text-xs italic">
+        <blockquote key={key++} className="border-l-2 border-[var(--color-primary)] pl-2 my-1 text-gray-500 text-xs italic">
           {renderInline(trimmed.slice(2))}
         </blockquote>
       );
@@ -329,7 +329,7 @@ export function Chatbot() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3.5 bg-[#0b5394] text-white rounded-full shadow-lg hover:bg-[#032d60] transition-all hover:shadow-xl hover:-translate-y-0.5"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3.5 bg-[var(--color-primary)] text-white rounded-full shadow-lg hover:bg-[var(--color-secondary)] transition-all hover:shadow-xl hover:-translate-y-0.5"
         >
           <Bot className="w-5 h-5" />
           <span className="text-sm font-semibold">Connect+ Assistant</span>
@@ -341,7 +341,7 @@ export function Chatbot() {
         <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-6rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden animate-scale-in origin-bottom-right">
 
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#032d60] to-[#0b5394] text-white px-5 py-4 flex items-center justify-between flex-shrink-0">
+          <div className="bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-primary)] text-white px-5 py-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm">
                 <Bot className="w-5 h-5" />
@@ -369,7 +369,7 @@ export function Chatbot() {
                     <Link
                       to={to}
                       onClick={() => setOpen(false)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0b5394] text-white text-xs font-semibold rounded-full hover:bg-[#032d60] transition-colors shadow-sm"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--color-primary)] text-white text-xs font-semibold rounded-full hover:bg-[var(--color-secondary)] transition-colors shadow-sm"
                     >
                       {label}
                     </Link>
@@ -379,14 +379,14 @@ export function Chatbot() {
               return (
                 <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
                   {msg.role === 'bot' && (
-                    <div className="w-7 h-7 rounded-full bg-[#0b5394] flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Bot className="w-3.5 h-3.5 text-white" />
                     </div>
                   )}
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                       msg.role === 'user'
-                        ? 'bg-[#0b5394] text-white rounded-tr-sm text-sm'
+                        ? 'bg-[var(--color-primary)] text-white rounded-tr-sm text-sm'
                         : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm shadow-sm'
                     }`}
                   >
@@ -409,7 +409,7 @@ export function Chatbot() {
             {/* Typing indicator */}
             {typing && (
               <div className="flex justify-start gap-2">
-                <div className="w-7 h-7 rounded-full bg-[#0b5394] flex items-center justify-center flex-shrink-0">
+                <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
@@ -431,7 +431,7 @@ export function Chatbot() {
                 <button
                   key={action.label}
                   onClick={() => handleSend(action.keywords)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-700 hover:bg-[#0b5394] hover:text-white hover:border-[#0b5394] transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-700 hover:bg-[var(--color-primary)] hover:text-white hover:border-[var(--color-primary)] transition-all"
                 >
                   <Sparkles className="w-3 h-3" />
                   {action.label}
@@ -450,12 +450,12 @@ export function Chatbot() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask a question..."
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none"
               />
               <button
                 onClick={() => handleSend()}
                 disabled={!input.trim()}
-                className="p-2.5 bg-[#0b5394] text-white rounded-xl hover:bg-[#032d60] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="p-2.5 bg-[var(--color-primary)] text-white rounded-xl hover:bg-[var(--color-secondary)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4" />
               </button>

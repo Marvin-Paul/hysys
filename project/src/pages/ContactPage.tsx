@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Loader2, Sparkles, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { PageHero } from '../components/PageHero';
 import { useTranslation } from '../lib/i18n';
 import { useSiteContent } from '../hooks/useSiteContent';
 import { SEO } from '../components/SEO';
@@ -31,7 +32,7 @@ export function ContactPage() {
     try {
       await fetch('https://formsubmit.co/info@hysysglobal.com', {
         method: 'POST',
-        body: new URLSearchParams({ _subject: 'New contact form submission from HYSYS website', name: `${firstName} ${lastName}`, email, phone, company, jobTitle, interest, message } as any),
+        body: new URLSearchParams({ _subject: 'New contact form submission from HYSYS website', name: `${firstName} ${lastName}`, email, phone, company, jobTitle, interest, message }),
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
       if (supabase) {
@@ -56,53 +57,15 @@ export function ContactPage() {
     <div className="pt-16">
       <SEO title="Contact" />
 
-      {/* ── Hero ── */}
-      <section className="relative min-h-[60vh] overflow-hidden flex items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#032d60] via-[#0b5394] to-[#00a3e0]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="absolute top-20 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-blob" />
-        <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
-        {[...Array(8)].map((_, i) => (
-          <div key={i} className="absolute w-1 h-1 rounded-full animate-pulse" style={{
-            background: i % 2 === 0 ? 'rgba(0,163,224,0.4)' : 'rgba(255,255,255,0.3)',
-            top: `${20 + (i * 9) % 60}%`, left: `${5 + (i * 13) % 90}%`,
-            animationDelay: `${i * 0.5}s`,
-          }} />
-        ))}
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center w-full">
-          <ScrollReveal>
-            <div className="flex justify-center mb-6">
-              <span className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 rounded-full text-sm font-medium backdrop-blur-md border border-white/20 text-white">
-                <Sparkles className="w-4 h-4 text-cyan-300" />
-                We'd love to hear from you
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              </span>
-            </div>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/40 mb-4">HYSYS GLOBAL SOLUTIONS LIMITED</p>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-5">
-              {content.getContent('contactTitle', t('contactTitle'))}
-              <span className="block bg-gradient-to-r from-cyan-200 via-white to-cyan-200 bg-clip-text text-transparent mt-2">
-                Get In Touch
-              </span>
-            </h1>
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-1 rounded-full bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400" />
-            </div>
-            <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">
-              {content.getContent('contactDesc', t('contactDesc'))}
-            </p>
-          </ScrollReveal>
-        </div>
-
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" className="w-full h-16">
-            <path d="M0 80L720 40L1440 80V80H0Z" fill="#f9fafb" />
-          </svg>
-        </div>
-      </section>
+      <PageHero
+        badge="Contact"
+        eyebrow="HYSYS GLOBAL SOLUTIONS LIMITED"
+        title={content.getContent('contactTitle', t('contactTitle'))}
+        subtitle="Get In Touch"
+        description={content.getContent('contactDesc', t('contactDesc'))}
+        primaryCta={{ label: 'Send a Message', to: '/contact' }}
+        secondaryCta={{ label: 'Request a Demo', to: '/register' }}
+      />
 
       {/* ── Contact Info Cards ── */}
       <section className="bg-gray-50 pt-8 pb-0">
@@ -111,7 +74,7 @@ export function ContactPage() {
             {contactCards.map((card, idx) => (
               <ScrollReveal key={idx}>
                 <div className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                     <card.icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="font-bold text-gray-900 text-sm mb-2">{card.title}</h3>
@@ -134,10 +97,10 @@ export function ContactPage() {
             <div className="lg:col-span-2">
               <ScrollReveal>
                 <div className="sticky top-24">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0b5394]/10 rounded-full text-sm font-semibold text-[#0b5394] mb-5">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-5">
                     <Sparkles className="w-4 h-4" /> {content.getContent('getInTouch', t('getInTouch'))}
                   </span>
-                  <h2 className="text-3xl font-extrabold text-[#032d60] mb-4 leading-tight">
+                  <h2 className="text-3xl font-extrabold text-[var(--color-secondary)] mb-4 leading-tight">
                     Ready to transform your business?
                   </h2>
                   <p className="text-gray-600 mb-8 leading-relaxed">
@@ -151,8 +114,8 @@ export function ContactPage() {
                       { icon: MapPin,label: 'Visit Us', value: 'Plot 19 Sir Albert Cook Road, Mengo, Kampala', href: '#' },
                     ].map((item) => (
                       <a key={item.label} href={item.href}
-                        className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[#0b5394]/20 transition-all group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0b5394] to-[#00a3e0] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-[var(--color-primary)]/20 transition-all group">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                           <item.icon className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -164,13 +127,13 @@ export function ContactPage() {
                   </div>
 
                   {/* Premium CTA box */}
-                  <div className="mt-8 bg-gradient-to-br from-[#032d60] to-[#0b5394] rounded-2xl p-6 text-white relative overflow-hidden">
+                  <div className="mt-8 bg-gradient-to-br from-[var(--color-secondary)] to-[var(--color-primary)] rounded-2xl p-6 text-white relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-8 translate-x-8" />
                     <div className="relative">
                       <Sparkles className="w-6 h-6 text-cyan-300 mb-3" />
                       <h3 className="font-bold text-lg mb-2">Free 14-Day Trial</h3>
                       <p className="text-white/70 text-sm mb-4">No credit card needed. Full platform access from day one.</p>
-                      <Link to="/register" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#032d60] rounded-xl text-sm font-bold hover:shadow-lg transition-all hover:-translate-y-0.5">
+                      <Link to="/register" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[var(--color-secondary)] rounded-xl text-sm font-bold hover:shadow-lg transition-all hover:-translate-y-0.5">
                         Get Started <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
@@ -189,14 +152,14 @@ export function ContactPage() {
                     </div>
                     <h3 className="text-2xl font-extrabold text-gray-900 mb-3">Message Sent!</h3>
                     <p className="text-gray-500 max-w-sm mx-auto">Thank you for reaching out. Our team will get back to you within 24 hours.</p>
-                    <button onClick={() => setSent(false)} className="mt-6 px-6 py-3 bg-[#0b5394] text-white rounded-xl font-semibold hover:bg-[#032d60] transition-colors">
+                    <button onClick={() => setSent(false)} className="mt-6 px-6 py-3 bg-[var(--color-primary)] text-white rounded-xl font-semibold hover:bg-[var(--color-secondary)] transition-colors">
                       Send Another Message
                     </button>
                   </div>
                 ) : (
                   <>
                     <div className="mb-8">
-                      <h2 className="text-2xl font-extrabold text-[#032d60]">{content.getContent('sendUsMessage', t('sendUsMessage'))}</h2>
+                      <h2 className="text-2xl font-extrabold text-[var(--color-secondary)]">{content.getContent('sendUsMessage', t('sendUsMessage'))}</h2>
                       <p className="text-gray-500 mt-1 text-sm">All fields marked * are required.</p>
                     </div>
                     {error && (
@@ -205,44 +168,44 @@ export function ContactPage() {
                     <form onSubmit={handleSubmit} className="space-y-5">
                       <div className="grid md:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">{t('firstNameLabel')} *</label>
-                          <input type="text" name="firstName" required placeholder="John"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all text-sm" />
+                          <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">{t('firstNameLabel')} *</label>
+                          <input id="firstName" type="text" name="firstName" required placeholder="John"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
                         </div>
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">{t('lastNameLabel')} *</label>
-                          <input type="text" name="lastName" required placeholder="Doe"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all text-sm" />
-                        </div>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-5">
-                        <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">{t('workEmailLabel')} *</label>
-                          <input type="email" name="email" required placeholder="john@company.com"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all text-sm" />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">{t('phoneInputLabel')}</label>
-                          <input type="tel" name="phone" placeholder="+256 700 000 000"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all text-sm" />
+                          <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">{t('lastNameLabel')} *</label>
+                          <input id="lastName" type="text" name="lastName" required placeholder="Doe"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
                         </div>
                       </div>
                       <div className="grid md:grid-cols-2 gap-5">
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">{t('companyLabel')} *</label>
-                          <input type="text" name="company" required placeholder="Company Inc."
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all text-sm" />
+                          <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">{t('workEmailLabel')} *</label>
+                          <input id="email" type="email" name="email" required placeholder="john@company.com"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
                         </div>
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">{t('jobTitleLabel')}</label>
-                          <input type="text" name="jobTitle" placeholder="VP of Sales"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all text-sm" />
+                          <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">{t('phoneInputLabel')}</label>
+                          <input id="phone" type="tel" name="phone" placeholder="+256 700 000 000"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-5">
+                        <div>
+                          <label htmlFor="company" className="block text-sm font-semibold text-gray-700 mb-2">{t('companyLabel')} *</label>
+                          <input id="company" type="text" name="company" required placeholder="Company Inc."
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
+                        </div>
+                        <div>
+                          <label htmlFor="jobTitle" className="block text-sm font-semibold text-gray-700 mb-2">{t('jobTitleLabel')}</label>
+                          <input id="jobTitle" type="text" name="jobTitle" placeholder="VP of Sales"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">{t('interestedInLabel')} *</label>
-                        <select name="interest" required
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all text-sm bg-white">
+                        <label htmlFor="interest" className="block text-sm font-semibold text-gray-700 mb-2">{t('interestedInLabel')} *</label>
+                        <select id="interest" name="interest" required
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm bg-white">
                           <option value="">Select an option...</option>
                           <option value="demo">Product Demo</option>
                           <option value="pricing">Pricing Information</option>
@@ -252,12 +215,12 @@ export function ContactPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">{t('messageLabel')} *</label>
-                        <textarea name="message" required rows={4} placeholder="Tell us how we can help..."
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0b5394] focus:border-transparent outline-none transition-all resize-none text-sm" />
+                        <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">{t('messageLabel')} *</label>
+                        <textarea id="message" name="message" required rows={4} placeholder="Tell us how we can help..."
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none text-sm" />
                       </div>
                       <button type="submit" disabled={sending}
-                        className="w-full py-4 bg-[#0b5394] text-white rounded-2xl font-bold hover:bg-[#032d60] transition-all hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base">
+                        className="w-full py-4 bg-[var(--color-primary)] text-white rounded-2xl font-bold hover:bg-[var(--color-secondary)] transition-all hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base">
                         {sending ? <><Loader2 className="w-5 h-5 animate-spin" /> Sending...</> : <><Send className="w-5 h-5" /> Send Message</>}
                       </button>
                     </form>

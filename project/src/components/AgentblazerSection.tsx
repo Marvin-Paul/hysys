@@ -12,7 +12,7 @@ export function AgentblazerSection() {
     <section className="py-14 sm:py-20 bg-white border-t border-gray-200">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#032d60] leading-tight mb-3 sm:mb-4">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight mb-3 sm:mb-4">
           Become an Agentblazer
         </h2>
         <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-xl mx-auto mb-7 sm:mb-8">
@@ -20,10 +20,10 @@ export function AgentblazerSection() {
         </p>
 
         <Link
-          to="/learning"
-          className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-[#0b5394] text-white rounded-lg font-bold text-sm hover:bg-[#032d60] transition-all hover:shadow-lg hover:-translate-y-0.5 mb-10 sm:mb-14"
+          to="/solutions"
+          className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-[var(--color-primary)] text-white rounded-lg font-bold text-sm hover:bg-[var(--color-secondary)] transition-all hover:shadow-lg hover:-translate-y-0.5 mb-10 sm:mb-14"
         >
-          Explore all Agentforce learning <ArrowRight className="w-4 h-4" />
+          Explore support and resources <ArrowRight className="w-4 h-4" />
         </Link>
 
         {/* badge cards — 3 cols on sm+, 1 col on xs */}
@@ -38,7 +38,7 @@ export function AgentblazerSection() {
                   <span className="text-[8px] sm:text-[9px] font-bold text-gray-500 uppercase tracking-widest">Agentblazer</span>
                 </div>
               </div>
-              <span className="text-sm font-semibold text-[#032d60]">{b.label}</span>
+              <span className="text-sm font-semibold text-[var(--color-secondary)]">{b.label}</span>
             </div>
           ))}
         </div>
