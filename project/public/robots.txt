@@ -1,0 +1,11 @@
+# Marmidon ERP — www.marmidon.com (Doc 4 §6.2)
+User-agent: *
+Allow: /
+
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /register
+Disallow: /project-status
+
+Sitemap: https://www.marmidon.com/sitemap.xml

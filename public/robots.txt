@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /project-status
+
+Sitemap: https://www.marmidon.com/sitemap.xml

@@ -1,85 +1,84 @@
-import {
-  useState, useEffect, useCallback,
-  createContext, useContext, type ReactNode,
-} from 'react';
-import { supabase } from '../lib/supabase';
-import { useAuth } from '../lib/auth';
+import { useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react';
+import { supabase, type SiteContent } from '../lib/db/supabase';
 
-// ── Types ────────────────────────────────────────────────────────────────────
-interface ContentMap { [key: string]: unknown }
+interface ContentMap {
+  [key: string]: unknown;
+}
+
 interface SectionCache {
-  [section: string]: { data: ContentMap; loaded: boolean; fetchedAt: number }
+  [section: string]: {
+    data: ContentMap;
+    loaded: boolean;
+  };
 }
 
 interface SiteContentContextType {
-  getContent:     (section: string, key: string, fallback?: string) => string;
-  getContentRaw:  (section: string, key: string) => unknown;
-  sectionLoaded:  (section: string) => boolean;
+  getContent: (section: string, key: string, fallback?: string) => string;
+  getContentAny: (section: string, keys: string[], fallback?: string) => string;
+  getContentRaw: (section: string, key: string) => unknown;
+  sectionLoaded: (section: string) => boolean;
   refreshSection: (section: string) => Promise<void>;
-  updateContent:  (section: string, key: string, value: unknown) => Promise<void>;
+  updateContent: (section: string, key: string, value: unknown) => Promise<void>;
   saveAllContent: (section: string, content: Record<string, unknown>) => Promise<void>;
-  getAllContent:   (section: string) => ContentMap;
+  getAllContent: (section: string) => ContentMap;
 }
 
 const SiteContentContext = createContext<SiteContentContextType | null>(null);
 
-// Cache TTL — only refetch if data is older than 5 minutes
-const CACHE_TTL_MS = 5 * 60 * 1000;
-
-// ── Provider ─────────────────────────────────────────────────────────────────
 export function SiteContentProvider({ children }: { children: ReactNode }) {
   const [cache, setCache] = useState<SectionCache>({});
-  const { user, role } = useAuth();
 
   const fetchSection = useCallback(async (section: string) => {
-    const existing = cache[section];
-    // Skip if already loaded and not stale
-    if (existing?.loaded && Date.now() - existing.fetchedAt < CACHE_TTL_MS) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('site_content')
-        .select('content_key, content_value')
-        .eq('section', section);
-
-      if (error) {
-        console.warn(`[useSiteContent] fetch failed for "${section}":`, error.message);
-        // Mark as loaded anyway so we don't keep hammering Supabase
-        setCache(prev => ({
-          ...prev,
-          [section]: { data: prev[section]?.data || {}, loaded: true, fetchedAt: Date.now() },
-        }));
-        return;
-      }
-
-      const map: ContentMap = {};
-      (data || []).forEach((row: any) => { map[row.content_key] = row.content_value; });
-
-      setCache(prev => ({
+    if (!supabase) {
+      setCache((prev) => ({
         ...prev,
-        [section]: { data: map, loaded: true, fetchedAt: Date.now() },
+        [section]: { data: {}, loaded: true },
       }));
-    } catch (e) {
-      console.warn(`[useSiteContent] unexpected error for "${section}":`, e);
+      return;
     }
-  }, [cache]);
+
+    const { data, error } = await supabase
+      .from('site_content')
+      .select('content_key, content_value')
+      .eq('section', section);
+
+    if (error) {
+      console.error(`Error fetching site content for "${section}":`, error);
+      return;
+    }
+
+    const map: ContentMap = {};
+    (data as Pick<SiteContent, 'content_key' | 'content_value'>[]).forEach((row) => {
+      map[row.content_key] = row.content_value;
+    });
+
+    setCache((prev) => ({
+      ...prev,
+      [section]: { data: map, loaded: true },
+    }));
+  }, []);
 
   const refreshSection = useCallback(async (section: string) => {
-    // Force refetch by resetting fetchedAt
-    setCache(prev => ({
-      ...prev,
-      [section]: { ...(prev[section] || { data: {}, loaded: false }), fetchedAt: 0 },
-    }));
     await fetchSection(section);
   }, [fetchSection]);
 
   const getContent = useCallback((section: string, key: string, fallback = ''): string => {
-    const val = cache[section]?.data[key];
+    const sectionData = cache[section];
+    if (!sectionData || !sectionData.loaded) return fallback;
+    const val = sectionData.data[key];
     if (typeof val === 'string') return val;
     if (typeof val === 'number' || typeof val === 'boolean') return String(val);
     if (Array.isArray(val) || (val && typeof val === 'object')) return JSON.stringify(val);
     return fallback;
   }, [cache]);
+
+  const getContentAny = useCallback((section: string, keys: string[], fallback = ''): string => {
+    for (const key of keys) {
+      const val = getContent(section, key, '');
+      if (val.trim()) return val;
+    }
+    return fallback;
+  }, [getContent]);
 
   const getContentRaw = useCallback((section: string, key: string): unknown => {
     return cache[section]?.data[key];
@@ -94,43 +93,63 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [cache]);
 
   const updateContent = useCallback(async (section: string, key: string, value: unknown) => {
-    if (role !== 'admin') return;
-    const { error } = await supabase.from('site_content').upsert(
-      { section, content_key: key, content_value: value, updated_by: user?.id },
-      { onConflict: 'section,content_key' }
-    );
-    if (error) throw error;
-    setCache(prev => ({
+    if (!supabase) {
+      throw new Error('Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
+    }
+    const { error } = await supabase
+      .from('site_content')
+      .upsert(
+        {
+          section,
+          content_key: key,
+          content_value: value,
+        },
+        { onConflict: 'section,content_key' }
+      );
+
+    if (error) {
+      console.error('Error updating site content:', error);
+      throw error;
+    }
+
+    setCache((prev) => ({
       ...prev,
       [section]: {
         loaded: prev[section]?.loaded ?? false,
-        fetchedAt: prev[section]?.fetchedAt ?? 0,
         data: { ...(prev[section]?.data || {}), [key]: value },
       },
     }));
-  }, [role, user]);
+  }, []);
 
   const saveAllContent = useCallback(async (section: string, content: Record<string, unknown>) => {
-    if (role !== 'admin') return;
+    if (!supabase) {
+      throw new Error('Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
+    }
+
     const upserts = Object.entries(content).map(([key, value]) => ({
-      section, content_key: key, content_value: value, updated_by: user?.id,
+      section,
+      content_key: key,
+      content_value: value,
     }));
-    const { error } = await supabase.from('site_content')
+
+    const { error } = await supabase
+      .from('site_content')
       .upsert(upserts, { onConflict: 'section,content_key' });
-    if (error) throw error;
-    setCache(prev => ({
+
+    if (error) {
+      console.error('Error saving site content:', error);
+      throw error;
+    }
+
+    setCache((prev) => ({
       ...prev,
-      [section]: {
-        loaded: true,
-        fetchedAt: Date.now(),
-        data: { ...(prev[section]?.data || {}), ...content },
-      },
+      [section]: { loaded: true, data: { ...(prev[section]?.data || {}), ...content } },
     }));
-  }, [role, user]);
+  }, []);
 
   return (
     <SiteContentContext.Provider value={{
-      getContent, getContentRaw, sectionLoaded, refreshSection,
+      getContent, getContentAny, getContentRaw, sectionLoaded, refreshSection,
       updateContent, saveAllContent, getAllContent,
     }}>
       {children}
@@ -138,30 +157,24 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// ── Per-section hook ─────────────────────────────────────────────────────────
 export function useSiteContent(section: string) {
   const ctx = useContext(SiteContentContext);
   if (!ctx) throw new Error('useSiteContent must be used within a SiteContentProvider');
 
   const { refreshSection } = ctx;
-
   useEffect(() => {
-    // Only fetch if not already cached — avoids hammering Supabase
     refreshSection(section);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [section]);
+  }, [section, refreshSection]);
 
   return {
-    getContent:     (key: string, fallback = '') => ctx.getContent(section, key, fallback),
-    getContentRaw:  (key: string) => ctx.getContentRaw(section, key),
-    loaded:         ctx.sectionLoaded(section),
-    refresh:        () => ctx.refreshSection(section),
-    updateContent:  (key: string, value: unknown) => ctx.updateContent(section, key, value),
+    getContent: (key: string, fallback = '') => ctx.getContent(section, key, fallback),
+    getContentAny: (keys: string[], fallback = '') => ctx.getContentAny(section, keys, fallback),
+    getContentRaw: (key: string) => ctx.getContentRaw(section, key),
+    loaded: ctx.sectionLoaded(section),
+    refresh: () => ctx.refreshSection(section),
+    updateContent: (key: string, value: unknown) => ctx.updateContent(section, key, value),
     saveAllContent: (content: Record<string, unknown>) => ctx.saveAllContent(section, content),
-    allContent:     ctx.getAllContent(section),
-    // Compatibility alias
-    getValue: (sectionAlias: string, key: string, fallback = '') =>
-      ctx.getContent(sectionAlias === section ? section : sectionAlias, key, fallback),
+    allContent: ctx.getAllContent(section),
   };
 }
 
