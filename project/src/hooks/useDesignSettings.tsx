@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/db/supabase';
 
 export interface DesignColors {
   primary: string;

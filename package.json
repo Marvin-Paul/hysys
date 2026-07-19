@@ -1,6 +1,12 @@
 {
-  "dependencies": {
-    "claude": "^0.1.1",
-    "morgan": "^1.11.0"
+  "name": "hysys",
+  "private": true,
+  "description": "HYSYS Global Solutions — monorepo root",
+  "scripts": {
+    "dev": "npm run dev --prefix project",
+    "build": "npm run build --prefix project",
+    "lint": "npm run lint --prefix project",
+    "typecheck": "npm run typecheck --prefix project",
+    "preview": "npm run preview --prefix project"
   }
 }

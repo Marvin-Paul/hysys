@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react';
-import { supabase, type SiteContent } from '../lib/supabase';
+import { supabase, type SiteContent } from '../lib/db/supabase';
 
 interface ContentMap {
   [key: string]: unknown;
@@ -14,6 +14,7 @@ interface SectionCache {
 
 interface SiteContentContextType {
   getContent: (section: string, key: string, fallback?: string) => string;
+  getContentAny: (section: string, keys: string[], fallback?: string) => string;
   getContentRaw: (section: string, key: string) => unknown;
   sectionLoaded: (section: string) => boolean;
   refreshSection: (section: string) => Promise<void>;
@@ -71,6 +72,14 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
     return fallback;
   }, [cache]);
 
+  const getContentAny = useCallback((section: string, keys: string[], fallback = ''): string => {
+    for (const key of keys) {
+      const val = getContent(section, key, '');
+      if (val.trim()) return val;
+    }
+    return fallback;
+  }, [getContent]);
+
   const getContentRaw = useCallback((section: string, key: string): unknown => {
     return cache[section]?.data[key];
   }, [cache]);
@@ -84,7 +93,9 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [cache]);
 
   const updateContent = useCallback(async (section: string, key: string, value: unknown) => {
-    if (!supabase) return;
+    if (!supabase) {
+      throw new Error('Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
+    }
     const { error } = await supabase
       .from('site_content')
       .upsert(
@@ -111,7 +122,9 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const saveAllContent = useCallback(async (section: string, content: Record<string, unknown>) => {
-    if (!supabase) return;
+    if (!supabase) {
+      throw new Error('Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
+    }
 
     const upserts = Object.entries(content).map(([key, value]) => ({
       section,
@@ -136,7 +149,7 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
 
   return (
     <SiteContentContext.Provider value={{
-      getContent, getContentRaw, sectionLoaded, refreshSection,
+      getContent, getContentAny, getContentRaw, sectionLoaded, refreshSection,
       updateContent, saveAllContent, getAllContent,
     }}>
       {children}
@@ -155,6 +168,7 @@ export function useSiteContent(section: string) {
 
   return {
     getContent: (key: string, fallback = '') => ctx.getContent(section, key, fallback),
+    getContentAny: (keys: string[], fallback = '') => ctx.getContentAny(section, keys, fallback),
     getContentRaw: (key: string) => ctx.getContentRaw(section, key),
     loaded: ctx.sectionLoaded(section),
     refresh: () => ctx.refreshSection(section),

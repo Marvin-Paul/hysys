@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/db/supabase';
 
 export interface ContentVersion {
   id: string;
@@ -48,7 +48,7 @@ export function usePublishing() {
       version_label: label || `v${Date.now()}`,
       status: 'published',
     });
-    if (error) { console.error('Publish version error:', error); return false; }
+    if (error) console.warn('Publish saved live content, but version history failed:', error.message);
     await loadVersions(section);
     return true;
   }, [loadVersions, writeSiteContent]);
@@ -63,7 +63,7 @@ export function usePublishing() {
       version_label: `Draft ${new Date().toLocaleString()}`,
       status: 'draft',
     });
-    if (error) { console.error('Draft version error:', error); return false; }
+    if (error) console.warn('Draft saved live content, but version history failed:', error.message);
     await loadVersions(section);
     return true;
   }, [loadVersions, writeSiteContent]);
