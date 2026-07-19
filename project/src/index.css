@@ -2229,11 +2229,18 @@ h5, h6 {
 }
 
 .site-nav__logo {
-  height: 3.5rem;
+  height: 2.5rem;
   width: auto;
-  max-width: 11rem;
+  max-width: 8rem;
   object-fit: contain;
   object-position: left center;
+}
+
+@media (min-width: 768px) {
+  .site-nav__logo {
+    height: 3.5rem;
+    max-width: 11rem;
+  }
 }
 
 /* Align legacy page offsets with fixed nav height */
