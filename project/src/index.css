@@ -449,7 +449,7 @@ h5, h6 {
 
 .site-footer__logo {
   display: block;
-  width: 5.5rem;
+  width: 7rem;
   height: auto;
   margin-bottom: 1.25rem;
   object-fit: contain;
@@ -2229,9 +2229,9 @@ h5, h6 {
 }
 
 .site-nav__logo {
-  height: 2.75rem;
+  height: 3rem;
   width: auto;
-  max-width: 8.5rem;
+  max-width: 9rem;
   object-fit: contain;
   object-position: left center;
 }
