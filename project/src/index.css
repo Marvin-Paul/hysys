@@ -2229,9 +2229,9 @@ h5, h6 {
 }
 
 .site-nav__logo {
-  height: 3rem;
+  height: 3.5rem;
   width: auto;
-  max-width: 9rem;
+  max-width: 11rem;
   object-fit: contain;
   object-position: left center;
 }
