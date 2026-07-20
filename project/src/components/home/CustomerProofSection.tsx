@@ -44,7 +44,7 @@ export function CustomerProofSection({ videoUrl: fallbackVideoUrl }: { videoUrl?
                 'Manufacturers, retailers, and service firms use Marmidon to cut manual work, improve stock accuracy, and close books faster. See how customers in your sector transformed operations.'
               )}
             </p>
-            <div className="flex flex-col xs:flex-row flex-wrap gap-3">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
               <Link
                 to="/customers"
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[var(--color-primary)] text-white rounded-lg font-semibold text-sm hover:bg-[var(--color-secondary)] transition-all hover:shadow-lg"

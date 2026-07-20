@@ -109,17 +109,22 @@ export function SiteFooter() {
               ))}
             </ul>
           </div>
+
+          <div>
+            <h4 className="site-footer__heading">{global.getContent('footer_col_legal', 'Legal')}</h4>
+            <ul className="site-footer__links">
+              <li><Link to="/legal/privacy" className="site-footer__link">{global.getContent('footer_privacy_label', 'Privacy')}</Link></li>
+              <li><Link to="/legal/terms" className="site-footer__link">{global.getContent('footer_terms_label', 'Terms')}</Link></li>
+              <li><Link to="/legal/cookies" className="site-footer__link">{global.getContent('footer_cookies_label', 'Cookies')}</Link></li>
+              <li><Link to="/legal/accessibility" className="site-footer__link">{global.getContent('footer_accessibility_label', 'Accessibility')}</Link></li>
+              <li><Link to="/sitemap" className="site-footer__link">{global.getContent('footer_sitemap_label', 'Sitemap')}</Link></li>
+            </ul>
+          </div>
         </div>
 
         <div className="site-footer__bar">
           <p className="site-footer__legal">{copyright}</p>
-          <nav className="site-footer__legal-links" aria-label="Legal">
-            <Link to="/legal/privacy" className="site-footer__legal-link">{global.getContent('footer_privacy_label', 'Privacy')}</Link>
-            <Link to="/legal/terms" className="site-footer__legal-link">{global.getContent('footer_terms_label', 'Terms')}</Link>
-            <Link to="/legal/cookies" className="site-footer__legal-link">{global.getContent('footer_cookies_label', 'Cookies')}</Link>
-            <Link to="/sitemap" className="site-footer__legal-link">{global.getContent('footer_sitemap_label', 'Sitemap')}</Link>
-            <Link to="/dashboard" title="Dashboard" className="site-footer__admin-dot" aria-label="Dashboard" />
-          </nav>
+          <Link to="/dashboard" title="Dashboard" className="site-footer__admin-dot" aria-label="Dashboard" />
         </div>
       </div>
     </footer>

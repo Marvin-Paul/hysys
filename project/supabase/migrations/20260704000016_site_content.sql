@@ -58,7 +58,7 @@ CREATE TRIGGER set_site_content_timestamp
 INSERT INTO public.site_content (section, content_key, content_value) VALUES
   -- Homepage
   ('homepage', 'hero_title', '"AI-Powered CRM That Transforms Your Business"'),
-  ('homepage', 'hero_subtitle', '"From lead management to customer success — HYSYS delivers enterprise-grade CRM with intelligent automation, real-time analytics, and seamless integrations."'),
+  ('homepage', 'hero_subtitle', '"From lead management to customer success — Marmidon delivers enterprise-grade ERP with intelligent automation, real-time analytics, and seamless integrations."'),
   ('homepage', 'hero_cta', '"Get Started Free"'),
   ('homepage', 'hero_cta_secondary', '"Watch Demo"'),
   ('homepage', 'stats_companies', '"150K+"'),
@@ -71,12 +71,12 @@ INSERT INTO public.site_content (section, content_key, content_value) VALUES
   ('homepage', 'stats_integrations_label', '"Integrations"'),
   
   -- About
-  ('about', 'hero_title', '"About HYSYS Global Solutions"'),
+  ('about', 'hero_title', '"About Marmidon Global Solutions"'),
   ('about', 'hero_desc', '"Empowering businesses with intelligent CRM solutions since 2010."'),
   ('about', 'mission_title', '"Our Mission"'),
   ('about', 'mission_text_1', '"To democratize enterprise-grade CRM technology, making it accessible and affordable for businesses of all sizes across the globe."'),
   ('about', 'mission_text_2', '"We believe every business deserves powerful tools to manage customer relationships, drive sales, and deliver exceptional service — without the complexity and cost of traditional enterprise software."'),
-  ('about', 'stats_badge', '"Companies trust HYSYS GLOBAL SOLUTIONS LIMITED"'),
+  ('about', 'stats_badge', '"Companies trust Marmidon Global Solutions Limited"'),
   ('about', 'values_title', '"Our Values"'),
   ('about', 'leadership_title', '"Leadership Team"'),
   ('about', 'journey_title', '"Our Journey"'),
@@ -86,9 +86,9 @@ INSERT INTO public.site_content (section, content_key, content_value) VALUES
   
   -- Products
   ('products', 'hero_title', '"Our Products"'),
-  ('products', 'hero_desc', '"Discover the full HYSYS ecosystem — from CRM fundamentals to AI-powered analytics."'),
+  ('products', 'hero_desc', '"Discover the full Marmidon ecosystem — from ERP fundamentals to AI-powered analytics."'),
   ('products', 'cta_title', '"Ready to Transform Your Business?"'),
-  ('products', 'cta_desc', '"Get started with HYSYS today and see why thousands of companies trust our platform."'),
+  ('products', 'cta_desc', '"Get started with Marmidon today and see why thousands of companies trust our platform."'),
   ('products', 'cta_button', '"Start Free Trial"'),
 
   -- Solutions
@@ -115,12 +115,12 @@ INSERT INTO public.site_content (section, content_key, content_value) VALUES
 
   -- Learning
   ('learning', 'hero_title', '"Learn & Grow"'),
-  ('learning', 'hero_desc', '"Master HYSYS with our comprehensive library of guides, tutorials, and best practices."'),
+  ('learning', 'hero_desc', '"Master Marmidon with our comprehensive library of guides, tutorials, and best practices."'),
 
   -- Customer Stories
   ('stories', 'hero_title', '"Customer Success Stories"'),
-  ('stories', 'hero_desc', '"See how businesses like yours achieve remarkable results with HYSYS."'),
+  ('stories', 'hero_desc', '"See how businesses like yours achieve remarkable results with Marmidon."'),
   ('stories', 'cta_title', '"Share Your Story"'),
-  ('stories', 'cta_desc', '"We love hearing from our customers. Share how HYSYS has helped your business grow."'),
+  ('stories', 'cta_desc', '"We love hearing from our customers. Share how Marmidon has helped your business grow."'),
   ('stories', 'cta_button', '"Submit Your Story"')
 ON CONFLICT (section, content_key) DO NOTHING;

@@ -46,6 +46,8 @@ const CookiesPage               = lazy(() => import('./pages/legal/CookiesPage')
 
 const TermsPage                 = lazy(() => import('./pages/legal/TermsPage').then(m => ({ default: m.TermsPage })));
 
+const AccessibilityPage        = lazy(() => import('./pages/legal/AccessibilityPage').then(m => ({ default: m.AccessibilityPage })));
+
 const LoginPage                 = lazy(() => import('./pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 
 const ContentManagerPage        = lazy(() => import('./pages/admin/ContentManagerPage').then(m => ({ default: m.ContentManagerPage })));
@@ -188,6 +190,7 @@ function App() {
               <Route path="/legal/privacy"             element={<PrivacyPage />} />
               <Route path="/legal/cookies"             element={<CookiesPage />} />
               <Route path="/legal/terms"               element={<TermsPage />} />
+              <Route path="/legal/accessibility"        element={<AccessibilityPage />} />
 
               <Route path="/project-status"             element={<ProjectStatusPage />} />
 

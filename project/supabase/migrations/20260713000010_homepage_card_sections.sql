@@ -1,4 +1,4 @@
--- Replace legacy Salesforce/HYSYS homepage card sections with Marmidon ERP content + images
+-- Replace legacy homepage card sections with Marmidon ERP content + images
 
 UPDATE site_content SET content_value = '"Featured proof from Marmidon customers"'::jsonb
 WHERE section = 'homepage' AND content_key = 'analyst_section_title';

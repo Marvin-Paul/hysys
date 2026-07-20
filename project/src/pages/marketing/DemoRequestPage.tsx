@@ -3,6 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { CalendarCheck, ArrowLeft, Send, CheckCircle, Loader2 } from 'lucide-react';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
+import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
+import { PrivacyConsent } from '../../components/ui/PrivacyConsent';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
@@ -10,6 +12,7 @@ import { useSiteContent } from '../../hooks/useSiteContent';
 import { MARMIDON_MODULES, MARMIDON_SECTORS, resolveModuleSlug, resolveSectorSlug } from '../../lib/marmidonCatalog';
 import { trackEvent } from '../../lib/analytics/track';
 import { submitLead } from '../../lib/forms/leadSubmission';
+import { useFieldValidation } from '../../lib/forms/validation';
 
 export function DemoRequestPage() {
   const [searchParams] = useSearchParams();
@@ -19,7 +22,9 @@ export function DemoRequestPage() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
+  const [consent, setConsent] = useState(false);
   const content = useSiteContent('demo_request');
+  const { errors, validate, markTouched, clearError, ariaProps, reset: resetValidation } = useFieldValidation();
 
   useEffect(() => {
     if (preModule && MARMIDON_MODULES.some((m) => m.slug === preModule)) {
@@ -35,19 +40,39 @@ export function DemoRequestPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSending(true);
     setError(null);
+    resetValidation();
     const form = e.currentTarget;
     const data = new FormData(form);
     const modules = selectedModules.length
       ? selectedModules
       : MARMIDON_MODULES.filter((m) => data.get(`module-${m.slug}`)).map((m) => m.slug);
 
+    const valid = validate({
+      firstName: { value: String(data.get('firstName') ?? ''), label: 'First name' },
+      lastName: { value: String(data.get('lastName') ?? ''), label: 'Last name' },
+      email: { value: String(data.get('email') ?? ''), label: 'Email' },
+      company: { value: String(data.get('company') ?? ''), label: 'Company name' },
+    });
+
+    if (!valid) {
+      setSending(false);
+      return;
+    }
+
     if (modules.length === 0) {
       setError('Please select at least one module of interest.');
       setSending(false);
       return;
     }
+
+    if (!consent) {
+      setError('Please agree to the privacy policy to continue.');
+      setSending(false);
+      return;
+    }
+
+    setSending(true);
 
     const sectorSlug = String(data.get('industry') ?? preSector ?? '');
     const message = String(data.get('message') ?? '').trim()
@@ -64,6 +89,8 @@ export function DemoRequestPage() {
       modulesInterest: modules,
       sectorSlug: sectorSlug || undefined,
       honeypot: String(data.get('website_url') ?? ''),
+      challenge: String(data.get('_challenge') ?? ''),
+      consent,
     });
 
     if (result.ok) {
@@ -113,23 +140,28 @@ export function DemoRequestPage() {
           )}
           <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'request_a_demo' })} className="relative space-y-6">
             <FormHoneypot />
+            <InvisibleChallenge />
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="firstName" className="form-label">{content.getContent('form_first_name_label', 'First name *')}</label>
-                <input id="firstName" name="firstName" required className="form-control" />
+                <input id="firstName" name="firstName" required className={`form-control${errors.firstName ? ' border-red-400' : ''}`} onBlur={() => markTouched('firstName')} onFocus={() => clearError('firstName')} {...ariaProps('firstName')} />
+                {errors.firstName && <p id="firstName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
               </div>
               <div>
                 <label htmlFor="lastName" className="form-label">{content.getContent('form_last_name_label', 'Last name *')}</label>
-                <input id="lastName" name="lastName" required className="form-control" />
+                <input id="lastName" name="lastName" required className={`form-control${errors.lastName ? ' border-red-400' : ''}`} onBlur={() => markTouched('lastName')} onFocus={() => clearError('lastName')} {...ariaProps('lastName')} />
+                {errors.lastName && <p id="lastName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
               </div>
             </div>
             <div>
               <label htmlFor="email" className="form-label">{content.getContent('form_email_label', 'Work email *')}</label>
-              <input id="email" name="email" type="email" required className="form-control" />
+              <input id="email" name="email" type="email" required className={`form-control${errors.email ? ' border-red-400' : ''}`} onBlur={() => markTouched('email')} onFocus={() => clearError('email')} {...ariaProps('email')} />
+              {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
             <div>
               <label htmlFor="company" className="form-label">{content.getContent('form_company_label', 'Company name *')}</label>
-              <input id="company" name="company" required className="form-control" />
+              <input id="company" name="company" required className={`form-control${errors.company ? ' border-red-400' : ''}`} onBlur={() => markTouched('company')} onFocus={() => clearError('company')} {...ariaProps('company')} />
+              {errors.company && <p id="company-error" role="alert" className="mt-1 text-sm text-red-600">{errors.company}</p>}
             </div>
             <div>
               <label htmlFor="phone" className="form-label">{content.getContent('form_phone_label', 'Phone number')}</label>
@@ -165,6 +197,7 @@ export function DemoRequestPage() {
               <label htmlFor="message" className="form-label">{content.getContent('form_message_label', 'Tell us about your needs')}</label>
               <textarea id="message" name="message" rows={4} className="form-control form-control--textarea" />
             </div>
+            <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
             <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
               {sending ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> {content.getContent('form_submitting_label', 'Submitting…')}</>

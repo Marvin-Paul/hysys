@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -46,6 +46,10 @@
   --marmidon-muted: #5A6470;
   --marmidon-hairline: #D5DBE2;
   --marmidon-surface: #E8F2FC;
+  --marmidon-success: #1F8A4C;
+  --marmidon-guidance: #C9851A;
+  --marmidon-alert: #C2412B;
+  --marmidon-highlight: #6A3FA0;
 
   /* Design system variables (managed via Site Content Manager) */
   --color-primary: #3588E4;
@@ -58,10 +62,14 @@
   --color-text: #1F2933;
   --color-text-muted: #5A6470;
   --color-border: #D5DBE2;
+  --color-success: #1F8A4C;
+  --color-guidance: #C9851A;
+  --color-alert: #C2412B;
+  --color-highlight: #6A3FA0;
 
-  --font-family: 'Inter', system-ui, sans-serif;
-  --font-display: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-family: 'Inter', 'Source Sans 3', system-ui, sans-serif;
+  --font-display: 'Inter', 'Source Sans 3', system-ui, sans-serif;
+  --font-body: 'Inter', 'Source Sans 3', system-ui, sans-serif;
 
   /* WDD §3.3 spacing scale (8px base) */
   --space-1: 4px;
@@ -91,6 +99,9 @@
   --font-size-h3: 24px;
   --font-size-h4: 20px;
   --font-size-body: 16px;
+  --font-size-body-lg: 20px;
+  --font-size-small: 14px;
+  --font-size-button: 15px;
   --font-weight-heading: 700;
   --font-weight-body: 400;
   --line-spacing: 1.6;
@@ -451,6 +462,7 @@ h5, h6 {
   display: block;
   width: 7rem;
   height: auto;
+  min-width: 110px;
   margin-bottom: 1.25rem;
   object-fit: contain;
 }
@@ -725,6 +737,32 @@ h5, h6 {
   transform: translateY(-1px);
 }
 
+.btn-marmidon:focus-visible,
+.site-nav__link:focus-visible,
+.site-nav__text-link:focus-visible,
+.site-nav__cta:focus-visible,
+.site-nav__menu-btn:focus-visible,
+.site-nav__icon-btn:focus-visible,
+.site-nav__search-close:focus-visible,
+.site-nav__drawer-close:focus-visible,
+.site-nav__drawer-cta:focus-visible,
+.site-nav__drawer-contact:focus-visible,
+.nav-mega-item:focus-visible,
+.nav-mobile-link:focus-visible,
+.site-footer__link:focus-visible,
+.site-footer__social-link:focus-visible,
+.site-footer__legal-link:focus-visible,
+.form-control:focus-visible,
+.skip-link:focus-visible {
+  outline: 2px solid var(--marmidon-interactive);
+  outline-offset: 2px;
+}
+
+.btn-marmidon--primary:focus-visible {
+  outline: 2px solid var(--marmidon-navy);
+  outline-offset: 2px;
+}
+
 .btn-marmidon--secondary {
   color: var(--marmidon-navy);
   background: transparent;
@@ -733,6 +771,34 @@ h5, h6 {
 
 .btn-marmidon--secondary:hover {
   background: rgba(30, 102, 196, 0.06);
+}
+
+.btn-marmidon--tertiary {
+  color: var(--marmidon-interactive);
+  background: transparent;
+  padding: 0;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+.btn-marmidon--tertiary::after {
+  content: '→';
+  transition: transform 0.18s ease-out;
+}
+
+.btn-marmidon--tertiary:hover::after {
+  transform: translateX(3px);
+}
+
+.btn-marmidon--tertiary:hover {
+  text-decoration: underline;
 }
 
 .section-pad {
@@ -1180,7 +1246,7 @@ h5, h6 {
   border: 1px solid rgba(15, 23, 42, 0.08);
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(10, 37, 64, 0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
 }
 
 .pro-card:hover {
@@ -2140,6 +2206,14 @@ h5, h6 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+  }
+
   .agent-badge__orbit,
   .agent-badge--delay-1,
   .agent-badge--delay-2,
@@ -2148,6 +2222,36 @@ h5, h6 {
   }
 
   .agent-badge:hover .agent-badge__shine {
+    transform: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale,
+  .stagger-children > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .site-nav__drawer {
+    animation: none;
+  }
+
+  .nav-mega-panel,
+  .nav-simple-panel,
+  .nav-lang-panel {
+    transition: opacity 0.15s;
+  }
+
+  .pro-card,
+  .pro-card:hover {
+    transition: none;
     transform: none;
   }
 }
@@ -2161,7 +2265,11 @@ h5, h6 {
   z-index: 50;
   height: var(--nav-height);
   overflow: visible;
-  transition: background 0.35s var(--ease-out-expo), border-color 0.35s, box-shadow 0.35s;
+  transition: background 0.35s var(--ease-out-expo), border-color 0.35s, box-shadow 0.35s, height 0.2s ease-out;
+}
+
+.site-nav--scrolled {
+  height: 56px;
 }
 
 .site-nav--solid {
@@ -2231,15 +2339,27 @@ h5, h6 {
 .site-nav__logo {
   height: 2.5rem;
   width: auto;
+  min-width: 110px;
   max-width: 8rem;
   object-fit: contain;
   object-position: left center;
+  transition: height 0.2s ease-out;
 }
 
 @media (min-width: 768px) {
   .site-nav__logo {
     height: 3.5rem;
     max-width: 11rem;
+  }
+}
+
+.site-nav--scrolled .site-nav__logo {
+  height: 2rem;
+}
+
+@media (min-width: 768px) {
+  .site-nav--scrolled .site-nav__logo {
+    height: 2.5rem;
   }
 }
 
@@ -3140,18 +3260,4 @@ h5, h6 {
   font-weight: 600;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
 
-  .site-nav__drawer {
-    animation: none;
-  }
-
-  .nav-mega-panel,
-  .nav-simple-panel,
-  .nav-lang-panel {
-    transition: opacity 0.15s;
-  }
-}

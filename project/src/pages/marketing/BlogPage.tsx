@@ -3,6 +3,7 @@ import { Newspaper, ArrowRight, CalendarDays, User } from 'lucide-react';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
+import { NewsletterSignup } from '../../components/ui/NewsletterSignup';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
@@ -75,6 +76,15 @@ export function BlogPage() {
               </ScrollReveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="pb-16 lg:pb-24">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <NewsletterSignup
+            title={content.getContent('newsletter_title', 'Stay informed')}
+            description={content.getContent('newsletter_desc', 'Get the latest ERP insights delivered to your inbox.')}
+          />
         </div>
       </section>
 

@@ -133,6 +133,10 @@ export const PAGE_META = {
     title: 'Cookie Statement | Marmidon Enterprise Software',
     description: 'How Marmidon uses cookies and how you can manage your preferences.',
   },
+  accessibility: {
+    title: 'Accessibility Statement | Marmidon Enterprise Software',
+    description: 'Marmidon is committed to WCAG 2.2 AA accessibility — features, known limitations, and how to report issues.',
+  },
 } as const;
 
 export function moduleSeoTitle(slug: string, fallbackTitle: string): string {

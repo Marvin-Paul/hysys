@@ -20,7 +20,7 @@ WHERE section = 'stories' AND content_key = 'customer_stories';
 UPDATE public.site_content
 SET content_value = '[
   {"name":"Alex Johnson","role":"CEO & Co-Founder","bio":"Former VP at leading tech companies with 20+ years experience building enterprise platforms.","image":"https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80"},
-  {"name":"Maria Chen","role":"Chief Technology Officer","bio":"Pioneered cloud infrastructure at major providers. Leads HYSYS engineering vision.","image":"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"},
+  {"name":"Maria Chen","role":"Chief Technology Officer","bio":"Pioneered cloud infrastructure at major providers. Leads Marmidon engineering vision.","image":"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"},
   {"name":"David Park","role":"Chief Financial Officer","bio":"Finance leader with deep SaaS expertise and a track record of scaling companies globally.","image":"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"},
   {"name":"Sarah Williams","role":"Chief Marketing Officer","bio":"Brand builder with global marketing experience across Africa and Europe.","image":"https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80"}
 ]'::jsonb

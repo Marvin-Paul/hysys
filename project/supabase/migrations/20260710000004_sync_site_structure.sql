@@ -37,11 +37,11 @@ WHERE section = 'events' AND content_key = 'pricingDesc';
 
 INSERT INTO public.site_content (section, content_key, content_value) VALUES
   ('events', 'eventsTitle', '"Events & Experiences"'::jsonb),
-  ('events', 'eventsDesc', '"Participate in live summits, workshops, and partner forums designed to help your organisation grow with HYSYS."'::jsonb),
+  ('events', 'eventsDesc', '"Participate in live summits, workshops, and partner forums designed to help your organisation grow with Marmidon."'::jsonb),
   ('events', 'events_section_title', '"Learn, network, and lead change"'::jsonb),
-  ('events', 'events_section_desc', '"Experience HYSYS events tailored for customers, partners, and IT teams who want to modernize faster."'::jsonb),
+  ('events', 'events_section_desc', '"Experience Marmidon events tailored for customers, partners, and IT teams who want to modernize faster."'::jsonb),
   ('events', 'events_list', '[
-    {"id":"summit","date":"June 12, 2026","title":"HYSYS Global Summit","description":"Join customers, partners, and product leaders for innovation sessions, hands-on workshops, and networking.","highlight":"Live keynotes + panel discussions"},
+    {"id":"summit","date":"June 12, 2026","title":"Marmidon Global Summit","description":"Join customers, partners, and product leaders for innovation sessions, hands-on workshops, and networking.","highlight":"Live keynotes + panel discussions"},
     {"id":"forum","date":"September 4, 2026","title":"Customer Success Forum","description":"Explore customer stories, best practices, and success strategies for CRM and AI-powered operations.","highlight":"Case study deep dives"},
     {"id":"workshop","date":"November 18, 2026","title":"Cloud Transformation Workshop","description":"Practical sessions for IT teams planning secure cloud migrations and scalable platform rollouts.","highlight":"Architecture and security workshops"}
   ]'::jsonb),
@@ -49,7 +49,7 @@ INSERT INTO public.site_content (section, content_key, content_value) VALUES
     {"question":"Who should attend?","answer":"IT leaders, operations teams, customer success managers, and anyone evaluating digital transformation solutions."},
     {"question":"How do I register?","answer":"Click the registration button or contact our team to reserve your place and ask about group registration."},
     {"question":"Can I attend remotely?","answer":"Yes — most events include virtual sessions, live Q&A, and on-demand recordings."},
-    {"question":"What will I learn?","answer":"You will learn how to use HYSYS to improve customer experience, automate workflows, and scale with confidence."}
+    {"question":"What will I learn?","answer":"You will learn how to use Marmidon to improve customer experience, automate workflows, and scale with confidence."}
   ]'::jsonb),
   ('events', 'cta_title', '"Reserve your seat"'::jsonb),
   ('events', 'cta_desc', '"Spaces are limited for our flagship events. Contact our team to register early."'::jsonb),
@@ -79,7 +79,7 @@ SET content_value = EXCLUDED.content_value,
 
 INSERT INTO public.site_content (section, content_key, content_value) VALUES
   ('documentation', 'hero_title', '"Product Documentation"'::jsonb),
-  ('documentation', 'hero_desc', '"Browse technical guides, setup instructions, and best practices for every HYSYS product."'::jsonb),
+  ('documentation', 'hero_desc', '"Browse technical guides, setup instructions, and best practices for every Marmidon product."'::jsonb),
   ('documentation', 'cta_title', '"Need help finding something?"'::jsonb),
   ('documentation', 'cta_desc', '"Our support team can provide detailed documentation and guided assistance."'::jsonb),
   ('documentation', 'cta_button', '"Contact Support"'::jsonb)

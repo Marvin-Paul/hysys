@@ -2,7 +2,7 @@
 
 INSERT INTO site_content (section, content_key, content_value) VALUES
   ('homepage', 'demo_experience_badge', '"Demo Experience"'::jsonb),
-  ('homepage', 'demo_title', '"See HYSYS in action"'::jsonb),
+  ('homepage', 'demo_title', '"See Marmidon in action"'::jsonb),
   ('homepage', 'demo_desc', '"Watch a concise product demo to understand how our CRM platform accelerates sales, service, and marketing across teams."'::jsonb),
   ('homepage', 'demo_what_youll_see', '"What you''ll see"'::jsonb),
   ('homepage', 'demo_cta_label', '"Start your free trial"'::jsonb),
@@ -22,7 +22,7 @@ INSERT INTO site_content (section, content_key, content_value) VALUES
   ('navigation', 'nav_signup_label', '"Sign up"'::jsonb),
   ('navigation', 'nav_search_placeholder', '"Search products, industries…"'::jsonb),
   ('navigation', 'nav_mobile_menu_title', '"Menu"'::jsonb),
-  ('navigation', 'nav_mobile_menu_subtitle', '"Explore HYSYS products & services"'::jsonb),
+  ('navigation', 'nav_mobile_menu_subtitle', '"Explore Marmidon products & services"'::jsonb),
   ('navigation', 'nav_mobile_search_placeholder', '"Search…"'::jsonb),
   ('navigation', 'nav_language_active_label', '"Active"'::jsonb),
   ('about', 'hero_badge_label', '"About Us"'::jsonb),
@@ -33,7 +33,7 @@ INSERT INTO site_content (section, content_key, content_value) VALUES
   ('about', 'values_badge', '"What We Stand For"'::jsonb),
   ('about', 'values_subtitle', '"The principles that guide everything we do."'::jsonb),
   ('about', 'leadership_badge', '"The Team"'::jsonb),
-  ('about', 'leadership_subtitle', '"World-class leaders driving HYSYS forward."'::jsonb),
+  ('about', 'leadership_subtitle', '"World-class leaders driving Marmidon forward."'::jsonb),
   ('about', 'journey_badge', '"Our Journey"'::jsonb),
   ('about', 'cta_secondary_button', '"Start Free Trial"'::jsonb),
   ('stories', 'stories_list_hero_cta_primary', '"Read Stories"'::jsonb),
@@ -45,7 +45,7 @@ INSERT INTO site_content (section, content_key, content_value) VALUES
   ('stories', 'detail_hero_primary_cta', '"Contact Sales"'::jsonb),
   ('stories', 'detail_hero_secondary_cta', '"View All Stories"'::jsonb),
   ('stories', 'detail_cta_title', '"Ready to write your success story?"'::jsonb),
-  ('stories', 'detail_cta_desc', '"Join 150,000+ businesses achieving remarkable results with HYSYS."'::jsonb),
+  ('stories', 'detail_cta_desc', '"Join 150,000+ businesses achieving remarkable results with Marmidon."'::jsonb),
   ('stories', 'detail_cta_primary', '"Start Free Trial"'::jsonb),
   ('stories', 'detail_cta_secondary', '"More Stories"'::jsonb)
 ON CONFLICT (section, content_key) DO UPDATE SET content_value = EXCLUDED.content_value;

@@ -66,10 +66,47 @@ const FORCE_UPDATES = {
     ...MARMIDON_PRODUCTS_OVERRIDES,
     products_list: productsListForCms(),
     products_grid_title: 'Eleven modules. One ERP platform.',
+    hero_desc: 'Discover the full Marmidon ecosystem — from ERP fundamentals to AI-powered analytics.',
+    cta_desc: 'Get started with Marmidon today and see why thousands of companies trust our platform.',
   },
   global: { ...MARMIDON_GLOBAL_OVERRIDES },
-  about: { ...MARMIDON_ABOUT_OVERRIDES },
-  stories: { ...MARMIDON_STORIES_OVERRIDES },
+  events: {
+    eventsDesc: 'Participate in live summits, workshops, and partner forums designed to help your organisation grow with Marmidon.',
+    events_section_title: 'Learn, network, and lead change',
+    events_section_desc: 'Experience Marmidon events tailored for customers, partners, and IT teams who want to modernize faster.',
+    events_highlights_title: 'Why attend Marmidon events?',
+    events_list: [
+      { id: 'summit', date: 'June 12, 2026', title: 'Marmidon Global Summit', description: 'Join customers, partners, and product leaders for innovation sessions, hands-on workshops, and networking.', highlight: 'Live keynotes + panel discussions' },
+      { id: 'forum', date: 'September 4, 2026', title: 'Customer Success Forum', description: 'Explore customer stories, best practices, and success strategies for ERP and AI-powered operations.', highlight: 'Case study deep dives' },
+      { id: 'workshop', date: 'November 18, 2026', title: 'Cloud Transformation Workshop', description: 'Practical sessions for IT teams planning secure cloud migrations and scalable platform rollouts.', highlight: 'Architecture and security workshops' },
+    ],
+    faqs: [
+      { question: 'Who should attend?', answer: 'IT leaders, operations teams, customer success managers, and anyone evaluating digital transformation solutions.' },
+      { question: 'How do I register?', answer: 'Click the registration button or contact our team to reserve your place and ask about group registration.' },
+      { question: 'Can I attend remotely?', answer: 'Yes — most events include virtual sessions, live Q&A, and on-demand recordings.' },
+      { question: 'What will I learn?', answer: 'You will learn how to use Marmidon to improve customer experience, automate workflows, and scale with confidence.' },
+    ],
+  },
+  documentation: {
+    hero_desc: 'Browse technical guides, setup instructions, and best practices for every Marmidon product.',
+    doc_categories: [
+      { id: 'getting-started', title: 'Getting Started', description: 'Quick-start guides, account setup, and first steps with Marmidon ERP.', iconName: 'Sparkles', articles: 'Platform overview, Creating your first account, Importing contacts, Setting up your pipeline' },
+      { id: 'products', title: 'Products', description: 'Documentation for Sales Cloud, Service Cloud, Marketing Cloud, and more.', iconName: 'FileText', articles: 'Sales Cloud user guide, Service Cloud case management, Marketing Cloud campaigns, Data Cloud setup' },
+      { id: 'administration', title: 'Administration', description: 'User management, security settings, and platform configuration.', iconName: 'BookOpen', articles: 'User roles and permissions, Security best practices, Custom fields and objects, Integration setup' },
+      { id: 'video-tutorials', title: 'Video Tutorials', description: 'Step-by-step video walkthroughs for common tasks and workflows.', iconName: 'Video', articles: 'Dashboard walkthrough, Building automations, Creating reports, Mobile app setup' },
+    ],
+  },
+  about: {
+    ...MARMIDON_ABOUT_OVERRIDES,
+    hero_title: 'About Marmidon Global Solutions',
+    stats_badge: 'Companies trust Marmidon Global Solutions Limited',
+  },
+  stories: {
+    ...MARMIDON_STORIES_OVERRIDES,
+    customerStoriesDesc: 'See how organizations worldwide transform with Marmidon.',
+    shareYourStoryDesc: 'Join thousands of companies achieving remarkable results with Marmidon.',
+    featured_section_desc: 'See how organisations like yours are achieving remarkable results with Marmidon.',
+  },
 };
 
 async function main() {

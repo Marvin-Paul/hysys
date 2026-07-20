@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Send, Sparkles, CheckCircle, Loader2 } from 'lucide-react';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
+import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
+import { PrivacyConsent } from '../../components/ui/PrivacyConsent';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
@@ -15,6 +17,7 @@ export function PartnerApplyPage() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +26,12 @@ export function PartnerApplyPage() {
     const form = e.currentTarget;
     const data = new FormData(form);
     const program = String(data.get('program'));
+
+    if (!consent) {
+      setError('Please agree to the privacy policy to continue.');
+      setSending(false);
+      return;
+    }
 
     const result = await submitLead({
       formType: 'partner',
@@ -34,6 +43,8 @@ export function PartnerApplyPage() {
       interest: program,
       message: String(data.get('message')),
       honeypot: String(data.get('website_url') ?? ''),
+      challenge: String(data.get('_challenge') ?? ''),
+      consent,
     });
 
     if (result.ok) {
@@ -83,6 +94,7 @@ export function PartnerApplyPage() {
           )}
           <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'partner_apply' })} className="relative space-y-6">
             <FormHoneypot />
+            <InvisibleChallenge />
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="firstName" className="form-label">{content.getContent('form_first_name_label', 'First name *')}</label>
@@ -119,6 +131,7 @@ export function PartnerApplyPage() {
               <label htmlFor="message" className="form-label">{content.getContent('form_message_label', 'Tell us about your business *')}</label>
               <textarea id="message" name="message" rows={4} required className="form-control form-control--textarea" />
             </div>
+            <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
             <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
               {sending ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> {content.getContent('form_submitting_label', 'Submitting…')}</>

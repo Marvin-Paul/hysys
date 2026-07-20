@@ -114,16 +114,16 @@ export interface DesignSettings {
 
 export const DEFAULT_DESIGN: DesignSettings = {
   colors: {
-    primary: '#0b5394',
-    secondary: '#032d60',
-    accent: '#00a3e0',
+    primary: '#3588E4',
+    secondary: '#0F2D5C',
+    accent: '#1E66C4',
     background: '#ffffff',
     card: '#f8fafc',
-    nav: '#032d60',
-    footer: '#032d60',
-    text: '#111827',
-    textMuted: '#6b7280',
-    border: '#e5e7eb',
+    nav: '#0F2D5C',
+    footer: '#0F2D5C',
+    text: '#1F2933',
+    textMuted: '#5A6470',
+    border: '#D5DBE2',
   },
   typography: {
     fontFamily: 'Inter, system-ui, sans-serif',

@@ -16,6 +16,7 @@ interface Submission {
   modules_interest?: string | null;
   sector_slug?: string | null;
   website?: string | null;
+  consent_given?: boolean;
   is_read: boolean;
   created_at: string;
 }
@@ -312,6 +313,16 @@ export function SubmissionsManager({ onUnreadChange }: { onUnreadChange?: (count
                     <div>
                       <label className="text-xs text-gray-500 uppercase tracking-wider">Job Title</label>
                       <p className="text-sm font-medium text-gray-900">{selected.job_title || '—'}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500 uppercase tracking-wider">Privacy Consent</label>
+                      <p className="text-sm font-medium text-gray-900">
+                        {selected.consent_given ? (
+                          <span className="text-green-600">Given</span>
+                        ) : (
+                          <span className="text-amber-600">Not given</span>
+                        )}
+                      </p>
                     </div>
                   </div>
 

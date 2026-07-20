@@ -3,6 +3,7 @@ import { BookOpen, MessageCircle, FileText, ArrowRight, Newspaper, type LucideIc
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
+import { NewsletterSignup } from '../../components/ui/NewsletterSignup';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
@@ -71,6 +72,17 @@ export function ResourcesPage() {
                 </ScrollReveal>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="pb-16 lg:pb-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-lg mx-auto">
+            <NewsletterSignup
+              title={content.getContent('newsletter_title', 'Stay informed')}
+              description={content.getContent('newsletter_desc', 'Get ERP insights and updates delivered to your inbox.')}
+            />
           </div>
         </div>
       </section>

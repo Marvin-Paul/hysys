@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Loader2, Sparkles, ArrowRight, CalendarCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
@@ -10,8 +10,11 @@ import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { trackEvent } from '../../lib/analytics/track';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
+import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
+import { PrivacyConsent } from '../../components/ui/PrivacyConsent';
 import { submitLead } from '../../lib/forms/leadSubmission';
 import { MARMIDON_MODULES, MARMIDON_SECTORS } from '../../lib/marmidonCatalog';
+import { useFieldValidation } from '../../lib/forms/validation';
 
 export function ContactPage() {
   const { t } = useTranslation();
@@ -19,11 +22,13 @@ export function ContactPage() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
+  const { errors, validate, markTouched, clearError, ariaProps, reset: resetValidation } = useFieldValidation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSending(true);
     setError(null);
+    resetValidation();
     const form = e.currentTarget;
     const data = new FormData(form);
     const firstName = String(data.get('firstName'));
@@ -34,6 +39,27 @@ export function ContactPage() {
     const jobTitle = String(data.get('jobTitle') ?? '');
     const interest = String(data.get('interest') ?? '');
     const message = String(data.get('message'));
+
+    const valid = validate({
+      firstName: { value: firstName, label: 'First name' },
+      lastName: { value: lastName, label: 'Last name' },
+      email: { value: email, label: 'Email' },
+      company: { value: company, label: 'Company name' },
+      message: { value: message, label: 'Message' },
+    });
+
+    if (!valid) {
+      setSending(false);
+      return;
+    }
+
+    if (!consent) {
+      setError('Please agree to the privacy policy to continue.');
+      setSending(false);
+      return;
+    }
+
+    setSending(true);
 
     const result = await submitLead({
       formType: 'contact',
@@ -46,6 +72,8 @@ export function ContactPage() {
       interest,
       message,
       honeypot: String(data.get('website_url') ?? ''),
+      challenge: String(data.get('_challenge') ?? ''),
+      consent,
     });
 
     if (result.ok) {
@@ -67,6 +95,19 @@ export function ContactPage() {
   const primaryPhone = phoneLines[0]?.replace(/[^\d+]/g, '') || '+256782602854';
   const email = content.getContent('email_address', 'info@marmidon.com');
   const addressLine = (content.getContent('office_address', '') || 'Plot 19 Sir Albert Cook Road, Mengo, Kampala').split('\n')[0];
+
+  const [showMap, setShowMap] = useState(false);
+  const [loadMap, setLoadMap] = useState(false);
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0]?.isIntersecting) { setLoadMap(true); observer.disconnect(); } },
+      { rootMargin: '200px' }
+    );
+    if (mapRef.current) observer.observe(mapRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="pt-16">
@@ -113,6 +154,41 @@ export function ContactPage() {
                 </div>
               </ScrollReveal>
             ))}
+          </div>
+
+          {/* Map — lazy-loaded, consent-aware (TSR-004 §8.1) */}
+          <div ref={mapRef} className="mb-16 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+            {loadMap ? (
+              showMap ? (
+                <iframe
+                  title="Marmidon office location"
+                  width="100%"
+                  height="320"
+                  className="w-full"
+                  loading="lazy"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.757098857833!2d32.577328!3d0.313630!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dbbb5b1b1b1b1%3A0x1b1b1b1b1b1b1b1b!2sPlot+19+Sir+Albert+Cook+Road%2C+Mengo%2C+Kampala!5e0!3m2!1sen!2sug!4v1"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-80 bg-slate-50 text-center p-8">
+                  <MapPin className="w-10 h-10 text-[var(--color-primary)] mb-3" />
+                  <p className="font-semibold text-slate-900 mb-1">Show office location</p>
+                  <p className="text-sm text-slate-500 mb-4">Loading the map may set cookies from Google.</p>
+                  <button
+                    onClick={() => setShowMap(true)}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-secondary)] transition-colors"
+                  >
+                    <MapPin className="w-4 h-4" /> Load map
+                  </button>
+                </div>
+              )
+            ) : (
+              <div className="h-80 bg-slate-50 animate-pulse flex items-center justify-center">
+                <MapPin className="w-8 h-8 text-slate-300" />
+              </div>
+            )}
           </div>
 
           <div id="contact-form" className="grid lg:grid-cols-5 gap-12">
@@ -178,7 +254,7 @@ export function ContactPage() {
                     </div>
                     <h3 className="text-2xl font-extrabold text-gray-900 mb-3">{content.getContent('success_title', 'Message Sent!')}</h3>
                     <p className="text-gray-500 max-w-sm mx-auto">{content.getContent('success_desc', 'Thank you for reaching out. Our team will get back to you within 24 hours.')}</p>
-                    <button onClick={() => setSent(false)} className="mt-6 px-6 py-3 bg-[var(--color-primary)] text-white rounded-xl font-semibold hover:bg-[var(--color-secondary)] transition-colors">
+                    <button onClick={() => { setSent(false); resetValidation(); }} className="mt-6 px-6 py-3 bg-[var(--color-primary)] text-white rounded-xl font-semibold hover:bg-[var(--color-secondary)] transition-colors">
                       {content.getContent('success_again_label', 'Send Another Message')}
                     </button>
                   </div>
@@ -193,23 +269,30 @@ export function ContactPage() {
                     )}
                     <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'contact' })} className="relative space-y-5">
                       <FormHoneypot />
+                      <InvisibleChallenge />
                       <div className="grid md:grid-cols-2 gap-5">
                         <div>
                           <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_first_name_label', `${t('firstNameLabel')} *`)}</label>
                           <input id="firstName" type="text" name="firstName" required placeholder="John"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
+                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.firstName ? ' border-red-400' : ' border-gray-200'}`}
+                            onBlur={() => markTouched('firstName')} onFocus={() => clearError('firstName')} {...ariaProps('firstName')} />
+                          {errors.firstName && <p id="firstName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
                         </div>
                         <div>
                           <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_last_name_label', `${t('lastNameLabel')} *`)}</label>
                           <input id="lastName" type="text" name="lastName" required placeholder="Doe"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
+                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.lastName ? ' border-red-400' : ' border-gray-200'}`}
+                            onBlur={() => markTouched('lastName')} onFocus={() => clearError('lastName')} {...ariaProps('lastName')} />
+                          {errors.lastName && <p id="lastName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
                         </div>
                       </div>
                       <div className="grid md:grid-cols-2 gap-5">
                         <div>
                           <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_email_label', `${t('workEmailLabel')} *`)}</label>
                           <input id="email" type="email" name="email" required placeholder="john@company.com"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
+                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.email ? ' border-red-400' : ' border-gray-200'}`}
+                            onBlur={() => markTouched('email')} onFocus={() => clearError('email')} {...ariaProps('email')} />
+                          {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email}</p>}
                         </div>
                         <div>
                           <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_phone_label', t('phoneInputLabel'))}</label>
@@ -221,7 +304,9 @@ export function ContactPage() {
                         <div>
                           <label htmlFor="company" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_company_label', `${t('companyLabel')} *`)}</label>
                           <input id="company" type="text" name="company" required placeholder="Company Inc."
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
+                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.company ? ' border-red-400' : ' border-gray-200'}`}
+                            onBlur={() => markTouched('company')} onFocus={() => clearError('company')} {...ariaProps('company')} />
+                          {errors.company && <p id="company-error" role="alert" className="mt-1 text-sm text-red-600">{errors.company}</p>}
                         </div>
                         <div>
                           <label htmlFor="jobTitle" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_job_title_label', t('jobTitleLabel'))}</label>
@@ -253,8 +338,11 @@ export function ContactPage() {
                       <div>
                         <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_message_label', `${t('messageLabel')} *`)}</label>
                         <textarea id="message" name="message" required rows={4} placeholder="Tell us how we can help..."
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none text-sm" />
+                          className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none text-sm${errors.message ? ' border-red-400' : ' border-gray-200'}`}
+                          onBlur={() => markTouched('message')} onFocus={() => clearError('message')} {...ariaProps('message')} />
+                        {errors.message && <p id="message-error" role="alert" className="mt-1 text-sm text-red-600">{errors.message}</p>}
                       </div>
+                      <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
                       <button type="submit" disabled={sending}
                         className="w-full py-4 bg-[var(--color-primary)] text-white rounded-2xl font-bold hover:bg-[var(--color-secondary)] transition-all hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base">
                         {sending ? <><Loader2 className="w-5 h-5 animate-spin" /> {content.getContent('form_submitting_label', 'Sending...')}</> : <><Send className="w-5 h-5" /> {content.getContent('form_submit_label', 'Send Message')}</>}

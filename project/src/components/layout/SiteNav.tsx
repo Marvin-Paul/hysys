@@ -537,7 +537,7 @@ export function SiteNav() {
 
     <header
 
-      className={`site-nav ${isHeroNav ? 'site-nav--hero' : 'site-nav--solid'}`}
+      className={`site-nav ${isHeroNav ? 'site-nav--hero' : 'site-nav--solid'} ${isScrolled && !isHeroNav ? 'site-nav--scrolled' : ''}`}
 
     >
 

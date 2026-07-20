@@ -1,8 +1,8 @@
 -- Product polish labels for CMS Content Manager
 
 INSERT INTO site_content (section, content_key, content_value) VALUES
-  ('global', 'page_eyebrow', '"HYSYS GLOBAL SOLUTIONS LIMITED"'::jsonb),
-  ('global', 'page_subtitle_suffix', '"by HYSYS"'::jsonb),
+  ('global', 'page_eyebrow', '"Marmidon Global Solutions Limited"'::jsonb),
+  ('global', 'page_subtitle_suffix', '"by Marmidon"'::jsonb),
   ('global', 'card_footer_label', '"Learn more"'::jsonb),
   ('products', 'products_hero_cta_primary', '"Start Free Trial"'::jsonb),
   ('products', 'products_hero_cta_secondary', '"Contact Sales"'::jsonb),

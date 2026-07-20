@@ -17,6 +17,8 @@ export interface LeadSubmissionPayload {
   sectorSlug?: string;
   website?: string;
   honeypot?: string;
+  challenge?: string;
+  consent?: boolean;
 }
 
 const FORM_SUBMIT_EMAIL = 'info@marmidon.com';
@@ -30,8 +32,19 @@ const ANALYTICS_BY_FORM: Record<LeadFormType, AnalyticsEvent> = {
 export async function submitLead(
   payload: LeadSubmissionPayload
 ): Promise<{ ok: boolean; error?: string }> {
+  // Honeypot check (FR-CONV-03)
   if (payload.honeypot?.trim()) {
     return { ok: true };
+  }
+
+  // Timing challenge check (TSR-004 §5.3, §8.1)
+  if (payload.challenge !== 'verified') {
+    return { ok: true };
+  }
+
+  // Consent check (CPM-005 §7.4, TSR-004 §8)
+  if (!payload.consent) {
+    return { ok: false, error: 'You must agree to the privacy policy to submit this form.' };
   }
 
   const subjectByType: Record<LeadFormType, string> = {
@@ -72,6 +85,7 @@ export async function submitLead(
     modules_interest: payload.modulesInterest?.length ? payload.modulesInterest.join(', ') : null,
     sector_slug: payload.sectorSlug ?? null,
     website: payload.website ?? null,
+    consent_given: payload.consent ?? false,
   });
 
   if (dbError) {
@@ -79,10 +93,30 @@ export async function submitLead(
     return { ok: false, error: `Failed to save your request. Please email us at ${FORM_SUBMIT_EMAIL}.` };
   }
 
-  // Email notification is best-effort; admin inbox is Supabase submissions.
+  // Admin email notification via formsubmit.co
   fetch(`https://formsubmit.co/${FORM_SUBMIT_EMAIL}`, {
     method: 'POST',
     body: formBody,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  }).catch(() => {
+    /* non-blocking */
+  });
+
+  // Autoresponder — confirmation email to the user (TSR-004 §8.1)
+  const autoBody = new URLSearchParams({
+    _subject: `Thank you for contacting Marmidon`,
+    _autoresponse: `Hello ${payload.firstName},\n\nThank you for reaching out to Marmidon Enterprise Software.\n\n${
+      payload.formType === 'demo'
+        ? 'We have received your demo request. A member of our team will contact you within 24 hours to schedule a personalised demonstration tailored to your modules and industry.'
+        : 'We have received your message. Our team will get back to you within one business day.'
+    }\n\nIn the meantime, feel free to explore our resources at https://www.marmidon.com/resources\n\nBest regards,\nThe Marmidon Team`,
+    email: payload.email,
+    name: `${payload.firstName} ${payload.lastName}`.trim(),
+  });
+
+  fetch(`https://formsubmit.co/${FORM_SUBMIT_EMAIL}`, {
+    method: 'POST',
+    body: autoBody,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   }).catch(() => {
     /* non-blocking */

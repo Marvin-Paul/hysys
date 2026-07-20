@@ -37,7 +37,7 @@ export function CoreValuesSection() {
               {title}
             </h2>
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8">{desc}</p>
-            <div className="flex flex-col xs:flex-row flex-wrap gap-3">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
               <Link
                 to="/about"
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[var(--color-primary)] text-white rounded-lg font-semibold text-sm hover:bg-[var(--color-secondary)] transition-all hover:shadow-lg"
