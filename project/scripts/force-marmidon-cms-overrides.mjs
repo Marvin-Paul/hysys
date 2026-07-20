@@ -1,6 +1,6 @@
 /**
  * Force-overwrites Marmidon ERP CMS keys (ignores existing values).
- * Use when Supabase still has legacy CRM/HYSYS copy from before the ERP migration.
+ * Use when Supabase still has legacy CRM/Marmidon copy from before the ERP migration.
  *
  * Usage (from project/):
  *   node scripts/force-marmidon-cms-overrides.mjs
@@ -112,3 +112,4 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+

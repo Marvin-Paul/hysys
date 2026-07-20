@@ -85,3 +85,4 @@ ${urls.map((path) => `  <url>
 
 writeFileSync(resolve(__dirname, '../public/sitemap.xml'), xml, 'utf8');
 console.log(`Wrote ${urls.length} URLs to public/sitemap.xml`);
+

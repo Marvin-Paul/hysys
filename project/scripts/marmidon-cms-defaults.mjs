@@ -334,7 +334,7 @@ export const MARMIDON_STORIES_OVERRIDES = {
   detail_cta_primary: 'Request a Demo',
 };
 
-/** Full backfill defaults — Marmidon ERP only (no legacy HYSYS/CRM copy). */
+/** Full backfill defaults — Marmidon ERP only (no legacy Marmidon/CRM copy). */
 export function buildMarmidonTextDefaults() {
   return {
     homepage: {
@@ -389,3 +389,4 @@ export function buildMarmidonTextDefaults() {
     stories: { ...MARMIDON_STORIES_OVERRIDES },
   };
 }
+

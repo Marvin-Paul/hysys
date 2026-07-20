@@ -50,14 +50,14 @@ const REMOVED_KEYS = [
 
 const UPSERTS = [
   { section: 'events', content_key: 'eventsTitle', content_value: 'Events & Experiences' },
-  { section: 'events', content_key: 'eventsDesc', content_value: 'Participate in live summits, workshops, and partner forums designed to help your organisation grow with HYSYS.' },
+  { section: 'events', content_key: 'eventsDesc', content_value: 'Participate in live summits, workshops, and partner forums designed to help your organisation grow with Marmidon.' },
   { section: 'events', content_key: 'events_section_title', content_value: 'Learn, network, and lead change' },
-  { section: 'events', content_key: 'events_section_desc', content_value: 'Experience HYSYS events tailored for customers, partners, and IT teams who want to modernize faster.' },
+  { section: 'events', content_key: 'events_section_desc', content_value: 'Experience Marmidon events tailored for customers, partners, and IT teams who want to modernize faster.' },
   {
     section: 'events',
     content_key: 'events_list',
     content_value: [
-      { id: 'summit', date: 'June 12, 2026', title: 'HYSYS Global Summit', description: 'Join customers, partners, and product leaders for innovation sessions, hands-on workshops, and networking.', highlight: 'Live keynotes + panel discussions' },
+      { id: 'summit', date: 'June 12, 2026', title: 'Marmidon Global Summit', description: 'Join customers, partners, and product leaders for innovation sessions, hands-on workshops, and networking.', highlight: 'Live keynotes + panel discussions' },
       { id: 'forum', date: 'September 4, 2026', title: 'Customer Success Forum', description: 'Explore customer stories, best practices, and success strategies for CRM and AI-powered operations.', highlight: 'Case study deep dives' },
       { id: 'workshop', date: 'November 18, 2026', title: 'Cloud Transformation Workshop', description: 'Practical sessions for IT teams planning secure cloud migrations and scalable platform rollouts.', highlight: 'Architecture and security workshops' },
     ],
@@ -69,7 +69,7 @@ const UPSERTS = [
       { question: 'Who should attend?', answer: 'IT leaders, operations teams, customer success managers, and anyone evaluating digital transformation solutions.' },
       { question: 'How do I register?', answer: 'Click the registration button or contact our team to reserve your place and ask about group registration.' },
       { question: 'Can I attend remotely?', answer: 'Yes — most events include virtual sessions, live Q&A, and on-demand recordings.' },
-      { question: 'What will I learn?', answer: 'You will learn how to use HYSYS to improve customer experience, automate workflows, and scale with confidence.' },
+      { question: 'What will I learn?', answer: 'You will learn how to use Marmidon to improve customer experience, automate workflows, and scale with confidence.' },
     ],
   },
   { section: 'events', content_key: 'cta_title', content_value: 'Reserve your seat' },
@@ -82,19 +82,19 @@ const UPSERTS = [
   { section: 'contact', content_key: 'getInTouch', content_value: 'Get in Touch' },
   { section: 'contact', content_key: 'sendUsMessage', content_value: 'Send Us a Message' },
   { section: 'contact', content_key: 'phone_numbers', content_value: '0782-602854\n0752-602857\n0757-602854\nMon–Fri 8am–6pm EAT' },
-  { section: 'contact', content_key: 'email_address', content_value: 'info@hysysglobal.com' },
+  { section: 'contact', content_key: 'email_address', content_value: 'info@Marmidonglobal.com' },
   { section: 'contact', content_key: 'office_address', content_value: "Plot 19 Sir Albert Cook Road, Mengo — Kampala\nP.O. Box 16435 K'la" },
   { section: 'contact', content_key: 'business_hours', content_value: 'Mon–Fri: 8:00 AM – 6:00 PM EAT\nSat: 9:00 AM – 1:00 PM EAT' },
   { section: 'documentation', content_key: 'hero_title', content_value: 'Product Documentation' },
-  { section: 'documentation', content_key: 'hero_desc', content_value: 'Browse technical guides, setup instructions, and best practices for every HYSYS product.' },
+  { section: 'documentation', content_key: 'hero_desc', content_value: 'Browse technical guides, setup instructions, and best practices for every Marmidon product.' },
   { section: 'documentation', content_key: 'cta_title', content_value: 'Need help finding something?' },
   { section: 'documentation', content_key: 'cta_desc', content_value: 'Our support team can provide detailed documentation and guided assistance.' },
   { section: 'documentation', content_key: 'cta_button', content_value: 'Contact Support' },
   { section: 'global', content_key: 'footer_tagline', content_value: 'Empowering businesses with intelligent CRM solutions.' },
-  { section: 'global', content_key: 'support_email', content_value: 'support@hysysglobal.com' },
+  { section: 'global', content_key: 'support_email', content_value: 'support@Marmidonglobal.com' },
   { section: 'global', content_key: 'support_phone', content_value: '0782-602854' },
   { section: 'stories', content_key: 'featured_section_title', content_value: 'Trusted by industry leaders' },
-  { section: 'stories', content_key: 'featured_section_desc', content_value: 'See how organisations like yours are achieving remarkable results with HYSYS.' },
+  { section: 'stories', content_key: 'featured_section_desc', content_value: 'See how organisations like yours are achieving remarkable results with Marmidon.' },
   {
     section: 'stories',
     content_key: 'stories_stats',
@@ -110,7 +110,7 @@ const UPSERTS = [
   { section: 'contact', content_key: 'trial_title', content_value: 'Free 14-Day Trial' },
   { section: 'contact', content_key: 'trial_desc', content_value: 'No credit card needed. Full platform access from day one.' },
   { section: 'contact', content_key: 'trial_button', content_value: 'Get Started' },
-  { section: 'events', content_key: 'events_highlights_title', content_value: 'Why attend HYSYS events?' },
+  { section: 'events', content_key: 'events_highlights_title', content_value: 'Why attend Marmidon events?' },
   { section: 'events', content_key: 'faq_section_title', content_value: 'Everything you need to know' },
   {
     section: 'events',
@@ -132,17 +132,17 @@ const UPSERTS = [
     section: 'documentation',
     content_key: 'doc_categories',
     content_value: [
-      { id: 'getting-started', title: 'Getting Started', description: 'Quick-start guides, account setup, and first steps with HYSYS CRM.', iconName: 'Sparkles', articles: 'Platform overview, Creating your first account, Importing contacts, Setting up your pipeline' },
+      { id: 'getting-started', title: 'Getting Started', description: 'Quick-start guides, account setup, and first steps with Marmidon CRM.', iconName: 'Sparkles', articles: 'Platform overview, Creating your first account, Importing contacts, Setting up your pipeline' },
       { id: 'products', title: 'Products', description: 'Documentation for Sales Cloud, Service Cloud, Marketing Cloud, and more.', iconName: 'FileText', articles: 'Sales Cloud user guide, Service Cloud case management, Marketing Cloud campaigns, Data Cloud setup' },
       { id: 'administration', title: 'Administration', description: 'User management, security settings, and platform configuration.', iconName: 'BookOpen', articles: 'User roles and permissions, Security best practices, Custom fields and objects, Integration setup' },
       { id: 'video-tutorials', title: 'Video Tutorials', description: 'Step-by-step video walkthroughs for common tasks and workflows.', iconName: 'Video', articles: 'Dashboard walkthrough, Building automations, Creating reports, Mobile app setup' },
     ],
   },
   { section: 'products', content_key: 'cta_title', content_value: 'Ready to get started?' },
-  { section: 'products', content_key: 'cta_desc', content_value: 'Try any HYSYS product free for 14 days. No credit card required.' },
+  { section: 'products', content_key: 'cta_desc', content_value: 'Try any Marmidon product free for 14 days. No credit card required.' },
   { section: 'products', content_key: 'cta_button', content_value: 'Start Free Trial' },
   { section: 'industries', content_key: 'cta_title', content_value: "Don't see your industry?" },
-  { section: 'industries', content_key: 'cta_desc', content_value: 'HYSYS adapts to any sector. Talk to our team for a custom solution.' },
+  { section: 'industries', content_key: 'cta_desc', content_value: 'Marmidon adapts to any sector. Talk to our team for a custom solution.' },
   { section: 'industries', content_key: 'cta_button', content_value: 'Contact Sales' },
 ];
 
@@ -212,3 +212,4 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+

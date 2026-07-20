@@ -22,3 +22,4 @@ const sql = [
 
 writeFileSync(resolve(__dirname, '../supabase/migrations/20260713000007_fix_marmidon_module_cards.sql'), sql);
 console.log('Wrote 20260713000007_fix_marmidon_module_cards.sql');
+
