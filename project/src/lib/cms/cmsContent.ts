@@ -77,7 +77,7 @@ export function pickCmsField(value: unknown, fallback: string): string {
 }
 
 const LEGACY_HOMEPAGE_COPY =
-  /HYSYS|Salesforce|Agentic AI|Dreamforce|Trailblazer|AppExchange|Gartner|Forrester|Agentforce|Magic Quadrant|DIY approach|greatest platform for change|Take the pledge/i;
+  /SALESFORCE|Agentic AI|Dreamforce|Trailblazer|AppExchange|Gartner|Forrester|Agentforce|Magic Quadrant|DIY approach|greatest platform for change|Take the pledge/i;
 
 /** Ignore legacy Salesforce/HYSYS homepage copy stored in CMS. */
 export function pickMarmidonHomepageText(value: unknown, fallback: string): string {
