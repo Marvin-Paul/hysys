@@ -42,6 +42,9 @@ export function IndustriesSection() {
   const cardLinkLabel = content.getContent('homepage_industries_link_label', 'Learn more');
   const exploreCta = content.getContent('homepage_industries_cta', 'Explore all solutions');
 
+  const displayedSectors = sectors.slice(0, 4);
+  const hiddenSectors = sectors.slice(4);
+
   return (
     <section className="py-14 sm:py-20 bg-white border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,8 +57,8 @@ export function IndustriesSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 mb-10 sm:mb-12">
-          {sectors.map((sector: { id: string; title: string; description: string; link?: string; iconName?: string; image?: string }) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-10 sm:mb-12">
+          {displayedSectors.map((sector: { id: string; title: string; description: string; link?: string; iconName?: string; image?: string }) => (
             <SectorCard
               key={sector.id}
               id={sector.id}
@@ -65,6 +68,20 @@ export function IndustriesSection() {
               image={sector.image}
               icon={iconsById[sector.id] ?? iconsById[MARMIDON_SECTORS[0]?.slug ?? 'manufacturing']}
               linkLabel={cardLinkLabel}
+            />
+          ))}
+          {/* Remaining sector cards are preserved below for future use */}
+          {hiddenSectors.map((sector: { id: string; title: string; description: string; link?: string; iconName?: string; image?: string }) => (
+            <SectorCard
+              key={sector.id}
+              id={sector.id}
+              title={sector.title}
+              description={sector.description}
+              link={sector.link || `/solutions/${sector.id}`}
+              image={sector.image}
+              icon={iconsById[sector.id] ?? iconsById[MARMIDON_SECTORS[0]?.slug ?? 'manufacturing']}
+              linkLabel={cardLinkLabel}
+              className="hidden"
             />
           ))}
         </div>

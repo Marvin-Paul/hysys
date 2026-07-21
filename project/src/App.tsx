@@ -30,6 +30,8 @@ const ContactPage               = lazy(() => import('./pages/marketing/ContactPa
 
 const EventsPage                = lazy(() => import('./pages/marketing/EventsPage').then(m => ({ default: m.EventsPage })));
 
+const FeatureCardsPage          = lazy(() => import('./pages/marketing/FeatureCardsPage').then(m => ({ default: m.default })));
+
 const SearchResultsPage         = lazy(() => import('./pages/marketing/SearchResultsPage').then(m => ({ default: m.SearchResultsPage })));
 
 const DocumentationPage         = lazy(() => import('./pages/marketing/DocumentationPage').then(m => ({ default: m.DocumentationPage })));
@@ -190,6 +192,8 @@ function App() {
               <Route path="/customers/:storyId"        element={<CustomerStoryDetailPage />} />
 
               <Route path="/events"                     element={<EventsPage />} />
+
+              <Route path="/feature-cards"               element={<FeatureCardsPage />} />
 
               <Route path="/pricing"                    element={<PricingPage />} />
 

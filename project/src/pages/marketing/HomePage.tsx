@@ -25,17 +25,14 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
-import { CustomerStoriesSection } from '../../components/home/CustomerStoriesSection';
 import { FAQSection } from '../../components/home/FAQSection';
 import { PlatformArchitecture } from '../../components/home/PlatformArchitecture';
 import { AIForBusinessSection } from '../../components/home/AIForBusinessSection';
-import { CustomerProofSection } from '../../components/home/CustomerProofSection';
 import { IndustriesSection } from '../../components/home/IndustriesSection';
 import { AnalystReportSection } from '../../components/home/AnalystReportSection';
-import { AgentblazerSection } from '../../components/home/AgentblazerSection';
 import { CoreValuesSection } from '../../components/home/CoreValuesSection';
+import TestimonialsSection from './TestimonialsSection';
 import { AISuccessSection } from '../../components/home/AISuccessSection';
-import { GetStartedSection } from '../../components/home/GetStartedSection';
 import { ResourcesTeaser } from '../../components/home/ResourcesTeaser';
 import { FeaturesSection } from '../../components/home/FeaturesSection';
 import { useTranslation } from '../../lib/i18n';
@@ -169,7 +166,7 @@ export function HomePage() {
         fullTitle
       />
       {/* ── Premium Hero ── */}
-      <section className="relative min-h-screen overflow-hidden">
+      <section className="relative min-h-[60vh] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
@@ -214,10 +211,10 @@ export function HomePage() {
           />
         ))}
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-20 min-h-screen flex items-center justify-center">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-10 sm:pb-14 flex items-center justify-center">
           <div ref={heroRef} className={`text-white text-center transition-all duration-1000 w-full ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
 
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-3 sm:mb-4">
               <span className="type-badge type-badge--hero">
                 <Sparkles className="w-4 h-4 text-cyan-300" />
                 {t('homeSectionBadge')}
@@ -238,12 +235,12 @@ export function HomePage() {
 
             <div className="type-divider" />
 
-            <p className="type-hero-lead mb-10">
+            <p className="type-hero-lead mb-5 sm:mb-6">
               {effectiveCmsText(content.getContentRaw('hero_desc'), 'homepage', 'hero_desc', t('heroDescription'))}
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6 sm:mb-8">
               <Link
                 to="/request-a-demo"
                 className="group relative inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold text-base overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
@@ -264,7 +261,7 @@ export function HomePage() {
             </div>
 
             {/* Trust micro-badges */}
-            <div className="flex flex-wrap justify-center gap-6 mb-12">
+            <div className="flex flex-wrap justify-center gap-6 mb-4 sm:mb-6">
               {resolvedTrustBadges.map((b: any) => (
                 <div key={b.id ?? b.text} className="flex items-center gap-2 text-white/50 text-sm">
                   <span>{b.icon}</span>
@@ -275,7 +272,7 @@ export function HomePage() {
 
             {/* Trusted brands */}
             <div>
-              <p className="type-label mb-5">{content.getContent('trusted_by_label', t('trustedBy'))}</p>
+                <p className="type-label mb-3">{content.getContent('trusted_by_label', t('trustedBy'))}</p>
               <div className="overflow-hidden">
                 <div className="flex gap-10 animate-marquee hover:pause justify-center">
                   {resolvedTrustedBrands.map((brand, i) => (
@@ -418,7 +415,7 @@ export function HomePage() {
               </div>
             </ScrollReveal>
             <div className={`pro-card-grid stagger-children ${productsVisible ? 'visible' : ''}`}>
-              {resolvedProductCards.map((card) => (
+              {resolvedProductCards.slice(0, 4).map((card) => (
                 <ContentCard
                   key={card.id || card.titleKey}
                   to={card.link}
@@ -436,29 +433,23 @@ export function HomePage() {
         </div>
       </section>
 
-      <FeaturesSection />
-
       <PlatformArchitecture />
 
-      <CustomerStoriesSection />
+      <TestimonialsSection />
 
       <AIForBusinessSection videoUrl={videoUrl} />
-
-      <CustomerProofSection videoUrl={videoUrl} />
 
       <IndustriesSection />
 
       <AnalystReportSection />
 
-      <AgentblazerSection />
-
       <CoreValuesSection />
 
       <AISuccessSection />
 
-      <GetStartedSection />
-
       <ResourcesTeaser />
+
+      <FeaturesSection />
 
       <FAQSection />
     </>

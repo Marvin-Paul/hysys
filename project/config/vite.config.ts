@@ -62,6 +62,11 @@ function devActivityLogger(): Plugin {
 
 export default defineConfig({
   plugins: [react(), devActivityLogger()],
+  resolve: {
+    alias: {
+      '@': path.resolve(root, 'src'),
+    },
+  },
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
