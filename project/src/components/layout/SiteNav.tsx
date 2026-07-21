@@ -501,11 +501,18 @@ export function SiteNav() {
             ))}
             <aside className="nav-mega-promo">
               <p className="nav-mega-promo__eyebrow">Get started</p>
-              <h3 className="nav-mega-promo__title">See Marmidon live</h3>
-              <p className="nav-mega-promo__desc">Book a demo tailored to your modules and industry.</p>
+              <h3 className="nav-mega-promo__title">Explore the full suite</h3>
+              <p className="nav-mega-promo__desc">Browse all modules or book a demo tailored to your needs.</p>
+              <Link
+                to="/products"
+                className="nav-mega-promo__cta nav-mega-promo__cta--explore"
+                onClick={() => setActiveDropdown(null)}
+              >
+                View all products <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
               <Link
                 to="/request-a-demo"
-                className="nav-mega-promo__cta"
+                className="nav-mega-promo__cta nav-mega-promo__cta--demo"
                 onClick={() => setActiveDropdown(null)}
               >
                 Request a Demo <ArrowRight className="w-3.5 h-3.5" />
@@ -528,9 +535,6 @@ export function SiteNav() {
     </Link>
   );
 
-  const supportPhone = contactContent.getContent('phone_numbers', '0782-602854').split('\n')[0]?.trim() || '0782-602854';
-  const phoneDigits = supportPhone.replace(/[^\d+]/g, '');
-  const phoneHref = phoneDigits.startsWith('+') ? `tel:${phoneDigits}` : `tel:+256${phoneDigits.replace(/^0/, '')}`;
   const contactLabel = nav.getContentAny(['nav_contact_sales_label', 'nav_contact_label'], 'Contact Sales');
 
   return (
@@ -653,18 +657,6 @@ export function SiteNav() {
 
               <Globe className="w-4 h-4 opacity-70" />
 
-              <span>{languageCode.toUpperCase()}</span>
-
-              <ChevronDown
-
-                className={`w-3 h-3 opacity-50 transition-transform ${
-
-                  activeDropdown === 'language' ? 'rotate-180' : ''
-
-                }`}
-
-              />
-
             </button>
 
             <div className="site-nav__bridge site-nav__bridge--narrow" aria-hidden />
@@ -707,21 +699,17 @@ export function SiteNav() {
 
 
 
-          <div className="site-nav__contact-stack">
-            <Link to="/contact" className={`site-nav__text-link ${isHeroNav ? 'site-nav__text-link--hero' : ''}`}>
+          <div className="site-nav__cta-group">
+            <Link
+              to="/contact"
+              className={`btn-marmidon btn-marmidon--secondary ${isHeroNav ? 'site-nav__cta-secondary--hero' : ''}`}
+            >
               {contactLabel}
             </Link>
-            <a
-              href={phoneHref}
-              className={`site-nav__text-link site-nav__phone-link ${isHeroNav ? 'site-nav__text-link--hero' : ''}`}
-            >
-              {supportPhone}
-            </a>
+            <Link to="/request-a-demo" className="site-nav__cta site-nav__cta--primary">
+              {nav.getContent('nav_demo_label', 'Request a Demo')}
+            </Link>
           </div>
-
-          <Link to="/request-a-demo" className="site-nav__cta">
-            {nav.getContent('nav_demo_label', 'Request a Demo')}
-          </Link>
 
         </div>
 
@@ -1056,14 +1044,9 @@ export function SiteNav() {
 
             <div className="site-nav__drawer-footer">
 
-              <div className="site-nav__drawer-contact-stack col-span-2">
-                <Link to="/contact" className="site-nav__drawer-contact">
-                  {contactLabel}
-                </Link>
-                <a href={phoneHref} className="site-nav__drawer-contact site-nav__drawer-phone">
-                  {supportPhone}
-                </a>
-              </div>
+              <Link to="/contact" className="site-nav__drawer-contact col-span-2">
+                {contactLabel}
+              </Link>
 
               <Link to="/request-a-demo" className="site-nav__drawer-cta col-span-2">
                 {nav.getContent('nav_demo_label', 'Request a Demo')}

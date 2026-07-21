@@ -348,7 +348,6 @@ export const translations: Record<string, Record<string, string>> = {
     platformIntroBadge: 'Integrated ERP',
     platformIntroTitle: 'Run your whole business on one Marmidon platform',
     platformIntroDesc: 'Eleven integrated modules share one database — so finance, operations, inventory, and sales stay in sync without spreadsheets or duplicate entry.',
-    exploreAllProducts: 'Explore all modules',
     demoExperience: 'Demo experience',
     whatYoullSee: "What you'll see",
     intelligentPipeline: 'Finance & general ledger workflows',

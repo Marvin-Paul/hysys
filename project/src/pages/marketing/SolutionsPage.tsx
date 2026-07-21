@@ -12,6 +12,8 @@ import { SectionHeading } from '../../components/ui/SectionHeading';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { PageHero } from '../../components/ui/PageHero';
+import { Testimonial } from '../../components/ui/Testimonial';
+import { SectorCard } from '../../components/ui/SectorCard';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { sectorSeoTitle, PAGE_META } from '../../lib/seo/pageMeta';
@@ -20,7 +22,7 @@ import { cmsTemplate, mergeCmsRecord } from '../../lib/cms/cmsContent';
 import { MARMIDON_SECTORS, getModule, resolveSectorSlug } from '../../lib/marmidonCatalog';
 import { getSectorDetail } from '../../lib/sectorDetailContent';
 import { demoRequestUrl } from '../../lib/forms/demoUrl';
-import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
+import { breadcrumbJsonLd, reviewJsonLd } from '../../lib/seo/structuredData';
 import { trackEvent } from '../../lib/analytics/track';
 import { sectorImages } from '../../lib/cms/cardDefaults';
 
@@ -110,31 +112,16 @@ export function SolutionsPage() {
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {MARMIDON_SECTORS.map((sector) => {
               const cmsSector = sectors[sector.slug] ?? sectorDefaults[sector.slug];
-              const Icon = sectorIconMap[cmsSector.iconName] || sectorIconMap[sector.iconName] || Building2;
               return (
                 <ScrollReveal key={sector.slug}>
-                  <Link
-                    to={`/solutions/${sector.slug}`}
-                    className="group relative block rounded-2xl overflow-hidden ring-1 ring-slate-200 shadow-sm transition hover:shadow-lg hover:-translate-y-1"
-                  >
-                    <img
-                      src={cmsSector.image || sectorImages[sector.slug]}
-                      alt={cmsSector.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-                    <div className="relative p-6 min-h-[200px] flex flex-col justify-end">
-                      <div className="inline-flex rounded-xl bg-white/20 backdrop-blur p-2.5 ring-1 ring-white/30 text-white w-fit mb-3">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <h3 className="text-base font-semibold text-white group-hover:text-[var(--color-accent)]">{cmsSector.title}</h3>
-                      <p className="mt-1 text-sm text-white/80 line-clamp-2">{cmsSector.description}</p>
-                      <div className="mt-3 flex items-center gap-1 text-sm font-medium text-white/90 group-hover:text-white">
-                        {global.getContent('card_footer_label', 'Learn more')} <ArrowRight className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  </Link>
+                  <SectorCard
+                    id={sector.slug}
+                    title={cmsSector.title}
+                    description={cmsSector.description}
+                    link={`/solutions/${sector.slug}`}
+                    image={cmsSector.image || sectorImages[sector.slug]}
+                    linkLabel={global.getContent('card_footer_label', 'Learn more')}
+                  />
                 </ScrollReveal>
               );
             })}
@@ -184,15 +171,19 @@ export function SolutionDetailPage() {
     );
   }
 
+  const sectorDetail = getSectorDetail(resolvedSlug);
+
   const sectorJsonLd = [
     breadcrumbJsonLd([
       { name: 'Home', path: '/' },
       { name: 'Solutions', path: '/solutions' },
       { name: sector.title, path: `/solutions/${resolvedSlug}` },
     ]),
+    ...(sectorDetail?.proof ? [reviewJsonLd({
+      quote: sectorDetail.proof.quote,
+      author: sectorDetail.proof.attribution,
+    })] : []),
   ];
-
-  const sectorDetail = getSectorDetail(resolvedSlug);
   const demoUrl = demoRequestUrl({ sector: resolvedSlug });
   const primaryModuleSlug = sector.recommendedModules[0];
   const modulesCtaTo = primaryModuleSlug ? `/products/${primaryModuleSlug}` : '/products';
@@ -301,12 +292,12 @@ export function SolutionDetailPage() {
         <section className="py-16 lg:py-24 bg-white">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <ScrollReveal>
-              <blockquote className="relative rounded-3xl bg-[var(--color-secondary)] p-8 sm:p-10 text-white">
-                <p className="text-lg sm:text-xl leading-relaxed font-medium">&ldquo;{sectorDetail.proof.quote}&rdquo;</p>
-                <footer className="mt-6 text-sm text-white/70">
-                  — {sectorDetail.proof.attribution}, {sectorDetail.proof.company}
-                </footer>
-              </blockquote>
+              <Testimonial
+                quote={sectorDetail.proof.quote}
+                attribution={sectorDetail.proof.attribution}
+                company={sectorDetail.proof.company}
+                variant="dark"
+              />
             </ScrollReveal>
           </div>
         </section>

@@ -7,7 +7,7 @@ import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
-import { faqJsonLd } from '../../lib/seo/structuredData';
+import { faqJsonLd, breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { mergeCmsList } from '../../lib/cms/cmsContent';
 import { DEFAULT_FAQ_PAGE_ITEMS, groupFaqItems } from '../../lib/cms/resourceDefaults';
 
@@ -36,6 +36,11 @@ export function FAQPage() {
 
   const faqJsonLdData = useMemo(
     () => [
+      breadcrumbJsonLd([
+        { name: 'Home', path: '/' },
+        { name: 'Resources', path: '/resources' },
+        { name: 'FAQs', path: '/resources/faqs' },
+      ]),
       faqJsonLd(
         faqCategories.flatMap((cat) =>
           cat.questions.map((item) => ({ question: item.q, answer: item.a }))

@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { mergeMarmidonProductCards, pickCmsField, pickMarmidonHomepageText } from '../../lib/cms/cmsContent';
 import { outcomeReportImages } from '../../lib/cms/cardDefaults';
+import { OptimizedImage } from '../ui/OptimizedImage';
 
 const defaultReports = [
   {
@@ -90,12 +91,11 @@ export function AnalystReportSection() {
             >
               <div className="relative h-40 sm:h-44 overflow-hidden">
                 {report.image ? (
-                  <img
+                  <OptimizedImage
                     src={report.image}
                     alt=""
                     aria-hidden
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
                     onError={(e) => handleImageError(report.id, e)}
                   />
                 ) : (

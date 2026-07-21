@@ -8,6 +8,7 @@ import {
 import { PageHero } from '../../components/ui/PageHero';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { MARMIDON_MODULES, MARMIDON_SECTORS } from '../../lib/marmidonCatalog';
 import { BLOG_POSTS } from '../../lib/content/blogPosts';
@@ -108,9 +109,14 @@ export function SearchResultsPage() {
     count: getCategoryResults(cat.id).length
   })).filter(cat => cat.count > 0);
 
+  const searchJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Search', path: '/search' },
+  ])];
+
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
-      <SEO title={PAGE_META.search.title} description={PAGE_META.search.description} fullTitle />
+      <SEO title={PAGE_META.search.title} description={PAGE_META.search.description} jsonLd={searchJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Search' }]} />
 
@@ -156,6 +162,7 @@ export function SearchResultsPage() {
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Link to="/products" className="px-5 py-2.5 rounded-xl bg-[var(--color-primary)] text-white text-sm font-semibold">Browse modules</Link>
                 <Link to="/solutions" className="px-5 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-700">Browse solutions</Link>
+                <Link to="/contact" className="px-5 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-700">Contact support</Link>
               </div>
             </div>
           ) : (

@@ -1,14 +1,20 @@
 import { PageHero } from '../../components/ui/PageHero';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 
 export function TermsPage() {
   const content = useSiteContent('legal');
+  const termsJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Terms', path: '/legal/terms' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.terms.title} description={PAGE_META.terms.description} fullTitle />
+      <SEO title={PAGE_META.terms.title} description={PAGE_META.terms.description} jsonLd={termsJsonLd} fullTitle />
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Terms' }]} />
       <PageHero
         badge={content.getContent('terms_hero_badge', 'Terms of Service')}

@@ -292,6 +292,14 @@ function TypographyPanel({ settings, onChange }: { settings: DesignSettings; onC
         <RangeSlider label="Line Spacing" value={t.lineSpacing} min={1} max={2.5} step={0.1} onChange={(v) => set({ lineSpacing: v })} />
       </div>
       <hr className="border-gray-100" />
+      <SectionHeading title="Special Sizes" subtitle="Display, lead, button and caption sizes" />
+      <div className="grid grid-cols-2 gap-4">
+        <RangeSlider label="Display (Hero)" value={t.displaySize} min={36} max={80} onChange={(v) => set({ displaySize: v })} suffix="px" />
+        <RangeSlider label="Body Large (Lead)" value={t.bodyLgSize} min={14} max={28} onChange={(v) => set({ bodyLgSize: v })} suffix="px" />
+        <RangeSlider label="Button Label" value={t.buttonSize} min={12} max={22} onChange={(v) => set({ buttonSize: v })} suffix="px" />
+        <RangeSlider label="Small / Caption" value={t.smallSize} min={10} max={18} onChange={(v) => set({ smallSize: v })} suffix="px" />
+      </div>
+      <hr className="border-gray-100" />
       <SectionHeading title="Font Weights" subtitle="Heading and body font weight" />
       <div className="grid grid-cols-2 gap-4">
         <SelectInput label="Heading Font Weight" value={t.fontWeightHeading} onChange={(v) => set({ fontWeightHeading: v })}

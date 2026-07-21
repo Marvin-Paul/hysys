@@ -6,8 +6,10 @@ import { SectionHeading } from '../../components/ui/SectionHeading';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
+import { OptimizedImage } from '../../components/ui/OptimizedImage';
 import { mergeCmsList } from '../../lib/cms/cmsContent';
 import { eventImages } from '../../lib/cms/cardDefaults';
 
@@ -68,9 +70,14 @@ export function EventsPage() {
     defaultHighlights
   );
 
+  const eventsJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.events.title} description={PAGE_META.events.description} fullTitle />
+      <SEO title={PAGE_META.events.title} description={PAGE_META.events.description} jsonLd={eventsJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Events' }]} />
 
@@ -115,11 +122,10 @@ export function EventsPage() {
             {resolvedEvents.map((event: any, idx: number) => (
               <ScrollReveal key={event.id ?? idx}>
                 <div className="group relative rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300">
-                  <img
+                  <OptimizedImage
                     src={event.image || eventImages[event.id as string]}
                     alt={event.title}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
                   <div className="relative p-8 min-h-[280px] flex flex-col justify-end">

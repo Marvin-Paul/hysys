@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { pickMarmidonHomepageText } from '../../lib/cms/cmsContent';
 import { coreValuesImage } from '../../lib/cms/cardDefaults';
+import { OptimizedImage } from '../ui/OptimizedImage';
 
 const defaultTags = ['TRUST', 'CUSTOMER SUCCESS', 'INNOVATION', 'INTEGRITY', 'SUSTAINABILITY'];
 
@@ -54,12 +55,11 @@ export function CoreValuesSection() {
           </div>
 
           <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden min-h-[280px] sm:min-h-[320px] shadow-lg">
-            <img
+            <OptimizedImage
               src={coreValuesImage}
               alt=""
               aria-hidden
               className="absolute inset-0 w-full h-full object-cover"
-              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-[var(--color-secondary)]/50 to-[var(--color-primary)]/45" />
             <div className="relative z-10 flex items-center justify-center min-h-[280px] sm:min-h-[320px] p-6 sm:p-8">

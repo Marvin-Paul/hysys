@@ -58,6 +58,9 @@ export function AIForBusinessSection({ videoUrl: fallbackVideoUrl }: { videoUrl?
                 {content.getContent('ai_business_cta_secondary', 'Watch overview')} <Play className="w-4 h-4" />
               </button>
             </div>
+            {content.getContent('ai_business_pricing', '') && (
+              <p className="mt-3 text-xs text-slate-400">{content.getContent('ai_business_pricing', '')}</p>
+            )}
           </div>
 
           <div className="order-1 lg:order-2">

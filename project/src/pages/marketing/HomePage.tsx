@@ -36,6 +36,7 @@ import { AgentblazerSection } from '../../components/home/AgentblazerSection';
 import { CoreValuesSection } from '../../components/home/CoreValuesSection';
 import { AISuccessSection } from '../../components/home/AISuccessSection';
 import { GetStartedSection } from '../../components/home/GetStartedSection';
+import { ResourcesTeaser } from '../../components/home/ResourcesTeaser';
 import { FeaturesSection } from '../../components/home/FeaturesSection';
 import { useTranslation } from '../../lib/i18n';
 import { useSiteContent } from '../../hooks/useSiteContent';
@@ -456,6 +457,8 @@ export function HomePage() {
       <AISuccessSection />
 
       <GetStartedSection />
+
+      <ResourcesTeaser />
 
       <FAQSection />
     </>

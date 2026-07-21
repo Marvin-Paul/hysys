@@ -4,9 +4,11 @@ import { CalendarCheck, ArrowLeft, Send, CheckCircle, Loader2 } from 'lucide-rea
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
 import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
+import { TurnstileWidget } from '../../components/ui/TurnstileWidget';
 import { PrivacyConsent } from '../../components/ui/PrivacyConsent';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { MARMIDON_MODULES, MARMIDON_SECTORS, resolveModuleSlug, resolveSectorSlug } from '../../lib/marmidonCatalog';
@@ -90,10 +92,12 @@ export function DemoRequestPage() {
       sectorSlug: sectorSlug || undefined,
       honeypot: String(data.get('website_url') ?? ''),
       challenge: String(data.get('_challenge') ?? ''),
+      turnstileToken: String(data.get('cf-turnstile-response') ?? ''),
       consent,
     });
 
     if (result.ok) {
+      trackEvent('demo_request_submit', { modules: modules.join(',') });
       setSubmitted(true);
     } else {
       setError(result.error ?? 'Failed to submit. Please try again.');
@@ -117,9 +121,14 @@ export function DemoRequestPage() {
     );
   }
 
+  const demoJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Request a Demo', path: '/request-a-demo' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.demo.title} description={PAGE_META.demo.description} fullTitle />
+      <SEO title={PAGE_META.demo.title} description={PAGE_META.demo.description} jsonLd={demoJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Request a Demo' }]} />
 
@@ -197,6 +206,7 @@ export function DemoRequestPage() {
               <label htmlFor="message" className="form-label">{content.getContent('form_message_label', 'Tell us about your needs')}</label>
               <textarea id="message" name="message" rows={4} className="form-control form-control--textarea" />
             </div>
+            <TurnstileWidget />
             <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
             <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
               {sending ? (

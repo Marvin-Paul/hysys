@@ -7,11 +7,13 @@ import { useTranslation } from '../../lib/i18n';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { trackEvent } from '../../lib/analytics/track';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
 import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
 import { PrivacyConsent } from '../../components/ui/PrivacyConsent';
+import { TurnstileWidget } from '../../components/ui/TurnstileWidget';
 import { submitLead } from '../../lib/forms/leadSubmission';
 import { MARMIDON_MODULES, MARMIDON_SECTORS } from '../../lib/marmidonCatalog';
 import { useFieldValidation } from '../../lib/forms/validation';
@@ -73,10 +75,12 @@ export function ContactPage() {
       message,
       honeypot: String(data.get('website_url') ?? ''),
       challenge: String(data.get('_challenge') ?? ''),
+      turnstileToken: String(data.get('cf-turnstile-response') ?? ''),
       consent,
     });
 
     if (result.ok) {
+      trackEvent('contact_submit', { interest });
       setSent(true);
     } else {
       setError(result.error ?? 'Failed to send. Please email us directly at info@marmidon.com.');
@@ -109,9 +113,14 @@ export function ContactPage() {
     return () => observer.disconnect();
   }, []);
 
+  const contactJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Contact', path: '/contact' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.contact.title} description={PAGE_META.contact.description} fullTitle />
+      <SEO title={PAGE_META.contact.title} description={PAGE_META.contact.description} jsonLd={contactJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Contact' }]} />
 
@@ -342,6 +351,7 @@ export function ContactPage() {
                           onBlur={() => markTouched('message')} onFocus={() => clearError('message')} {...ariaProps('message')} />
                         {errors.message && <p id="message-error" role="alert" className="mt-1 text-sm text-red-600">{errors.message}</p>}
                       </div>
+                      <TurnstileWidget />
                       <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
                       <button type="submit" disabled={sending}
                         className="w-full py-4 bg-[var(--color-primary)] text-white rounded-2xl font-bold hover:bg-[var(--color-secondary)] transition-all hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base">

@@ -1,14 +1,20 @@
 import { PageHero } from '../../components/ui/PageHero';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 
 export function AccessibilityPage() {
   const content = useSiteContent('legal');
+  const a11yJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Accessibility', path: '/legal/accessibility' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.accessibility.title} description={PAGE_META.accessibility.description} fullTitle />
+      <SEO title={PAGE_META.accessibility.title} description={PAGE_META.accessibility.description} jsonLd={a11yJsonLd} fullTitle />
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Accessibility' }]} />
       <PageHero
         badge={content.getContent('accessibility_hero_badge', 'Accessibility')}

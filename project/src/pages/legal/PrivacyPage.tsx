@@ -1,14 +1,20 @@
 import { PageHero } from '../../components/ui/PageHero';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 
 export function PrivacyPage() {
   const content = useSiteContent('legal');
+  const privacyJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Privacy', path: '/legal/privacy' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.privacy.title} description={PAGE_META.privacy.description} fullTitle />
+      <SEO title={PAGE_META.privacy.title} description={PAGE_META.privacy.description} jsonLd={privacyJsonLd} fullTitle />
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Privacy' }]} />
       <PageHero
         badge={content.getContent('privacy_hero_badge', 'Privacy Statement')}

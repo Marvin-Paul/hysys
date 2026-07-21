@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react';
 import { supabase, type SiteContent } from '../lib/db/supabase';
+import { TranslationContext } from '../lib/i18n';
+import { getI18nKey } from '../lib/cms/cmsDefaults';
 
 interface ContentMap {
   [key: string]: unknown;
@@ -166,9 +168,32 @@ export function useSiteContent(section: string) {
     refreshSection(section);
   }, [section, refreshSection]);
 
+  const translationCtx = useContext(TranslationContext);
+
+  const getContentWithI18n = useCallback((key: string, fallback = '') => {
+    const cmsVal = ctx.getContent(section, key, '');
+    if (cmsVal) return cmsVal;
+    if (translationCtx) {
+      const i18nKey = getI18nKey(section, key);
+      if (i18nKey) {
+        const translated = translationCtx.t(i18nKey);
+        if (translated && translated !== i18nKey) return translated;
+      }
+    }
+    return fallback;
+  }, [ctx, section, translationCtx]);
+
+  const getContentAnyWithI18n = useCallback((keys: string[], fallback = '') => {
+    for (const key of keys) {
+      const val = getContentWithI18n(key, '');
+      if (val.trim()) return val;
+    }
+    return fallback;
+  }, [getContentWithI18n]);
+
   return {
-    getContent: (key: string, fallback = '') => ctx.getContent(section, key, fallback),
-    getContentAny: (keys: string[], fallback = '') => ctx.getContentAny(section, keys, fallback),
+    getContent: getContentWithI18n,
+    getContentAny: getContentAnyWithI18n,
     getContentRaw: (key: string) => ctx.getContentRaw(section, key),
     loaded: ctx.sectionLoaded(section),
     refresh: () => ctx.refreshSection(section),

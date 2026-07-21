@@ -1,14 +1,20 @@
 import { PageHero } from '../../components/ui/PageHero';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 
 export function CookiesPage() {
   const content = useSiteContent('legal');
+  const cookiesJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Cookies', path: '/legal/cookies' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.cookies.title} description={PAGE_META.cookies.description} fullTitle />
+      <SEO title={PAGE_META.cookies.title} description={PAGE_META.cookies.description} jsonLd={cookiesJsonLd} fullTitle />
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Cookies' }]} />
       <PageHero
         badge={content.getContent('cookies_hero_badge', 'Cookie Policy')}

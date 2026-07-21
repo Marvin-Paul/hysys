@@ -1,16 +1,17 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle, ArrowRight, HelpCircle, Sparkles } from 'lucide-react';
+import { HelpCircle, Sparkles, ArrowRight, ChevronDown } from 'lucide-react';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
 import { SectionHeading } from '../../components/ui/SectionHeading';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
+import { PricingCard } from '../../components/ui/PricingCard';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { trackEvent } from '../../lib/analytics/track';
-import { faqJsonLd } from '../../lib/seo/structuredData';
+import { faqJsonLd, breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { mergeCmsList, toCmsArray } from '../../lib/cms/cmsContent';
 import { DEFAULT_PRICING_FAQS, DEFAULT_PRICING_TIERS } from '../../lib/cms/resourceDefaults';
 
@@ -51,7 +52,13 @@ export function PricingPage() {
   }, []);
 
   const pricingJsonLd = useMemo(
-    () => [faqJsonLd(faqs.map((f) => ({ question: f.question, answer: f.answer })))],
+    () => [
+      breadcrumbJsonLd([
+        { name: 'Home', path: '/' },
+        { name: 'Pricing', path: '/pricing' },
+      ]),
+      faqJsonLd(faqs.map((f) => ({ question: f.question, answer: f.answer }))),
+    ],
     [faqs]
   );
 
@@ -83,37 +90,10 @@ export function PricingPage() {
           <div className="grid gap-8 lg:grid-cols-3">
             {tiers.map((tier) => (
               <ScrollReveal key={tier.id}>
-                <div className={`relative rounded-3xl p-8 ${tier.highlight ? 'bg-[var(--color-primary)] text-white shadow-2xl scale-105 ring-4 ring-[var(--color-primary)]/20' : 'bg-white ring-1 ring-slate-200 shadow-lg'}`}>
-                  {tier.highlight && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--color-accent)] px-4 py-1 text-xs font-semibold text-white">
-                      {content.getContent('pricing_popular_label', 'Most Popular')}
-                    </div>
-                  )}
-                  <h3 className={`text-lg font-semibold ${tier.highlight ? 'text-white' : 'text-slate-900'}`}>{tier.name}</h3>
-                  <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-4xl font-bold">{tier.price}</span>
-                    {tier.period && <span className={`text-sm ${tier.highlight ? 'text-white/70' : 'text-slate-500'}`}>{tier.period}</span>}
-                  </div>
-                  <p className={`mt-3 text-sm ${tier.highlight ? 'text-white/80' : 'text-slate-600'}`}>{tier.desc}</p>
-                  <ul className="mt-6 space-y-3">
-                    {tier.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-sm">
-                        <CheckCircle className={`mt-0.5 h-4 w-4 shrink-0 ${tier.highlight ? 'text-white' : 'text-[var(--color-accent)]'}`} />
-                        <span className={tier.highlight ? 'text-white/90' : 'text-slate-600'}>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to={tier.id === 'enterprise' ? '/contact' : '/request-a-demo'}
-                    className={`mt-8 flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition ${
-                      tier.highlight
-                        ? 'bg-white text-[var(--color-primary)] hover:bg-slate-100'
-                        : 'bg-[var(--color-primary)] text-white hover:bg-[#1E66C4]'
-                    }`}
-                  >
-                    {tier.cta} <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
+                <PricingCard
+                  tier={tier}
+                  popularLabel={content.getContent('pricing_popular_label', 'Most Popular')}
+                />
               </ScrollReveal>
             ))}
           </div>
@@ -144,7 +124,7 @@ export function PricingPage() {
                   className="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-slate-900 hover:bg-slate-50"
                 >
                   {faq.question}
-                  <span className={`ml-2 shrink-0 transition ${openFaq === i ? 'rotate-180' : ''}`}>▼</span>
+                  <ChevronDown className={`ml-2 h-4 w-4 shrink-0 transition ${openFaq === i ? 'rotate-180' : ''}`} />
                 </button>
                 {openFaq === i && (
                   <div className="px-6 pb-4 text-sm text-slate-600">{faq.answer}</div>

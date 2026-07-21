@@ -14,7 +14,7 @@ import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { mergeCmsList, cmsText } from '../../lib/cms/cmsContent';
 import { storyThumbnails } from '../../lib/cms/cardDefaults';
-import { articleJsonLd } from '../../lib/seo/structuredData';
+import { articleJsonLd, breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { trackEvent } from '../../lib/analytics/track';
 import { CUSTOMER_STORIES } from '../../lib/content/customerStories';
 import { MARMIDON_MODULES, MARMIDON_SECTORS } from '../../lib/marmidonCatalog';
@@ -204,6 +204,7 @@ export function CustomerStoryDetailPage() {
   const results = story ? (Array.isArray((story as any).results) ? (story as any).results : []) : [];
   const storyIdx = customerStories.findIndex(s => s.id === storyId);
   const color = COLORS[storyIdx >= 0 ? storyIdx % COLORS.length : 0];
+  const relatedStories = mergedStories.filter((s) => s.id !== storyId).slice(0, 3);
 
   const storyName = story ? cmsText(story.name, story.nameKey, t) : '';
   const storyIndustry = story ? cmsText(story.industry, story.industryKey, t) : '';
@@ -221,6 +222,11 @@ export function CustomerStoryDetailPage() {
         datePublished: '2026-01-01',
         author: 'Marmidon Global Solutions',
       }),
+      breadcrumbJsonLd([
+        { name: 'Home', path: '/' },
+        { name: 'Customers', path: '/customers' },
+        { name: storyName, path: `/customers/${storyId}` },
+      ]),
     ];
   }, [story, storyName, storyQuote, storyId]);
 
@@ -304,6 +310,44 @@ export function CustomerStoryDetailPage() {
           </ScrollReveal>
         </div>
       </section>
+
+      {/* Related stories */}
+      {relatedStories.length > 0 && (
+        <section className="py-24 bg-gray-50 border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal>
+              <SectionHeading
+                badge={
+                  <span className="type-badge type-badge--light">
+                    <Sparkles className="w-4 h-4" /> {content.getContent('related_badge', 'Related Stories')}
+                  </span>
+                }
+                title={content.getContent('related_title', 'More success stories')}
+                description={content.getContent('related_desc', 'Discover how other organisations transformed their operations with Marmidon.')}
+              />
+            </ScrollReveal>
+            <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {relatedStories.map((s: any, idx: number) => {
+                const relColor = COLORS[(storyIdx + 1 + idx) % COLORS.length];
+                return (
+                  <ScrollReveal key={s.id}>
+                    <StoryCard
+                      to={`/customers/${s.id}`}
+                      name={cmsText(s.name, s.nameKey, t)}
+                      industry={cmsText(s.industry, s.industryKey, t)}
+                      quote={cmsText(s.quote, s.quoteKey, t)}
+                      logo={s.logo}
+                      thumbnail={s.thumbnail || s.image}
+                      results={s.results}
+                      accent={relColor}
+                    />
+                  </ScrollReveal>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA */}
       <section className="relative py-24 overflow-hidden">

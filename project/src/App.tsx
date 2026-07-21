@@ -1,10 +1,12 @@
 import { lazy, Suspense } from 'react';
 
-import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useParams } from 'react-router-dom';
+import { Routes, Route, Outlet, Navigate, useParams } from 'react-router-dom';
 
 import { Layout } from './components/layout/Layout';
 
 import { DevNavLogger } from './components/dev/DevNavLogger';
+
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
@@ -66,6 +68,14 @@ const TeamPage                  = lazy(() => import('./pages/marketing/TeamPage'
 
 const CareersPage               = lazy(() => import('./pages/marketing/CareersPage').then(m => ({ default: m.CareersPage })));
 
+const ArchitecturePage          = lazy(() => import('./pages/company/ArchitecturePage').then(m => ({ default: m.ArchitecturePage })));
+
+const IntegrationsPage          = lazy(() => import('./pages/company/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
+
+const SecurityPage              = lazy(() => import('./pages/company/SecurityPage').then(m => ({ default: m.SecurityPage })));
+
+const SupportPage               = lazy(() => import('./pages/company/SupportPage').then(m => ({ default: m.SupportPage })));
+
 const ResourcesPage             = lazy(() => import('./pages/marketing/ResourcesPage').then(m => ({ default: m.ResourcesPage })));
 
 const BlogPage                  = lazy(() => import('./pages/marketing/BlogPage').then(m => ({ default: m.BlogPage })));
@@ -77,6 +87,8 @@ const GuidesPage                = lazy(() => import('./pages/marketing/GuidesPag
 const FAQPage                   = lazy(() => import('./pages/marketing/FAQPage').then(m => ({ default: m.FAQPage })));
 
 const DemoRequestPage           = lazy(() => import('./pages/marketing/DemoRequestPage').then(m => ({ default: m.DemoRequestPage })));
+
+const HealthCheckPage           = lazy(() => import('./pages/api/HealthCheckPage').then(m => ({ default: m.HealthCheckPage })));
 
 const SolutionsPage             = lazy(() => import('./pages/marketing/SolutionsPage').then(m => ({ default: m.SolutionsPage })));
 
@@ -119,9 +131,7 @@ function LoadingScreen() {
 function App() {
 
   return (
-
-      <Router>
-
+    <>
         <DevNavLogger />
 
         <AuthProvider>
@@ -148,7 +158,7 @@ function App() {
 
             {/* ── Public marketing site ── */}
 
-            <Route element={<Layout><Suspense fallback={<LoadingScreen />}><Outlet /></Suspense></Layout>}>
+            <Route element={<Layout><Suspense fallback={<LoadingScreen />}><ErrorBoundary><Outlet /></ErrorBoundary></Suspense></Layout>}>
 
                <Route path="/"                           element={<HomePage />} />
 
@@ -156,12 +166,14 @@ function App() {
 
               {/* Legacy redirects (Doc 3 §6) */}
               <Route path="/about"                      element={<Navigate to="/company/about" replace />} />
+              <Route path="/about/*"                    element={<Navigate to="/company/about" replace />} />
               <Route path="/customer-stories"           element={<Navigate to="/customers" replace />} />
               <Route path="/customer-stories/:storyId" element={<LegacyStoryRedirect />} />
               <Route path="/industries"                 element={<Navigate to="/solutions" replace />} />
               <Route path="/industries/:industryId"     element={<LegacyIndustryRedirect />} />
-              <Route path="/services"                   element={<Navigate to="/solutions" replace />} />
-              <Route path="/services/*"                 element={<Navigate to="/solutions" replace />} />
+              <Route path="/services"                   element={<Navigate to="/products" replace />} />
+              <Route path="/services/*"                 element={<Navigate to="/products" replace />} />
+              <Route path="/contact/*"                  element={<Navigate to="/contact" replace />} />
               <Route path="/privacy"                    element={<Navigate to="/legal/privacy" replace />} />
               <Route path="/terms"                      element={<Navigate to="/legal/terms" replace />} />
               <Route path="/cookies"                    element={<Navigate to="/legal/cookies" replace />} />
@@ -202,6 +214,10 @@ function App() {
               <Route path="/company"                    element={<CompanyPage />} />
               <Route path="/company/team"               element={<TeamPage />} />
               <Route path="/company/careers"            element={<CareersPage />} />
+              <Route path="/company/architecture"       element={<ArchitecturePage />} />
+              <Route path="/company/integrations"       element={<IntegrationsPage />} />
+              <Route path="/company/security"           element={<SecurityPage />} />
+              <Route path="/company/support"            element={<SupportPage />} />
               <Route path="/resources"                  element={<ResourcesPage />} />
               <Route path="/resources/blog"             element={<BlogPage />} />
               <Route path="/resources/blog/:slug"       element={<BlogPostPage />} />
@@ -211,6 +227,7 @@ function App() {
               <Route path="/solutions"                  element={<SolutionsPage />} />
               <Route path="/solutions/:sectorId"        element={<SolutionDetailPage />} />
               <Route path="/sitemap"                    element={<SitemapPage />} />
+              <Route path="/api/health"                 element={<HealthCheckPage />} />
               <Route path="*"                           element={<NotFoundPage />} />
 
             </Route>
@@ -222,9 +239,7 @@ function App() {
         </DesignProvider>
 
         </AuthProvider>
-
-      </Router>
-
+    </>
   );
 
 }

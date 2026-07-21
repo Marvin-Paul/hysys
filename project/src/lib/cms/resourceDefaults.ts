@@ -106,6 +106,21 @@ export const DEFAULT_PARTNER_PROGRAMS = [
   { id: 'isv', title: 'ISV Partners', desc: 'Build integrations and extensions for the Marmidon ERP platform using our APIs and marketplace.', iconName: 'BarChart3', accent: 'bg-orange-50 text-orange-600 ring-orange-100' },
 ];
 
+export const DEFAULT_PARTNER_LIST = [
+  { id: 'acmecorp', name: 'AcmeCorp Solutions', location: 'Kampala, UG', program: 'reseller', sectors: 'Manufacturing, Retail, Distribution', website: 'https://acmecorp.example.com' },
+  { id: 'bluetech', name: 'BlueTech Systems', location: 'Nairobi, KE', program: 'technology', sectors: 'Healthcare, Education', website: 'https://bluetech.example.com' },
+  { id: 'catalyst', name: 'Catalyst Consulting', location: 'Lagos, NG', program: 'consulting', sectors: 'Financial Services, Professional Services', website: 'https://catalyst.example.com' },
+  { id: 'dataflow', name: 'DataFlow Integrators', location: 'Kigali, RW', program: 'isv', sectors: 'Wholesale, Distribution', website: 'https://dataflow.example.com' },
+  { id: 'enterprise-africa', name: 'Enterprise Africa Partners', location: 'Johannesburg, ZA', program: 'reseller', sectors: 'Manufacturing, Mining, Construction', website: 'https://enterprise-africa.example.com' },
+  { id: 'helix', name: 'Helix Software', location: 'Dar es Salaam, TZ', program: 'technology', sectors: 'Hospitality, Retail', website: 'https://helix.example.com' },
+  { id: 'integrate', name: 'Integrate Solutions', location: 'Accra, GH', program: 'consulting', sectors: 'Public Sector, Healthcare', website: 'https://integrate.example.com' },
+  { id: 'kili-tech', name: 'KiliTech Partners', location: 'Arusha, TZ', program: 'reseller', sectors: 'Agriculture, Non-Profit', website: 'https://kili-tech.example.com' },
+  { id: 'nexus', name: 'Nexus Business Systems', location: 'Lusaka, ZM', program: 'consulting', sectors: 'Education, Professional Services', website: 'https://nexus.example.com' },
+  { id: 'omnix', name: 'OmniX Integrations', location: 'Cape Town, ZA', program: 'isv', sectors: 'Media & Publishing, Retail', website: 'https://omnix.example.com' },
+  { id: 'pinnacle', name: 'Pinnacle ERP Solutions', location: 'Kampala, UG', program: 'reseller', sectors: 'Manufacturing, Wholesale, Construction', website: 'https://pinnacle.example.com' },
+  { id: 'quantum', name: 'Quantum Technologies', location: 'Addis Ababa, ET', program: 'technology', sectors: 'Financial Services, Education', website: 'https://quantum.example.com' },
+];
+
 export const DEFAULT_PARTNER_BENEFITS = [
   { id: 'revenue', title: 'Revenue sharing', desc: 'Competitive margins and recurring revenue on subscription renewals.' },
   { id: 'training', title: 'Training & certification', desc: 'Free access to Marmidon training materials, exams, and partner-only events.' },
@@ -159,8 +174,6 @@ export const DEFAULT_FOOTER_RESOURCES = [
   { id: 'blog', title: 'Blog', path: '/resources/blog' },
   { id: 'guides', title: 'Guides & Whitepapers', path: '/resources/guides' },
   { id: 'faqs', title: 'FAQs', path: '/resources/faqs' },
-  { id: 'docs', title: 'Documentation', path: '/documentation' },
-  { id: 'stories', title: 'Customer Stories', path: '/customers' },
 ];
 
 export const DEFAULT_FOOTER_COMPANY = [
@@ -168,6 +181,4 @@ export const DEFAULT_FOOTER_COMPANY = [
   { id: 'team', title: 'Team', path: '/company/team' },
   { id: 'careers', title: 'Careers', path: '/company/careers' },
   { id: 'partners', title: 'Partners', path: '/partners' },
-  { id: 'contact', title: 'Contact', path: '/contact' },
-  { id: 'demo', title: 'Request a Demo', path: '/request-a-demo' },
 ];

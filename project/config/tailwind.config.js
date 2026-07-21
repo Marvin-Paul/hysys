@@ -31,8 +31,20 @@ export default {
           800: '#0a2043',
           900: '#05142b',
         },
-        accent: {
-          cyan: '#00a3e0',
+        marmidon: {
+          blue: '#3588E4',
+          interactive: '#1E66C4',
+          navy: '#0F2D5C',
+          steel: '#1F4E79',
+          teal: '#0E8F84',
+          success: '#1F8A4C',
+          guidance: '#C9851A',
+          alert: '#C2412B',
+          highlight: '#6A3FA0',
+          ink: '#1F2933',
+          muted: '#5A6470',
+          hairline: '#D5DBE2',
+          surface: '#E8F2FC',
         },
       },
       fontFamily: {

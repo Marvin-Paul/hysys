@@ -5,10 +5,12 @@ import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { leadershipPhotos } from '../../lib/cms/cardDefaults';
 import { mergeCmsList } from '../../lib/cms/cmsContent';
+import { OptimizedImage } from '../../components/ui/OptimizedImage';
 
 const defaultTeam = [
   { id: 'alex-johnson', name: 'Alex Johnson', role: 'CEO & Co-Founder', bio: 'Former VP at leading tech companies with 20+ years experience building enterprise platforms.', image: leadershipPhotos['Alex Johnson'] },
@@ -28,9 +30,15 @@ export function TeamPage() {
     image: member.image || member.photo || leadershipPhotos[member.name] || '',
   }));
 
+  const teamJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Company', path: '/company' },
+    { name: 'Team', path: '/company/team' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.team.title} description={PAGE_META.team.description} fullTitle />
+      <SEO title={PAGE_META.team.title} description={PAGE_META.team.description} jsonLd={teamJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Company', path: '/company' }, { label: 'Team' }]} />
 
@@ -56,7 +64,7 @@ export function TeamPage() {
                 <div className="group rounded-2xl bg-white p-6 ring-1 ring-slate-200 shadow-sm text-center transition hover:shadow-lg">
                   <div className="mx-auto h-24 w-24 rounded-full overflow-hidden ring-4 ring-slate-100">
                     {member.image ? (
-                      <img src={member.image} alt={member.name} className="h-full w-full object-cover" />
+                      <OptimizedImage src={member.image} alt={member.name} className="h-full w-full object-cover" />
                     ) : (
                       <div className="h-full w-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center text-white text-2xl font-bold">
                         {member.name?.split(' ').map((n: string) => n[0]).join('')}

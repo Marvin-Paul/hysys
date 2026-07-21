@@ -1,5 +1,7 @@
 /** Consent-gated analytics — Doc 4 §7.2 event taxonomy */
 
+import { getStoredUtmParams } from './utmCapture';
+
 declare global {
   interface Window {
     dataLayer?: Record<string, unknown>[];
@@ -22,7 +24,17 @@ export type AnalyticsEvent =
   | 'search_query';
 
 function hasAnalyticsConsent(): boolean {
-  return localStorage.getItem('marmidon-cookie-consent') === 'all';
+  const level = localStorage.getItem('marmidon-cookie-consent');
+  if (level === 'all') return true;
+  if (level === 'custom') {
+    try {
+      const prefs = JSON.parse(localStorage.getItem('marmidon-cookie-prefs') || '{}');
+      return prefs.analytics === true;
+    } catch {
+      return false;
+    }
+  }
+  return false;
 }
 
 export function initAnalytics(gtmId?: string) {
@@ -49,9 +61,13 @@ export function initAnalytics(gtmId?: string) {
 export function trackEvent(event: AnalyticsEvent, params: Record<string, string | number | boolean> = {}) {
   if (!hasAnalyticsConsent()) return;
 
+  const utm = getStoredUtmParams();
+  const hasUtm = Object.keys(utm).length > 0;
+
   const payload = {
     event,
     page_path: window.location.pathname,
+    ...(hasUtm ? utm : {}),
     ...params,
   };
 
@@ -59,14 +75,38 @@ export function trackEvent(event: AnalyticsEvent, params: Record<string, string 
   window.dataLayer.push(payload);
 
   if (typeof window.gtag === 'function') {
-    window.gtag('event', event, params);
+    window.gtag('event', event, { ...(hasUtm ? utm : {}), ...params });
   }
 }
 
-export function onConsentGranted(level: 'all' | 'essential') {
-  if (level === 'all') {
+export function trackOutboundClick(target: string, linkText?: string) {
+  trackEvent('outbound_click', { target, link_text: linkText ?? '' });
+}
+
+/** Global click handler for external links */
+export function initOutboundTracking() {
+  document.addEventListener('click', (e) => {
+    const anchor = (e.target as HTMLElement).closest('a');
+    if (!anchor) return;
+    const href = anchor.getAttribute('href');
+    if (!href) return;
+    try {
+      const url = new URL(href, window.location.origin);
+      if (url.hostname !== window.location.hostname) {
+        trackOutboundClick(url.href, anchor.textContent?.trim() ?? '');
+      }
+    } catch {
+      /* invalid URL — ignore */
+    }
+  });
+}
+
+export function onConsentGranted(level: 'all' | 'essential' | 'custom') {
+  const shouldInit = level === 'all' || (level === 'custom' && hasAnalyticsConsent());
+  if (shouldInit) {
     const gtmId = import.meta.env.VITE_GTM_ID as string | undefined;
     initAnalytics(gtmId);
+    initOutboundTracking();
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: 'consent_granted' });
   }

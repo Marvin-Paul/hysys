@@ -6,8 +6,11 @@ import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
+import { OptimizedImage } from '../../components/ui/OptimizedImage';
+import { TurnstileWidget } from '../../components/ui/TurnstileWidget';
 import { submitLead } from '../../lib/forms/leadSubmission';
 import { trackEvent } from '../../lib/analytics/track';
 import { mergeCmsList } from '../../lib/cms/cmsContent';
@@ -56,6 +59,7 @@ export function GuidesPage() {
       message: `Guide download request: ${activeGuide.title}`,
       interest: `guide-${activeGuide.id}`,
       honeypot,
+      turnstileToken: String(data.get('cf-turnstile-response') ?? ''),
     });
 
     if (result.ok) {
@@ -67,9 +71,15 @@ export function GuidesPage() {
     setSending(false);
   };
 
+  const guidesJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Resources', path: '/resources' },
+    { name: 'Guides', path: '/resources/guides' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.guides.title} description={PAGE_META.guides.description} fullTitle />
+      <SEO title={PAGE_META.guides.title} description={PAGE_META.guides.description} jsonLd={guidesJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Resources', path: '/resources' }, { label: 'Guides' }]} />
 
@@ -89,11 +99,10 @@ export function GuidesPage() {
             {guides.map((guide) => (
               <ScrollReveal key={guide.id || guide.title}>
                 <div className="group relative rounded-2xl overflow-hidden ring-1 ring-slate-200 shadow-sm transition hover:shadow-lg hover:-translate-y-1">
-                  <img
+                  <OptimizedImage
                     src={guide.image || guideImages[guide.id as string]}
                     alt={guide.title}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
                   <div className="relative p-6 min-h-[220px] flex flex-col justify-between">
@@ -162,6 +171,7 @@ export function GuidesPage() {
                       className="form-control"
                     />
                   </div>
+                  <TurnstileWidget />
                   <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
                     {sending ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : content.getContent('download_button_label', 'Get the guide')}
                   </button>

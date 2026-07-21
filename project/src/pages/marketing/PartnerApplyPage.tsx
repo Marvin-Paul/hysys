@@ -4,9 +4,11 @@ import { ArrowLeft, Send, Sparkles, CheckCircle, Loader2 } from 'lucide-react';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
 import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
+import { TurnstileWidget } from '../../components/ui/TurnstileWidget';
 import { PrivacyConsent } from '../../components/ui/PrivacyConsent';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { trackEvent } from '../../lib/analytics/track';
 import { submitLead } from '../../lib/forms/leadSubmission';
@@ -44,10 +46,12 @@ export function PartnerApplyPage() {
       message: String(data.get('message')),
       honeypot: String(data.get('website_url') ?? ''),
       challenge: String(data.get('_challenge') ?? ''),
+      turnstileToken: String(data.get('cf-turnstile-response') ?? ''),
       consent,
     });
 
     if (result.ok) {
+      trackEvent('partner_apply_submit', { program });
       setSubmitted(true);
     } else {
       setError(result.error ?? 'Failed to submit. Please try again.');
@@ -71,9 +75,15 @@ export function PartnerApplyPage() {
     );
   }
 
+  const applyJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Partners', path: '/partners' },
+    { name: 'Apply', path: '/partners/apply' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.partnerApply.title} description={PAGE_META.partnerApply.description} fullTitle />
+      <SEO title={PAGE_META.partnerApply.title} description={PAGE_META.partnerApply.description} jsonLd={applyJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Partners', path: '/partners' }, { label: 'Apply' }]} />
 
@@ -131,6 +141,7 @@ export function PartnerApplyPage() {
               <label htmlFor="message" className="form-label">{content.getContent('form_message_label', 'Tell us about your business *')}</label>
               <textarea id="message" name="message" rows={4} required className="form-control form-control--textarea" />
             </div>
+            <TurnstileWidget />
             <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
             <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
               {sending ? (

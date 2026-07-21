@@ -1,9 +1,10 @@
-import type { ReactNode, SyntheticEvent } from 'react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { mergeMarmidonProductCards, pickCmsField } from '../../lib/cms/cmsContent';
 import { sectorImages } from '../../lib/cms/cardDefaults';
+import { SectorCard } from '../ui/SectorCard';
 import { MARMIDON_SECTORS, sectorCardsForHomepage } from '../../lib/marmidonCatalog';
 
 const defaultSectors = sectorCardsForHomepage();
@@ -22,13 +23,6 @@ const iconsById: Record<string, ReactNode> = {
   construction: (<svg viewBox="0 0 48 48" className="w-6 h-6" fill="none"><path d="M8 36h32M14 36V24l10-8 10 8v12" stroke="white" strokeWidth="2"/><rect x="20" y="28" width="8" height="8" fill="white" opacity="0.8"/></svg>),
   'media-publishing': (<svg viewBox="0 0 48 48" className="w-6 h-6" fill="none"><rect x="8" y="10" width="32" height="28" rx="3" fill="white" opacity="0.9"/><path d="M14 18h20M14 24h14M14 30h18" stroke="#3588E4" strokeWidth="2" strokeLinecap="round"/></svg>),
 };
-
-function handleSectorImageError(sectorId: string, event: SyntheticEvent<HTMLImageElement>) {
-  const fallback = sectorImages[sectorId];
-  if (fallback && event.currentTarget.src !== fallback) {
-    event.currentTarget.src = fallback;
-  }
-}
 
 export function IndustriesSection() {
   const content = useSiteContent('homepage');
@@ -62,47 +56,16 @@ export function IndustriesSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 mb-10 sm:mb-12">
           {sectors.map((sector: { id: string; title: string; description: string; link?: string; iconName?: string; image?: string }) => (
-            <div
+            <SectorCard
               key={sector.id}
-              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl min-h-[260px] flex flex-col"
-            >
-              {sector.image ? (
-                <img
-                  src={sector.image}
-                  alt=""
-                  aria-hidden
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                  onError={(e) => handleSectorImageError(sector.id, e)}
-                />
-              ) : (
-                <div
-                  className="absolute inset-0"
-                  style={{ background: 'linear-gradient(145deg,#3588E4 0%,#1E66C4 45%,#0F2D5C 100%)' }}
-                />
-              )}
-              <div
-                className={`relative z-10 mt-auto ${
-                  sector.image
-                    ? 'bg-gradient-to-t from-black/95 via-black/80 to-black/45 backdrop-blur-[2px]'
-                    : 'bg-gradient-to-t from-[#0F2D5C]/95 via-[#1E66C4]/60 to-transparent'
-                } px-5 py-4 sm:px-6 sm:py-5`}
-              >
-                <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1.5 leading-tight">{sector.title}</h3>
-                <p className="text-white/95 text-xs sm:text-sm leading-relaxed line-clamp-3 mb-4">{sector.description}</p>
-                <div className="flex items-center justify-between gap-3">
-                  <Link
-                    to={sector.link || `/solutions/${sector.id}`}
-                    className="text-white font-semibold text-sm underline underline-offset-4 decoration-white/70 hover:decoration-white transition-all"
-                  >
-                    {cardLinkLabel}
-                  </Link>
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-md flex-shrink-0 bg-white/20 backdrop-blur-sm ring-1 ring-white/25">
-                    {iconsById[sector.id] ?? iconsById[MARMIDON_SECTORS[0]?.slug ?? 'manufacturing']}
-                  </div>
-                </div>
-              </div>
-            </div>
+              id={sector.id}
+              title={sector.title}
+              description={sector.description}
+              link={sector.link || `/solutions/${sector.id}`}
+              image={sector.image}
+              icon={iconsById[sector.id] ?? iconsById[MARMIDON_SECTORS[0]?.slug ?? 'manufacturing']}
+              linkLabel={cardLinkLabel}
+            />
           ))}
         </div>
 

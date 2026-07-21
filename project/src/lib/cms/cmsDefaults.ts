@@ -3,6 +3,113 @@ import { translations } from '../i18n';
 /** English defaults — matches what the site shows when CMS fields are empty. */
 const en = translations.en;
 
+/**
+ * Maps CMS (section, key) → i18n translation key so the CMS system can
+ * resolve the active language's translation when no CMS-stored value exists.
+ *
+ * This is the central registry that makes the multi-lingual feature work
+ * across all pages without editing each page individually.
+ */
+export const CMS_I18N_MAP: Record<string, Record<string, string>> = {
+  homepage: {
+    hero_title: 'heroTitleLine1',
+    hero_subtitle: 'heroTitleLine2',
+    hero_desc: 'heroDescription',
+    hero_cta: 'startFreeTrial',
+    hero_cta_secondary: 'watchDemo',
+    trusted_by_label: 'trustedBy',
+    stats_integrations_label: 'uptimeSLA',
+    platform_intro_badge: 'platformIntroBadge',
+    platform_intro_title: 'platformIntroTitle',
+    platform_intro_desc: 'platformIntroDesc',
+    product_section_title: 'completeSuiteTitle',
+    product_section_desc: 'completeSuiteDesc',
+    get_started_badge: 'getStartedBadge',
+    get_started_title_1: 'getStartedTitle1',
+    get_started_title_2: 'getStartedTitle2',
+    get_started_title_3: 'getStartedTitle3',
+    get_started_button: 'tryForFree',
+    get_started_footnote: 'noCommitment',
+    explore_all_products_label: 'exploreAllProducts',
+    homepage_industries_link_label: 'learnMore',
+    ai_success_card_link_label: 'learnMore',
+  },
+  products: {
+    productsTitle: 'productsTitle',
+    productsDesc: 'productsDesc',
+    cta_button: 'startFreeTrialBtn',
+    detail_cta_title: 'readyToGetStarted',
+    detail_cta_button: 'startFreeTrialBtn',
+    products_hero_cta_primary: 'startFreeTrialBtn',
+    products_hero_cta_secondary: 'contactSales',
+    detail_hero_secondary_cta: 'viewAllProducts',
+    detail_hero_primary_cta: 'startFreeTrialBtn',
+    detail_outcomes_title: 'benefitsTitle',
+  },
+  industries: {
+    cta_button: 'contactSales',
+    detail_cta_button: 'startFreeTrialBtn',
+    industries_hero_cta_primary: 'contactSales',
+    industries_list_cta_secondary: 'startFreeTrialBtn',
+    detail_hero_primary_cta: 'startFreeTrialBtn',
+    detail_hero_secondary_cta: 'contactSales',
+  },
+  global: {
+    faq_section_title: 'faqSectionTitle',
+    card_footer_label: 'learnMore',
+  },
+  pricing: { cta_button: 'startFreeTrialBtn' },
+  resources: { cta_button: 'startFreeTrialBtn' },
+  blog: { cta_button: 'startFreeTrialBtn' },
+  guides: { cta_button: 'startFreeTrialBtn' },
+  faq_page: { cta_button: 'startFreeTrialBtn' },
+  company: { cta_button: 'startFreeTrialBtn' },
+  careers: { cta_button: 'startFreeTrialBtn' },
+  team: { cta_button: 'startFreeTrialBtn' },
+  contact: {
+    contactTitle: 'contactTitle',
+    contactDesc: 'contactDesc',
+    form_phone_label: 'phoneInputLabel',
+    form_job_title_label: 'jobTitleLabel',
+  },
+  about: {
+    hero_title: 'aboutTitle',
+    hero_desc: 'aboutDesc',
+    mission_title: 'ourMission',
+    mission_text_1: 'missionText1',
+    mission_text_2: 'missionText2',
+    values_title: 'ourValues',
+    leadership_title: 'leadershipTeam',
+    journey_title: 'ourJourney',
+    cta_title: 'joinOurTeam',
+    cta_desc: 'joinOurTeamDesc',
+    cta_button: 'viewOpenPositions',
+    hero_cta_primary: 'joinJourney',
+  },
+  stories: {
+    detail_hero_primary_cta: 'contactSales',
+    detail_hero_secondary_cta: 'viewAllStories',
+    detail_challenge_heading: 'theChallenge',
+    detail_solution_heading: 'theSolution',
+  },
+  nav: {
+    nav_products_label: 'products',
+    nav_solutions_label: 'solutions',
+    nav_company_label: 'about',
+    nav_customers_label: 'customerStories',
+    nav_demo_label: 'startFreeTrial',
+  },
+  events: {
+    cta_button: 'startFreeTrialBtn',
+    events_hero_cta_primary: 'startFreeTrial',
+  },
+};
+
+/** Look up the i18n translation key for a CMS (section, key) pair. */
+export function getI18nKey(section: string, key: string): string {
+  return CMS_I18N_MAP[section]?.[key] ?? '';
+}
+
 export const CMS_DEFAULTS: Record<string, Record<string, string>> = {
   homepage: {
     hero_title: en.heroTitleLine1,
@@ -35,6 +142,10 @@ export const CMS_DEFAULTS: Record<string, Record<string, string>> = {
     get_started_button: en.tryForFree,
     get_started_footnote: en.noCommitment,
     explore_all_products_label: en.exploreAllProducts,
+    homepage_resources_badge: 'Latest Insights',
+    homepage_resources_title: 'Learn, explore, and grow with Marmidon',
+    homepage_resources_desc: 'ERP guides, industry insights, and product updates from our team.',
+    homepage_resources_cta: 'View all articles',
     homepage_industries_link_label: en.learnMore,
     homepage_industries_cta: 'Explore all solutions',
     ai_success_card_link_label: en.learnMore,
@@ -96,7 +207,7 @@ export const CMS_DEFAULTS: Record<string, Record<string, string>> = {
   },
   global: {
     footer_brand_name: 'Marmidon Global Solutions Limited',
-    footer_tagline: 'Integrated ERP for finance, operations, and growth.',
+    footer_tagline: '',
     footer_website_url: 'https://www.marmidon.com',
     footer_copyright: '© 2026 Marmidon Global Solutions Limited. All rights reserved.',
     support_email: 'support@marmidon.com',
@@ -105,6 +216,7 @@ export const CMS_DEFAULTS: Record<string, Record<string, string>> = {
     footer_col_solutions: 'Solutions',
     footer_col_resources: 'Resources',
     footer_col_company: 'Company',
+    footer_col_connect: 'Connect',
     footer_all_products_label: 'All products →',
     footer_all_solutions_label: 'All solutions →',
     footer_privacy_label: 'Privacy',
@@ -136,6 +248,8 @@ export const CMS_DEFAULTS: Record<string, Record<string, string>> = {
     resources_desc: 'Access a wealth of knowledge to help you get the most out of the Marmidon platform.',
     resources_hero_badge: 'Resources',
     resources_card_link_label: 'Explore',
+    newsletter_title: 'Stay informed',
+    newsletter_desc: 'Get the latest ERP insights delivered to your inbox.',
     cta_title: 'Ready to see Marmidon in action?',
     cta_desc: 'Book a personalised demo tailored to your modules and industry.',
     cta_button: en.startFreeTrialBtn,
@@ -145,6 +259,8 @@ export const CMS_DEFAULTS: Record<string, Record<string, string>> = {
     blog_desc: 'ERP insights, implementation guides, and stories from the team.',
     blog_hero_badge: 'Blog',
     blog_read_more_label: 'Read more',
+    newsletter_title: 'Stay informed',
+    newsletter_desc: 'Get the latest ERP insights delivered to your inbox.',
     cta_title: 'Ready to see Marmidon in action?',
     cta_desc: 'Book a personalised demo tailored to your modules and industry.',
     cta_button: en.startFreeTrialBtn,
@@ -255,6 +371,50 @@ export const CMS_DEFAULTS: Record<string, Record<string, string>> = {
     cookies_hero_subtitle: 'How we use cookies',
     cookies_hero_desc: 'Understand how Marmidon uses cookies and similar technologies on our website.',
     cookies_hero_cta: 'Contact Us',
+  },
+  architecture: {
+    arch_hero_badge: 'Technical Architecture',
+    arch_hero_title: 'Enterprise architecture built for scale',
+    arch_hero_subtitle: 'Cloud-native · Modular · API-first',
+    arch_hero_desc: 'Marmidon ERP is built on a modern microservices architecture — secure, scalable, and designed to run your entire business on one platform.',
+    arch_hero_cta: 'Request a Demo',
+    arch_hero_secondary: 'View integrations',
+    cta_title: 'See the platform in action',
+    cta_desc: 'Book a personalised demo with our team to see how Marmidon ERP fits your architecture requirements.',
+    cta_button: en.startFreeTrialBtn,
+  },
+  integrations: {
+    int_hero_badge: 'Integrations',
+    int_hero_title: 'Connect Marmidon to your stack',
+    int_hero_subtitle: 'APIs · Webhooks · Data connectors',
+    int_hero_desc: 'REST APIs, webhooks, ETL connectors, and pre-built integrations — Marmidon ERP connects with your existing tools and data sources.',
+    int_hero_cta: 'View architecture',
+    int_hero_secondary: 'Request a Demo',
+    cta_title: 'Ready to connect?',
+    cta_desc: 'Book a demo to discuss your integration needs with our team.',
+    cta_button: en.startFreeTrialBtn,
+  },
+  security: {
+    sec_hero_badge: 'Security & Compliance',
+    sec_hero_title: 'Enterprise-grade security baked in',
+    sec_hero_subtitle: 'SOC 2 · Encryption · RBAC · Audit trails',
+    sec_hero_desc: 'Your data is protected with encryption, access controls, audit trails, and infrastructure designed for enterprise compliance requirements.',
+    sec_hero_cta: 'View architecture',
+    sec_hero_secondary: 'Contact security team',
+    cta_title: 'Have security questions?',
+    cta_desc: 'Contact our security team or download our security whitepaper for detailed technical documentation.',
+    cta_button: 'Contact us',
+  },
+  support: {
+    spt_hero_badge: 'Support & SLAs',
+    spt_hero_title: 'We have your back',
+    spt_hero_subtitle: 'Support tiers · Service levels · Response times',
+    spt_hero_desc: 'Choose the support level that fits your business — from self-service knowledge base to 24/7 enterprise-grade support with named engineers.',
+    spt_hero_cta: 'Contact support',
+    spt_hero_secondary: 'View documentation',
+    cta_title: 'Ready to get started?',
+    cta_desc: 'Request a demo and one of our ERP specialists will walk you through the platform, pricing, and support options.',
+    cta_button: en.startFreeTrialBtn,
   },
   demo_request: {
     demo_hero_badge: 'Demo',

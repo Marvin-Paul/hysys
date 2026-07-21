@@ -137,6 +137,22 @@ export const PAGE_META = {
     title: 'Accessibility Statement | Marmidon Enterprise Software',
     description: 'Marmidon is committed to WCAG 2.2 AA accessibility — features, known limitations, and how to report issues.',
   },
+  architecture: {
+    title: 'Technical Architecture | Marmidon Enterprise Software',
+    description: 'Cloud-native, modular microservices architecture powering Marmidon ERP — REST APIs, encryption, RBAC, CI/CD, and 99.9% SLA.',
+  },
+  integrations: {
+    title: 'Integrations | Marmidon Enterprise Software',
+    description: 'REST APIs, webhooks, ETL connectors, and custom workflows — connect Marmidon ERP to your existing enterprise stack.',
+  },
+  security: {
+    title: 'Security & Compliance | Marmidon Enterprise Software',
+    description: 'SOC 2, AES-256 encryption, RBAC, audit trails, and GDPR-compliant data protection — enterprise security baked into every layer.',
+  },
+  support: {
+    title: 'Support & SLAs | Marmidon Enterprise Software',
+    description: 'Three support tiers — Standard, Professional, and Enterprise — with 99.9% uptime SLA and 24/7 critical incident response.',
+  },
 } as const;
 
 export function moduleSeoTitle(slug: string, fallbackTitle: string): string {

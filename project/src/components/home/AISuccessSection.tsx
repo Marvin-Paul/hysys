@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { mergeMarmidonProductCards, pickCmsField, pickMarmidonHomepageText } from '../../lib/cms/cmsContent';
 import { resourceCardImages } from '../../lib/cms/cardDefaults';
+import { OptimizedImage } from '../ui/OptimizedImage';
 
 const defaultCards = [
   {
@@ -79,12 +80,11 @@ export function AISuccessSection() {
             >
               <div className="relative h-44 sm:h-48 overflow-hidden">
                 {card.image ? (
-                  <img
+                  <OptimizedImage
                     src={card.image}
                     alt=""
                     aria-hidden
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
                     onError={(e) => handleImageError(card.id, e)}
                   />
                 ) : (

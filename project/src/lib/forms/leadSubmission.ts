@@ -1,5 +1,7 @@
 import { supabase } from '../db/supabase';
 import { trackEvent, type AnalyticsEvent } from '../analytics/track';
+import { getUtmForForm } from '../analytics/utmCapture';
+import { checkRateLimit, getRateLimitRemaining } from './rateLimiter';
 
 export type LeadFormType = 'contact' | 'demo' | 'partner';
 
@@ -18,6 +20,7 @@ export interface LeadSubmissionPayload {
   website?: string;
   honeypot?: string;
   challenge?: string;
+  turnstileToken?: string;
   consent?: boolean;
 }
 
@@ -42,9 +45,21 @@ export async function submitLead(
     return { ok: true };
   }
 
+  // Turnstile CAPTCHA check (TSR-004 §5.3, §8.1)
+  if (import.meta.env.VITE_TURNSTILE_SITE_KEY && !payload.turnstileToken) {
+    return { ok: false, error: 'Please complete the security check.' };
+  }
+
   // Consent check (CPM-005 §7.4, TSR-004 §8)
   if (!payload.consent) {
     return { ok: false, error: 'You must agree to the privacy policy to submit this form.' };
+  }
+
+  // Client-side rate limit (TSR-004 §5.3)
+  if (!checkRateLimit(payload.formType, 3, 60_000)) {
+    const remaining = getRateLimitRemaining(payload.formType, 60_000);
+    const secs = Math.ceil(remaining / 1000);
+    return { ok: false, error: `You can submit this form again in ${secs} seconds.` };
   }
 
   const subjectByType: Record<LeadFormType, string> = {
@@ -52,6 +67,8 @@ export async function submitLead(
     demo: 'New demo request from Marmidon website',
     partner: 'New partner application from Marmidon website',
   };
+
+  const utmParams = getUtmForForm();
 
   const formBody = new URLSearchParams({
     _subject: subjectByType[payload.formType],
@@ -66,10 +83,24 @@ export async function submitLead(
     sector: payload.sectorSlug ?? '',
     website: payload.website ?? '',
     message: payload.message,
+    ...utmParams,
   });
 
   if (!supabase) {
     return { ok: false, error: 'Form storage is not configured. Please contact us directly.' };
+  }
+
+  // Server-side rate check — same email within 5 min (TSR-004 §5.3)
+  const fiveMinAgo = new Date(Date.now() - 300_000).toISOString();
+  const { count: recentCount, error: countError } = await supabase
+    .from('contact_submissions')
+    .select('*', { count: 'exact', head: true })
+    .eq('email', payload.email)
+    .eq('form_type', payload.formType)
+    .gte('created_at', fiveMinAgo);
+
+  if (!countError && recentCount && recentCount >= 2) {
+    return { ok: false, error: 'You have already submitted this form recently. Please try again later.' };
   }
 
   const { error: dbError } = await supabase.from('contact_submissions').insert({
@@ -86,6 +117,11 @@ export async function submitLead(
     sector_slug: payload.sectorSlug ?? null,
     website: payload.website ?? null,
     consent_given: payload.consent ?? false,
+    utm_source: utmParams.utm_source ?? null,
+    utm_medium: utmParams.utm_medium ?? null,
+    utm_campaign: utmParams.utm_campaign ?? null,
+    utm_term: utmParams.utm_term ?? null,
+    utm_content: utmParams.utm_content ?? null,
   });
 
   if (dbError) {

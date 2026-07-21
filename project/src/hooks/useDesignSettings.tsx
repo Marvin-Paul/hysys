@@ -21,6 +21,10 @@ export interface DesignTypography {
   headingH3: number;
   headingH4: number;
   bodySize: number;
+  displaySize: number;
+  bodyLgSize: number;
+  buttonSize: number;
+  smallSize: number;
   fontWeightHeading: string;
   fontWeightBody: string;
   lineSpacing: number;
@@ -127,17 +131,21 @@ export const DEFAULT_DESIGN: DesignSettings = {
   },
   typography: {
     fontFamily: 'Inter, system-ui, sans-serif',
-    headingH1: 48,
-    headingH2: 36,
+    headingH1: 40,
+    headingH2: 32,
     headingH3: 24,
     headingH4: 20,
     bodySize: 16,
+    displaySize: 60,
+    bodyLgSize: 20,
+    buttonSize: 15,
+    smallSize: 14,
     fontWeightHeading: '700',
     fontWeightBody: '400',
     lineSpacing: 1.6,
   },
   buttons: {
-    borderRadius: 8,
+    borderRadius: 10,
     style: 'filled',
     hoverEffect: 'lift',
     shadow: '0 1px 3px rgba(0,0,0,0.12)',
@@ -145,7 +153,7 @@ export const DEFAULT_DESIGN: DesignSettings = {
     paddingY: 12,
   },
   cards: {
-    borderRadius: 12,
+    borderRadius: 16,
     shadow: '0 1px 3px rgba(0,0,0,0.08)',
     border: '1px solid #e5e7eb',
     hoverAnimation: 'lift',
@@ -157,11 +165,11 @@ export const DEFAULT_DESIGN: DesignSettings = {
     bodySize: 14,
     bodyColor: '#6b7280',
     iconSize: 40,
-    iconColor: '#0b5394',
+    iconColor: '#3588E4',
     minHeight: 0,
     hoverLift: 4,
     hoverScale: 1.02,
-    borderHover: '1px solid #0b5394',
+    borderHover: '1px solid #3588E4',
     customCSS: '',
   },
   layout: {
@@ -169,7 +177,7 @@ export const DEFAULT_DESIGN: DesignSettings = {
     contentMaxWidth: 800,
     contentPadding: 24,
     pageSpacing: 80,
-    gridGap: 32,
+    gridGap: 24,
     sectionSpacing: 96,
     sidebarWidth: 280,
     borderRadiusScale: 1,
@@ -181,9 +189,9 @@ export const DEFAULT_DESIGN: DesignSettings = {
     transparent: false,
     logoSize: 80,
     height: 72,
-    backgroundColor: '#032d60',
+    backgroundColor: '#0F2D5C',
     textColor: '#ffffff',
-    activeColor: '#00a3e0',
+    activeColor: '#1E66C4',
     borderRadius: 0,
     shadow: '0 1px 4px rgba(0,0,0,0.1)',
     mobileBreakpoint: 768,
@@ -230,6 +238,10 @@ function applyDesignToCSS(settings: DesignSettings) {
   root.style.setProperty('--font-size-h3', `${t.headingH3}px`);
   root.style.setProperty('--font-size-h4', `${t.headingH4}px`);
   root.style.setProperty('--font-size-body', `${t.bodySize}px`);
+  root.style.setProperty('--font-size-display', `${t.displaySize}px`);
+  root.style.setProperty('--font-size-body-lg', `${t.bodyLgSize}px`);
+  root.style.setProperty('--font-size-button', `${t.buttonSize}px`);
+  root.style.setProperty('--font-size-small', `${t.smallSize}px`);
   root.style.setProperty('--font-weight-heading', t.fontWeightHeading);
   root.style.setProperty('--font-weight-body', t.fontWeightBody);
   root.style.setProperty('--line-spacing', String(t.lineSpacing));

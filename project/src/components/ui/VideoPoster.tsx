@@ -1,5 +1,6 @@
 import { Play } from 'lucide-react';
 import { toYouTubeEmbedUrl, withYouTubeAutoplay, youTubeThumbnailUrl } from '../../lib/youtube';
+import { OptimizedImage } from './OptimizedImage';
 
 interface VideoPosterProps {
   videoUrl: string;
@@ -46,7 +47,7 @@ export function VideoPoster({
       ) : (
         <>
           {thumbnail ? (
-            <img src={thumbnail} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <OptimizedImage src={thumbnail} alt={title} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
           )}

@@ -6,8 +6,10 @@ import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { useTranslation } from '../../lib/i18n';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { CardMedia } from '../../components/ui/CardMedia';
+import { OptimizedImage } from '../../components/ui/OptimizedImage';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { leadershipPhotos, aboutValueImages } from '../../lib/cms/cardDefaults';
 import { mergeCmsList, cmsText } from '../../lib/cms/cmsContent';
@@ -78,9 +80,15 @@ export function AboutPage() {
     icon: iconMap[String(stat.iconName)] || Building2,
   }));
 
+  const aboutJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Company', path: '/company' },
+    { name: 'About', path: '/company/about' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.about.title} description={PAGE_META.about.description} fullTitle />
+      <SEO title={PAGE_META.about.title} description={PAGE_META.about.description} jsonLd={aboutJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Company', path: '/company' }, { label: 'About' }]} />
 
@@ -200,11 +208,10 @@ export function AboutPage() {
               return (
                 <ScrollReveal key={idx}>
                   <div className="group relative rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center">
-                    <img
+                    <OptimizedImage
                       src={value.image || aboutValueImages[valueId]}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
                     <div className="relative p-8 min-h-[240px] flex flex-col items-center justify-center">

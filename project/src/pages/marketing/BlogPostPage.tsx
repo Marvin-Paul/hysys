@@ -1,14 +1,17 @@
 import { Link, useParams } from 'react-router-dom';
-import { CalendarDays, User, Sparkles, Tag } from 'lucide-react';
+import { CalendarDays, User, Sparkles, Tag, ArrowRight } from 'lucide-react';
 import { useMemo } from 'react';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { SEO } from '../../components/ui/SEO';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
-import { articleJsonLd } from '../../lib/seo/structuredData';
+import { BlogCard } from '../../components/ui/BlogCard';
+import { articleJsonLd, breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { BLOG_POSTS, BLOG_POSTS_BY_SLUG } from '../../lib/content/blogPosts';
+import { MARMIDON_MODULES } from '../../lib/marmidonCatalog';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { mergeCmsList, cmsSlug } from '../../lib/cms/cmsContent';
+import { blogPostImages } from '../../lib/cms/cardDefaults';
 
 function useBlogPosts() {
   const content = useSiteContent('blog');
@@ -26,8 +29,89 @@ function useBlogPosts() {
         author: String(post.author || ''),
         category: String(post.category || ''),
         body: String(post.body || ''),
+        moduleSlugs: (Array.isArray(post.moduleSlugs) ? post.moduleSlugs : []) as string[],
+        sectorSlugs: (Array.isArray(post.sectorSlugs) ? post.sectorSlugs : []) as string[],
+        tags: (Array.isArray(post.tags) ? post.tags : []) as string[],
       })),
     [rawPosts]
+  );
+}
+
+function RelatedPosts({ currentSlug, currentCategory }: { currentSlug: string; currentCategory: string }) {
+  const related = useMemo(() => {
+    const sameCategory = BLOG_POSTS.filter((p) => p.category === currentCategory && p.slug !== currentSlug);
+    if (sameCategory.length >= 3) return sameCategory.slice(0, 3);
+    const others = BLOG_POSTS.filter((p) => p.slug !== currentSlug && !sameCategory.includes(p));
+    return [...sameCategory, ...others].slice(0, 3);
+  }, [currentSlug, currentCategory]);
+
+  if (related.length === 0) return null;
+
+  return (
+    <section className="py-16 lg:py-24 bg-slate-50">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <h2 className="text-2xl font-bold text-slate-900">Related articles</h2>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {related.map((post) => (
+            <BlogCard
+              key={post.slug}
+              slug={post.slug}
+              title={post.title}
+              excerpt={post.excerpt}
+              date={post.date}
+              category={post.category}
+              image={blogPostImages[post.slug]}
+              layout="vertical"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TaxonomyLinks({ moduleSlugs, sectorSlugs, tags }: { moduleSlugs: string[]; sectorSlugs: string[]; tags: string[] }) {
+  const modules = useMemo(
+    () => MARMIDON_MODULES.filter((m) => moduleSlugs.includes(m.slug)),
+    [moduleSlugs]
+  );
+
+  if (modules.length === 0 && tags.length === 0) return null;
+
+  return (
+    <div className="border-t border-slate-200 pt-8 mt-12">
+      {modules.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Related modules</h3>
+          <div className="flex flex-wrap gap-2">
+            {modules.map((m) => (
+              <Link
+                key={m.slug}
+                to={`/products/${m.slug}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+              >
+                {m.shortName} <ArrowRight className="w-3 h-3" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+      {tags.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Topics</h3>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1 rounded-full text-sm bg-slate-100 text-slate-600"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -49,6 +133,11 @@ export function BlogPostPage() {
         datePublished: post.date,
         author: post.author,
       }),
+      breadcrumbJsonLd([
+        { name: 'Home', path: '/' },
+        { name: 'Blog', path: '/resources/blog' },
+        { name: post.title, path: `/resources/blog/${slug}` },
+      ]),
     ];
   }, [post, slug]);
 
@@ -102,8 +191,16 @@ export function BlogPostPage() {
               <p key={i} className="text-base leading-relaxed text-slate-700 mb-4">{paragraph}</p>
             ))}
           </div>
+
+          <TaxonomyLinks
+            moduleSlugs={post.moduleSlugs ?? []}
+            sectorSlugs={post.sectorSlugs ?? []}
+            tags={post.tags ?? []}
+          />
         </div>
       </section>
+
+      <RelatedPosts currentSlug={post.slug} currentCategory={post.category} />
 
       <PageCtaSection
         title={content.getContent('cta_title', 'Ready to see Marmidon in action?')}

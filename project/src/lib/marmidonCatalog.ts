@@ -255,19 +255,19 @@ export function sectorsForNav() {
 
 /** Products mega-menu column groups — Doc 3 §3.2 */
 export const MODULE_NAV_GROUPS = [
-  { label: 'Finance & People', slugs: ['financials', 'hr-payroll', 'projects'] as const },
-  { label: 'Supply Chain', slugs: ['inventory', 'procurement', 'sales-crm'] as const },
-  { label: 'Operations & Insight', slugs: ['operations', 'fleet', 'manufacturing', 'pos-retail', 'business-intelligence'] as const },
+  { label: 'Finance & People', slugs: ['financials', 'hr-payroll', 'sales-crm'] as const },
+  { label: 'Supply Chain', slugs: ['inventory', 'procurement', 'manufacturing', 'pos-retail'] as const },
+  { label: 'Operations & Insight', slugs: ['operations', 'fleet', 'projects', 'business-intelligence'] as const },
 ];
 
-export function footerModuleLinks(limit = MARMIDON_MODULES.length) {
+export function footerModuleLinks(limit = 6) {
   return MARMIDON_MODULES.slice(0, limit).map((m) => ({
     label: m.shortName,
     path: `/products/${m.slug}`,
   }));
 }
 
-export function footerSectorLinks(limit = MARMIDON_SECTORS.length) {
+export function footerSectorLinks(limit = 6) {
   return MARMIDON_SECTORS.slice(0, limit).map((s) => ({
     label: s.title,
     path: `/solutions/${s.slug}`,
@@ -304,6 +304,73 @@ export function sectorCardsForHomepage() {
     image: sectorImages[s.slug] || '',
   }));
 }
+
+/**
+ * Module×Sector tiered matrix — ● primary fit, ○ secondary fit, '' none.
+ * Row = module slug, col = sector slug.
+ * Based on CPM §5 (cross-reference) and FR-MOD-06.
+ */
+export const MODULE_SECTOR_MATRIX: Record<string, Record<string, 'primary' | 'secondary' | ''>> = {
+  financials: {
+    manufacturing: 'primary', production: 'primary', wholesale: 'primary', retail: 'primary',
+    distribution: 'primary', 'professional-services': 'primary', education: 'primary',
+    healthcare: 'primary', hospitality: 'primary', 'non-profit': 'primary',
+    construction: 'primary', 'media-publishing': 'primary',
+  },
+  'hr-payroll': {
+    manufacturing: 'primary', production: 'primary', wholesale: 'primary', retail: 'primary',
+    distribution: 'primary', 'professional-services': 'primary', education: 'primary',
+    healthcare: 'primary', hospitality: 'primary', 'non-profit': 'primary',
+    construction: 'primary', 'media-publishing': 'primary',
+  },
+  inventory: {
+    manufacturing: 'primary', production: 'primary', wholesale: 'primary', retail: 'primary',
+    distribution: 'primary', 'professional-services': 'secondary', education: 'secondary',
+    healthcare: 'primary', hospitality: 'primary', 'non-profit': 'secondary',
+    construction: 'primary', 'media-publishing': 'secondary',
+  },
+  procurement: {
+    manufacturing: 'primary', production: 'primary', wholesale: 'primary', retail: 'secondary',
+    distribution: 'primary', 'professional-services': 'secondary', education: 'primary',
+    healthcare: 'primary', hospitality: 'primary', 'non-profit': 'primary',
+    construction: 'primary', 'media-publishing': 'secondary',
+  },
+  'sales-crm': {
+    manufacturing: 'secondary', production: 'secondary', wholesale: 'primary', retail: 'primary',
+    distribution: 'primary', 'professional-services': 'primary', education: 'secondary',
+    healthcare: 'secondary', hospitality: 'primary', 'non-profit': 'secondary',
+    construction: 'secondary', 'media-publishing': 'primary',
+  },
+  operations: {
+    manufacturing: 'primary', production: 'primary', wholesale: 'secondary', retail: 'secondary',
+    distribution: 'primary', 'professional-services': 'primary', education: 'secondary',
+    healthcare: 'primary', hospitality: 'primary', 'non-profit': 'secondary',
+    construction: 'primary', 'media-publishing': 'primary',
+  },
+  fleet: {
+    manufacturing: 'secondary', production: 'secondary', wholesale: 'primary',
+    distribution: 'primary', 'professional-services': 'secondary',
+    construction: 'primary',
+  },
+  manufacturing: {
+    manufacturing: 'primary', production: 'primary',
+    distribution: 'secondary', construction: 'secondary',
+  },
+  'pos-retail': {
+    retail: 'primary', hospitality: 'primary',
+    wholesale: 'secondary',
+  },
+  'business-intelligence': {
+    manufacturing: 'primary', production: 'primary', wholesale: 'primary', retail: 'primary',
+    distribution: 'primary', 'professional-services': 'primary', education: 'primary',
+    healthcare: 'primary', hospitality: 'primary', 'non-profit': 'primary',
+    construction: 'primary', 'media-publishing': 'primary',
+  },
+  projects: {
+    'professional-services': 'primary', 'non-profit': 'primary', construction: 'primary',
+    'media-publishing': 'primary', manufacturing: 'secondary',
+  },
+};
 
 /** Full products list shape for CMS / products page */
 export function productsListForCms() {

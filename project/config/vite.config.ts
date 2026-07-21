@@ -1,10 +1,6 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 
-function formatTime(at?: string) {
-  return at ? new Date(at).toLocaleTimeString() : new Date().toLocaleTimeString();
-}
-
 function devActivityLogger(): Plugin {
   const handleLog = (body: string, res: import('http').ServerResponse) => {
     try {
@@ -18,13 +14,13 @@ function devActivityLogger(): Plugin {
         from?: string;
         className?: string;
       };
-
-      const time = formatTime(payload.at);
-
+      const time = payload.at
+        ? new Date(payload.at).toLocaleTimeString()
+        : new Date().toLocaleTimeString();
       if (payload.type === 'nav') {
         console.log(`[nav ${time}] ${payload.path ?? '(unknown)'}`);
       } else if (payload.type === 'click') {
-        const target = payload.href ? ` → ${payload.href}` : '';
+        const target = payload.href ? ` \u2192 ${payload.href}` : '';
         const origin = payload.from ? ` (from ${payload.from})` : '';
         const classes = payload.className ? ` {${payload.className}}` : '';
         console.log(
@@ -36,7 +32,6 @@ function devActivityLogger(): Plugin {
     } catch {
       console.log('[dev-log] (invalid payload)');
     }
-
     res.statusCode = 204;
     res.end();
   };
@@ -50,11 +45,8 @@ function devActivityLogger(): Plugin {
       next();
       return;
     }
-
     let body = '';
-    req.on('data', (chunk) => {
-      body += chunk;
-    });
+    req.on('data', (chunk) => { body += chunk; });
     req.on('end', () => handleLog(body, res));
   };
 
@@ -63,7 +55,6 @@ function devActivityLogger(): Plugin {
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use('/__dev/log', readBody);
-      // Backward compatible with earlier nav-only endpoint
       server.middlewares.use('/__dev/nav', readBody);
     },
   };
@@ -73,5 +64,21 @@ export default defineConfig({
   plugins: [react(), devActivityLogger()],
   optimizeDeps: {
     exclude: ['lucide-react'],
+  },
+  build: {
+    manifest: true,
+    rollupOptions: {
+      input: {
+        app: './index.html',
+      },
+    },
+  },
+  ssr: {
+    noExternal: [
+      'lucide-react',
+      'react-chartjs-2',
+      'chart.js',
+      'swiper',
+    ],
   },
 });

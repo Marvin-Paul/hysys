@@ -6,8 +6,10 @@ import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
+import { OptimizedImage } from '../../components/ui/OptimizedImage';
 import { mergeCmsList } from '../../lib/cms/cmsContent';
 import { DEFAULT_CAREERS_VALUES, DEFAULT_OPEN_ROLES } from '../../lib/cms/resourceDefaults';
 import { careerValueImages } from '../../lib/cms/cardDefaults';
@@ -26,9 +28,15 @@ export function CareersPage() {
     DEFAULT_OPEN_ROLES
   );
 
+  const careersJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Company', path: '/company' },
+    { name: 'Careers', path: '/company/careers' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.careers.title} description={PAGE_META.careers.description} fullTitle />
+      <SEO title={PAGE_META.careers.title} description={PAGE_META.careers.description} jsonLd={careersJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Company', path: '/company' }, { label: 'Careers' }]} />
 
@@ -60,11 +68,10 @@ export function CareersPage() {
             {values.map((v) => (
               <ScrollReveal key={v.id || v.title}>
                 <div className="group relative rounded-2xl overflow-hidden ring-1 ring-slate-200 shadow-sm transition hover:shadow-lg hover:-translate-y-1">
-                  <img
+                  <OptimizedImage
                     src={v.image || careerValueImages[v.id as string] || careerValueImages.innovation}
                     alt={String(v.title || '')}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/10" />
                   <div className="relative p-6 min-h-[180px] flex flex-col justify-end">

@@ -6,8 +6,10 @@ import { PageHero } from '../../components/ui/PageHero';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
+import { OptimizedImage } from '../../components/ui/OptimizedImage';
 import { mergeCmsList, toCmsArray } from '../../lib/cms/cmsContent';
 import { docCategoryImages } from '../../lib/cms/cardDefaults';
 
@@ -55,11 +57,18 @@ export function DocumentationPage() {
     image: cat.image || docCategoryImages[cat.id as string] || '',
   }));
 
+  const docsJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Documentation', path: '/documentation' },
+  ])];
+
   return (
+
     <div className="pt-16">
       <SEO
         title={PAGE_META.documentation.title}
         description={PAGE_META.documentation.description}
+        jsonLd={docsJsonLd}
         fullTitle
       />
 
@@ -99,11 +108,10 @@ export function DocumentationPage() {
             {docCategories.map((category) => (
               <ScrollReveal key={category.id}>
                 <div className="group relative rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                  <img
+                  <OptimizedImage
                     src={category.image || docCategoryImages[category.id as string] || docCategoryImages['getting-started']}
                     alt={category.title}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
                   <div className="relative p-8 min-h-[260px] flex flex-col justify-end">

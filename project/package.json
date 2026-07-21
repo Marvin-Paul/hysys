@@ -8,11 +8,23 @@
     "build": "vite build --config config/vite.config.ts && node scripts/generate-sitemap.mjs",
     "lint": "eslint . --config config/eslint.config.js",
     "preview": "vite preview --config config/vite.config.ts",
-    "typecheck": "tsc --noEmit -p config/tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p config/tsconfig.app.json",
+    "perf:collect": "lhci collect --config=lighthouse.config.mjs",
+    "perf:assert": "lhci assert --config=lighthouse.config.mjs",
+    "perf:upload": "lhci upload --config=lighthouse.config.mjs",
+    "perf": "lhci autorun --config=lighthouse.config.mjs",
+    "dev:ssr": "tsx server/dev.ts",
+    "build:ssr": "vite build --config config/vite.config.ts --outDir dist/client && vite build --config config/vite.config.ts --ssr src/entry-server.tsx --outDir dist/server && node scripts/generate-sitemap.mjs",
+    "start": "NODE_ENV=production tsx server/prod.ts"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.5.3",
+    "@sentry/browser": "^10.67.0",
+    "@sentry/react": "^10.67.0",
     "@supabase/supabase-js": "^2.57.4",
     "chart.js": "^4.5.1",
+    "compression": "^1.8.1",
+    "express": "^5.2.1",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.3.1",
@@ -22,6 +34,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/compression": "^1.8.1",
+    "@types/express": "^5.0.6",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

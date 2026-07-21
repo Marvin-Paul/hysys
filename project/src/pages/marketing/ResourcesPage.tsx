@@ -6,8 +6,10 @@ import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { NewsletterSignup } from '../../components/ui/NewsletterSignup';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
+import { OptimizedImage } from '../../components/ui/OptimizedImage';
 import { mergeCmsList } from '../../lib/cms/cmsContent';
 import { DEFAULT_RESOURCE_CARDS } from '../../lib/cms/resourceDefaults';
 import { resourceHubImages } from '../../lib/cms/cardDefaults';
@@ -27,9 +29,14 @@ export function ResourcesPage() {
     image: String(card.image || resourceHubImages[String(card.id)] || ''),
   }));
 
+  const resourcesJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Resources', path: '/resources' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.resources.title} description={PAGE_META.resources.description} fullTitle />
+      <SEO title={PAGE_META.resources.title} description={PAGE_META.resources.description} jsonLd={resourcesJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Resources' }]} />
 
@@ -51,11 +58,10 @@ export function ResourcesPage() {
               return (
                 <ScrollReveal key={s.id || s.path}>
                   <Link to={String(s.path || '/resources')} className="group relative block rounded-2xl overflow-hidden ring-1 ring-slate-200 shadow-sm transition hover:shadow-lg hover:-translate-y-1">
-                    <img
+                    <OptimizedImage
                       src={s.image || resourceHubImages[s.id as string] || resourceHubImages.blog}
                       alt={String(s.title || '')}
                       className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/10" />
                     <div className="relative p-6 min-h-[200px] flex flex-col justify-end">

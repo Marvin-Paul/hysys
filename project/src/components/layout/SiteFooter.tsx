@@ -8,7 +8,7 @@ export function SiteFooter() {
   const global = useSiteContent('global');
   const contact = useSiteContent('contact');
 
-  const tagline = global.getContent('footer_tagline', 'Empowering businesses with intelligent ERP solutions.');
+  const tagline = global.getContent('footer_tagline', '');
   const brandName = global.getContent('footer_brand_name', 'Marmidon Global Solutions Limited');
   const websiteUrl = global.getContent('footer_website_url', 'https://www.marmidon.com');
   const copyright = global.getContent('footer_copyright', '© 2026 Marmidon Global Solutions Limited. All rights reserved.');
@@ -29,6 +29,23 @@ export function SiteFooter() {
   const moduleLinks = footerModuleLinks();
   const sectorLinks = footerSectorLinks();
   const websiteHost = websiteUrl.replace(/^https?:\/\//, '');
+
+  const socialLinks = [
+    { label: 'X', href: websiteUrl, title: 'Marmidon on X' },
+    { label: 'in', href: websiteUrl, title: 'Marmidon on LinkedIn' },
+    { label: 'f', href: websiteUrl, title: 'Marmidon on Facebook' },
+  ];
+
+  const connectLinks = [
+    { id: 'contact', title: 'Contact', path: '/contact' },
+    { id: 'demo', title: 'Request a Demo', path: '/request-a-demo' },
+  ];
+
+  const legalLinks = [
+    { id: 'privacy', title: global.getContent('footer_privacy_label', 'Privacy'), path: '/legal/privacy' },
+    { id: 'terms', title: global.getContent('footer_terms_label', 'Terms'), path: '/legal/terms' },
+    { id: 'cookies', title: global.getContent('footer_cookies_label', 'Cookies'), path: '/legal/cookies' },
+  ];
 
   return (
     <footer className="site-footer">
@@ -51,28 +68,9 @@ export function SiteFooter() {
                 {websiteHost}
               </a>
             </address>
-            <div className="site-footer__social">
-              {[
-                { label: 'X', href: websiteUrl, title: 'Marmidon on X' },
-                { label: 'in', href: websiteUrl, title: 'Marmidon on LinkedIn' },
-                { label: 'f', href: websiteUrl, title: 'Marmidon on Facebook' },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={social.title}
-                  aria-label={social.title}
-                  className="site-footer__social-link"
-                >
-                  {social.label}
-                </a>
-              ))}
-            </div>
           </div>
 
-          <div>
+          <nav aria-label="Products">
             <h4 className="site-footer__heading">{global.getContent('footer_col_products', 'Products')}</h4>
             <ul className="site-footer__links">
               {moduleLinks.map((link) => (
@@ -80,9 +78,9 @@ export function SiteFooter() {
               ))}
               <li><Link to="/products" className="site-footer__link site-footer__link--all">{global.getContent('footer_all_products_label', 'All products →')}</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          <div>
+          <nav aria-label="Solutions">
             <h4 className="site-footer__heading">{global.getContent('footer_col_solutions', 'Solutions')}</h4>
             <ul className="site-footer__links">
               {sectorLinks.map((link) => (
@@ -90,16 +88,16 @@ export function SiteFooter() {
               ))}
               <li><Link to="/solutions" className="site-footer__link site-footer__link--all">{global.getContent('footer_all_solutions_label', 'All solutions →')}</Link></li>
             </ul>
-          </div>
+          </nav>
 
-          <div>
+          <nav aria-label="Resources">
             <h4 className="site-footer__heading">{global.getContent('footer_col_resources', 'Resources')}</h4>
             <ul className="site-footer__links">
               {resourceLinks.map((link) => (
                 <li key={link.id || link.path}><Link to={String(link.path)} className="site-footer__link">{link.title}</Link></li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           <div>
             <h4 className="site-footer__heading">{global.getContent('footer_col_company', 'Company')}</h4>
@@ -111,13 +109,31 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h4 className="site-footer__heading">{global.getContent('footer_col_legal', 'Legal')}</h4>
+            <h4 className="site-footer__heading">{global.getContent('footer_col_connect', 'Connect')}</h4>
             <ul className="site-footer__links">
-              <li><Link to="/legal/privacy" className="site-footer__link">{global.getContent('footer_privacy_label', 'Privacy')}</Link></li>
-              <li><Link to="/legal/terms" className="site-footer__link">{global.getContent('footer_terms_label', 'Terms')}</Link></li>
-              <li><Link to="/legal/cookies" className="site-footer__link">{global.getContent('footer_cookies_label', 'Cookies')}</Link></li>
-              <li><Link to="/legal/accessibility" className="site-footer__link">{global.getContent('footer_accessibility_label', 'Accessibility')}</Link></li>
-              <li><Link to="/sitemap" className="site-footer__link">{global.getContent('footer_sitemap_label', 'Sitemap')}</Link></li>
+              {connectLinks.map((link) => (
+                <li key={link.id}><Link to={link.path} className="site-footer__link">{link.title}</Link></li>
+              ))}
+              <li className="site-footer__social">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={social.title}
+                    aria-label={social.title}
+                    className="site-footer__social-link"
+                  >
+                    {social.label}
+                  </a>
+                ))}
+              </li>
+              <li className="site-footer__legal-links">
+                {legalLinks.map((link) => (
+                  <Link key={link.id} to={link.path} className="site-footer__link site-footer__link--legal">{link.title}</Link>
+                ))}
+              </li>
             </ul>
           </div>
         </div>

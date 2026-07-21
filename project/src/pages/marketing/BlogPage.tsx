@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom';
-import { Newspaper, ArrowRight, CalendarDays, User } from 'lucide-react';
-import { ScrollReveal } from '../../components/ui/ScrollReveal';
+import { Newspaper } from 'lucide-react';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
 import { NewsletterSignup } from '../../components/ui/NewsletterSignup';
+import { BlogCard } from '../../components/ui/BlogCard';
 import { PAGE_META } from '../../lib/seo/pageMeta';
 import { SEO } from '../../components/ui/SEO';
+import { breadcrumbJsonLd } from '../../lib/seo/structuredData';
 import { Breadcrumbs } from '../../components/ui/Breadcrumbs';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { BLOG_POSTS } from '../../lib/content/blogPosts';
@@ -28,9 +28,15 @@ export function BlogPage() {
     image: String(post.image || blogPostImages[(post.slug || post.id) as string] || ''),
   })).filter((p) => p.slug && p.title);
 
+  const blogJsonLd = [breadcrumbJsonLd([
+    { name: 'Home', path: '/' },
+    { name: 'Resources', path: '/resources' },
+    { name: 'Blog', path: '/resources/blog' },
+  ])];
+
   return (
     <div className="pt-16">
-      <SEO title={PAGE_META.blog.title} description={PAGE_META.blog.description} fullTitle />
+      <SEO title={PAGE_META.blog.title} description={PAGE_META.blog.description} jsonLd={blogJsonLd} fullTitle />
 
       <Breadcrumbs items={[{ label: 'Home', path: '/' }, { label: 'Resources', path: '/resources' }, { label: 'Blog' }]} />
 
@@ -48,32 +54,18 @@ export function BlogPage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-6">
             {posts.map((post) => (
-              <ScrollReveal key={post.slug}>
-                <Link to={`/resources/blog/${post.slug}`} className="group block rounded-2xl bg-white p-6 ring-1 ring-slate-200 shadow-sm transition hover:shadow-lg hover:-translate-y-0.5">
-                  <div className="flex items-start gap-4">
-                    <div className="hidden sm:flex h-24 w-36 shrink-0 rounded-xl overflow-hidden relative ring-1 ring-slate-200">
-                      <img
-                        src={post.image || blogPostImages[post.slug]}
-                        alt={post.title}
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
-                        <span className="rounded-full bg-[var(--color-primary)]/10 px-2.5 py-0.5 font-medium text-[var(--color-primary)]">{post.category}</span>
-                        <span className="inline-flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {post.date}</span>
-                        <span className="inline-flex items-center gap-1"><User className="w-3 h-3" /> {post.author}</span>
-                      </div>
-                      <h3 className="mt-2 text-lg font-semibold text-slate-900 group-hover:text-[var(--color-primary)]">{post.title}</h3>
-                      <p className="mt-1 text-sm text-slate-600 line-clamp-2">{post.excerpt}</p>
-                      <div className="mt-3 flex items-center gap-1 text-sm font-medium text-[var(--color-primary)]">
-                        {content.getContent('blog_read_more_label', 'Read more')} <ArrowRight className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </ScrollReveal>
+              <BlogCard
+                key={post.slug}
+                slug={post.slug}
+                title={post.title}
+                excerpt={post.excerpt}
+                date={post.date}
+                author={post.author}
+                category={post.category}
+                image={post.image || blogPostImages[post.slug]}
+                linkLabel={content.getContent('blog_read_more_label', 'Read more')}
+                layout="horizontal"
+              />
             ))}
           </div>
         </div>

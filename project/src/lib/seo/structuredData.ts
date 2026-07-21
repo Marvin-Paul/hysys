@@ -15,7 +15,10 @@ export const ORGANIZATION_JSON_LD = {
     availableLanguage: ['English'],
   },
   sameAs: [
-    'https://www.marmidon.com',
+    'https://www.linkedin.com/company/marmidon',
+    'https://twitter.com/MarmidonERP',
+    'https://www.facebook.com/MarmidonERP',
+    'https://www.youtube.com/@MarmidonERP',
   ],
 };
 
@@ -110,6 +113,25 @@ export function articleJsonLd(params: {
         '@type': 'ImageObject',
         url: `${SITE_URL}/Mavy%20logo3.svg`,
       },
+    },
+  };
+}
+
+export function reviewJsonLd(params: {
+  quote: string;
+  author: string;
+  authorTitle?: string;
+  ratingValue?: number;
+}) {
+  return {
+    '@type': 'Review',
+    reviewBody: params.quote,
+    author: { '@type': 'Person', name: params.author },
+    ...(params.authorTitle ? { authorTitle: params.authorTitle } : {}),
+    ...(params.ratingValue ? { reviewRating: { '@type': 'Rating', ratingValue: params.ratingValue, bestRating: 5 } } : {}),
+    itemReviewed: {
+      '@type': 'Organization',
+      name: 'Marmidon Global Solutions Limited',
     },
   };
 }

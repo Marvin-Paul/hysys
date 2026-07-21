@@ -38,30 +38,34 @@ CREATE TRIGGER set_design_settings_timestamp
 INSERT INTO public.design_settings (setting_key, setting_value) VALUES
 ('theme', jsonb_build_object(
   'colors', jsonb_build_object(
-    'primary', '#0b5394',
-    'secondary', '#032d60',
-    'accent', '#00a3e0',
+    'primary', '#3588E4',
+    'secondary', '#0F2D5C',
+    'accent', '#1E66C4',
     'background', '#ffffff',
     'card', '#f8fafc',
-    'nav', '#032d60',
-    'footer', '#032d60',
-    'text', '#111827',
-    'textMuted', '#6b7280',
-    'border', '#e5e7eb'
+    'nav', '#0F2D5C',
+    'footer', '#0F2D5C',
+    'text', '#1F2933',
+    'textMuted', '#5A6470',
+    'border', '#D5DBE2'
   ),
   'typography', jsonb_build_object(
     'fontFamily', 'Inter, system-ui, sans-serif',
-    'headingH1', 48,
-    'headingH2', 36,
+    'headingH1', 40,
+    'headingH2', 32,
     'headingH3', 24,
     'headingH4', 20,
     'bodySize', 16,
+    'displaySize', 60,
+    'bodyLgSize', 20,
+    'buttonSize', 15,
+    'smallSize', 14,
     'fontWeightHeading', '700',
     'fontWeightBody', '400',
     'lineSpacing', 1.6
   ),
   'buttons', jsonb_build_object(
-    'borderRadius', 8,
+    'borderRadius', 10,
     'style', 'filled',
     'hoverEffect', 'lift',
     'shadow', '0 1px 3px rgba(0,0,0,0.12)',
@@ -69,7 +73,7 @@ INSERT INTO public.design_settings (setting_key, setting_value) VALUES
     'paddingY', 12
   ),
   'cards', jsonb_build_object(
-    'borderRadius', 12,
+    'borderRadius', 16,
     'shadow', '0 1px 3px rgba(0,0,0,0.08)',
     'border', '1px solid #e5e7eb',
     'hoverAnimation', 'lift',
@@ -78,7 +82,7 @@ INSERT INTO public.design_settings (setting_key, setting_value) VALUES
   'layout', jsonb_build_object(
     'containerWidth', 1200,
     'pageSpacing', 80,
-    'gridGap', 32,
+    'gridGap', 24,
     'sectionSpacing', 96
   ),
   'navigation', jsonb_build_object(

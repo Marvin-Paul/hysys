@@ -4,6 +4,8 @@ import { Users, BarChart3, Shield, Zap, Cloud, ShoppingCart, ArrowRight, CheckCi
 import type { LucideIcon } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
+import { BenefitBlock } from '../../components/ui/BenefitBlock';
+import { Testimonial } from '../../components/ui/Testimonial';
 import { PageHero } from '../../components/ui/PageHero';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { SectionHeading } from '../../components/ui/SectionHeading';
@@ -23,7 +25,7 @@ import { getModuleDetail } from '../../lib/moduleDetailContent';
 import { getModuleFaqs } from '../../lib/moduleFaqs';
 import { demoRequestUrl } from '../../lib/forms/demoUrl';
 import { FaqAccordion } from '../../components/ui/FaqAccordion';
-import { softwareApplicationJsonLd, breadcrumbJsonLd } from '../../lib/seo/structuredData';
+import { softwareApplicationJsonLd, breadcrumbJsonLd, reviewJsonLd } from '../../lib/seo/structuredData';
 import { trackEvent } from '../../lib/analytics/track';
 
 const moduleIconMap: Record<string, LucideIcon> = {
@@ -122,6 +124,18 @@ export function ProductsPage() {
               </ScrollReveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-slate-50">
+        <div className="products-container">
+          <ScrollReveal>
+            <SectionHeading
+              badge={<span className="type-badge type-badge--light">{content.getContent('products_suite_badge', 'Suite Overview')}</span>}
+              title={content.getContent('products_suite_title', 'One platform, infinite possibilities')}
+              description={content.getContent('products_suite_desc', 'Every module shares the same database, security model, and analytics layer — so your data stays consistent across finance, operations, and sales.')}
+            />
+          </ScrollReveal>
         </div>
       </section>
 
@@ -231,6 +245,8 @@ export function ProductDetailPage() {
     );
   }
 
+  const detail = getModuleDetail(resolvedSlug);
+
   const moduleJsonLd = [
     softwareApplicationJsonLd({
       name: product.title,
@@ -242,9 +258,12 @@ export function ProductDetailPage() {
       { name: 'Products', path: '/products' },
       { name: product.title, path: `/products/${resolvedSlug}` },
     ]),
+    ...(detail?.proof ? [reviewJsonLd({
+      quote: detail.proof.quote,
+      author: detail.proof.attribution,
+    })] : []),
   ];
 
-  const detail = getModuleDetail(resolvedSlug);
   const overview = detail?.overview ?? product.description;
   const benefits = detail?.benefits ?? [];
   const relatedModules = (detail?.relatedModuleSlugs ?? [])
@@ -351,10 +370,7 @@ export function ProductDetailPage() {
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {benefits.map((benefit) => (
                 <ScrollReveal key={benefit}>
-                  <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200 shadow-sm">
-                    <CheckCircle className="w-5 h-5 text-[var(--color-primary)] mb-3" />
-                    <p className="text-sm font-medium text-slate-800 leading-relaxed">{benefit}</p>
-                  </div>
+                  <BenefitBlock title={benefit} accent="text-[var(--color-primary)]" />
                 </ScrollReveal>
               ))}
             </div>
@@ -412,12 +428,12 @@ export function ProductDetailPage() {
         <section className="py-24 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal>
-              <blockquote className="relative rounded-3xl bg-[var(--color-secondary)] p-8 sm:p-10 text-white">
-                <p className="text-lg sm:text-xl leading-relaxed font-medium">&ldquo;{detail.proof.quote}&rdquo;</p>
-                <footer className="mt-6 text-sm text-white/70">
-                  — {detail.proof.attribution}, {detail.proof.company}
-                </footer>
-              </blockquote>
+              <Testimonial
+                quote={detail.proof.quote}
+                attribution={detail.proof.attribution}
+                company={detail.proof.company}
+                variant="dark"
+              />
             </ScrollReveal>
           </div>
         </section>
@@ -441,7 +457,7 @@ export function ProductDetailPage() {
         </section>
       )}
 
-      {/* Block 9 · Related modules */}
+      {/* Block 9 · Related modules (compact card variant) */}
       {relatedModules.length > 0 && (
         <section className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -452,18 +468,36 @@ export function ProductDetailPage() {
                 description={content.getContent('detail_related_desc', 'Modules that connect directly with this part of Marmidon ERP.')}
               />
             </ScrollReveal>
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {relatedModules.map((mod) => (
                 <ScrollReveal key={mod.slug}>
-                  <ContentCard
+                  <Link
                     to={`/products/${mod.slug}`}
-                    title={mod.shortName}
-                    subtitle={mod.subtitle}
-                    description={mod.description.slice(0, 100) + (mod.description.length > 100 ? '…' : '')}
-                    icon={moduleIconMap[mod.iconName] || Shield}
-                    iconGradient={mod.color}
-                    image={productImages[mod.slug]}
-                  />
+                    className="group block rounded-xl bg-white ring-1 ring-slate-200 shadow-sm transition hover:shadow-lg hover:-translate-y-0.5 overflow-hidden"
+                  >
+                    <CardMedia
+                      src={productImages[mod.slug]}
+                      alt={mod.shortName}
+                      aspect="wide"
+                    />
+                    <div className="p-4">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                          style={{ background: `linear-gradient(135deg, ${mod.color?.replace(/from-(\w+)-(\d+)/, '')?.trim() || '#3588E4'})` }}
+                        >
+                          {(() => {
+                            const Icon = moduleIconMap[mod.iconName] || Shield;
+                            return <Icon className="w-4 h-4 text-white" />;
+                          })()}
+                        </div>
+                        <h3 className="text-sm font-semibold text-slate-900 group-hover:text-[var(--color-primary)] transition-colors">
+                          {mod.shortName}
+                        </h3>
+                      </div>
+                      <p className="mt-2 text-xs text-slate-500 line-clamp-2">{mod.subtitle}</p>
+                    </div>
+                  </Link>
                 </ScrollReveal>
               ))}
             </div>
