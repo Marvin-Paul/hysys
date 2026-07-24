@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BookOpen, Download, X, Loader2 } from 'lucide-react';
+import { BookOpen, Download, X, Loader2, Mail } from 'lucide-react';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
@@ -154,13 +154,17 @@ export function GuidesPage() {
               </div>
             ) : (
               <>
-                <h3 className="text-lg font-bold text-slate-900 pr-8">Download {activeGuide.title}</h3>
-                <p className="mt-2 text-sm text-slate-600">{content.getContent('download_modal_desc', 'Enter your work email to receive this guide.')}</p>
-                {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-                <form onSubmit={handleDownloadSubmit} className="relative mt-4 space-y-4">
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-slate-900 pr-8">Download {activeGuide.title}</h3>
+                  <p className="mt-1 text-sm text-slate-500">{content.getContent('download_modal_desc', 'Enter your work email to receive this guide.')}</p>
+                </div>
+                {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+                <form onSubmit={handleDownloadSubmit} className="space-y-5">
                   <FormHoneypot />
-                  <div>
-                    <label htmlFor="guide-email" className="form-label">Work email *</label>
+                  <div className="form-field">
+                    <label htmlFor="guide-email" className="form-field__label">
+                      <Mail className="w-4 h-4 text-gray-400" /> Work email *
+                    </label>
                     <input
                       id="guide-email"
                       name="email"
@@ -172,7 +176,7 @@ export function GuidesPage() {
                     />
                   </div>
                   <TurnstileWidget />
-                  <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
+                  <button type="submit" disabled={sending} className="form-actions__submit">
                     {sending ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : content.getContent('download_button_label', 'Get the guide')}
                   </button>
                 </form>

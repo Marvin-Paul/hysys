@@ -88,7 +88,7 @@ import { useSiteContent } from '../../hooks/useSiteContent';
 
 import { mergeCmsList } from '../../lib/cms/cmsContent';
 import { DEFAULT_NAV_COMPANY, DEFAULT_NAV_RESOURCES } from '../../lib/cms/resourceDefaults';
-import { modulesForNav, sectorsForNav, MODULE_NAV_GROUPS } from '../../lib/marmidonCatalog';
+import { modulesForNav, sectorsForNav, MODULE_NAV_GROUPS, SECTOR_NAV_GROUPS } from '../../lib/marmidonCatalog';
 import { trackEvent } from '../../lib/analytics/track';
 
 interface NavSubItem {
@@ -524,6 +524,86 @@ export function SiteNav() {
     );
   };
 
+  const renderSolutionsMegaGroup = (group: NavGroup) => {
+    const itemsByPath = Object.fromEntries(group.items.map((item) => [item.path, item]));
+
+    return (
+      <div
+        key={group.label}
+        className="relative"
+        onMouseEnter={() => setActiveDropdown(group.label)}
+        onMouseLeave={() => setActiveDropdown(null)}
+      >
+        <Link
+          to={group.path}
+          aria-current={isActive(group.path) ? 'page' : undefined}
+          className={navLinkClass(isActive(group.path))}
+        >
+          {group.label}
+          <ChevronDown
+            className={`w-3.5 h-3.5 opacity-60 transition-transform duration-200 ${
+              activeDropdown === group.label ? 'rotate-180' : ''
+            }`}
+          />
+        </Link>
+        <div className="site-nav__bridge" aria-hidden />
+        <div
+          className={`nav-mega-panel nav-mega-panel--products ${
+            activeDropdown === group.label ? 'nav-mega-panel--open' : ''
+          }`}
+        >
+          <div className="nav-mega-panel__header">
+            <div>
+              <p className="nav-mega-panel__eyebrow">{group.label}</p>
+              <p className="nav-mega-panel__tagline">{group.tagline}</p>
+            </div>
+            <Link
+              to={group.path}
+              className="nav-mega-panel__view-all"
+              onClick={() => setActiveDropdown(null)}
+            >
+              {nav.getContent('nav_view_all', 'View all')}
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+          <div className="nav-mega-products-layout">
+            {SECTOR_NAV_GROUPS.map((column) => (
+              <div key={column.label} className="nav-mega-products-col">
+                <p className="nav-mega-products-col__label">{column.label}</p>
+                <div className="nav-mega-products-col__items">
+                  {column.slugs.map((slug) => {
+                    const item = itemsByPath[`/solutions/${slug}`];
+                    if (!item) return null;
+                    return renderMegaItem(item, slug);
+                  })}
+                </div>
+              </div>
+            ))}
+            <aside className="nav-mega-promo">
+              <p className="nav-mega-promo__eyebrow">Industries</p>
+              <h3 className="nav-mega-promo__title">Built for your sector</h3>
+              <p className="nav-mega-promo__desc">Explore how Marmidon adapts to your industry with tailored module configurations.</p>
+              <Link
+                to="/solutions"
+                className="nav-mega-promo__cta nav-mega-promo__cta--explore"
+                onClick={() => setActiveDropdown(null)}
+              >
+                View all solutions <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link
+                to="/request-a-demo"
+                className="nav-mega-promo__cta nav-mega-promo__cta--demo"
+                onClick={() => setActiveDropdown(null)}
+              >
+                Request a Demo <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </aside>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderFlatLink = (link: { label: string; path: string }) => (
     <Link
       key={link.path}
@@ -557,7 +637,7 @@ export function SiteNav() {
 
         <nav className="site-nav__primary-nav" aria-label="Primary">
           {navGroups[0] && renderProductsMegaGroup(navGroups[0])}
-          {navGroups[1] && renderMegaGroup(navGroups[1], 'start')}
+          {navGroups[1] && renderSolutionsMegaGroup(navGroups[1])}
           {renderFlatLink(flatNavLinks[0])}
           {navGroups[2] && renderMegaGroup(navGroups[2], 'end')}
           {renderFlatLink(flatNavLinks[1])}
@@ -640,7 +720,6 @@ export function SiteNav() {
             )}
 
           </div>
-
 
 
           <div
@@ -843,6 +922,27 @@ export function SiteNav() {
                               <p className="nav-mobile-products-group__label">{column.label}</p>
                               {column.slugs.map((slug) => {
                                 const item = itemsByPath[`/products/${slug}`];
+                                if (!item) return null;
+                                return (
+                                  <Link key={item.path} to={item.path} className="nav-mobile-link nav-mobile-link--compact">
+                                    <div className={`nav-mega-item__icon ring-1 ${item.accent}`}>
+                                      <item.icon className="w-4 h-4" />
+                                    </div>
+                                    <div className="text-sm font-medium text-slate-900">{item.title}</div>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          );
+                        })
+                      ) : group.label === solutionsLabel ? (
+                        SECTOR_NAV_GROUPS.map((column) => {
+                          const itemsByPath = Object.fromEntries(group.items.map((item) => [item.path, item]));
+                          return (
+                            <div key={column.label} className="nav-mobile-products-group">
+                              <p className="nav-mobile-products-group__label">{column.label}</p>
+                              {column.slugs.map((slug) => {
+                                const item = itemsByPath[`/solutions/${slug}`];
                                 if (!item) return null;
                                 return (
                                   <Link key={item.path} to={item.path} className="nav-mobile-link nav-mobile-link--compact">

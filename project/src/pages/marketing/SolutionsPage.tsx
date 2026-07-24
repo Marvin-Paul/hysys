@@ -113,16 +113,17 @@ export function SolutionsPage() {
             {MARMIDON_SECTORS.map((sector) => {
               const cmsSector = sectors[sector.slug] ?? sectorDefaults[sector.slug];
               return (
-                <ScrollReveal key={sector.slug}>
-                  <SectorCard
-                    id={sector.slug}
-                    title={cmsSector.title}
-                    description={cmsSector.description}
-                    link={`/solutions/${sector.slug}`}
-                    image={cmsSector.image || sectorImages[sector.slug]}
-                    linkLabel={global.getContent('card_footer_label', 'Learn more')}
-                  />
-                </ScrollReveal>
+              <ScrollReveal key={sector.slug}>
+                <SectorCard
+                  id={sector.slug}
+                  title={cmsSector.title}
+                  description={cmsSector.description}
+                  link={`/solutions/${sector.slug}`}
+                  image={cmsSector.image || sectorImages[sector.slug]}
+                  linkLabel={global.getContent('card_footer_label', 'Learn more')}
+                  icon={sectorIconMap[sector.iconName]}
+                />
+              </ScrollReveal>
               );
             })}
           </div>

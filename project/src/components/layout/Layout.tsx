@@ -5,6 +5,7 @@ import { SiteNav } from './SiteNav';
 import { SiteFooter } from './SiteFooter';
 import { GlobalStructuredData } from '../seo/GlobalStructuredData';
 import { languages, translations, TranslationContext, Language } from '../../lib/i18n';
+import { ScrollToTop } from './ScrollToTop';
 
 const PRODUCTION_HOST = 'www.marmidon.com';
 
@@ -59,6 +60,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <TranslationContext.Provider value={{ languageCode, setLanguage, t }}>
+      <ScrollToTop />
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <div className="min-h-screen flex flex-col">
         <GlobalStructuredData />

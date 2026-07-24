@@ -1,5 +1,10 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '..');
 
 function devActivityLogger(): Plugin {
   const handleLog = (body: string, res: import('http').ServerResponse) => {

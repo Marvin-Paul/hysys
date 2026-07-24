@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { OptimizedImage } from './OptimizedImage';
 
 type CardMediaAspect = 'video' | 'wide' | 'square' | 'portrait' | 'avatar';
@@ -40,11 +40,14 @@ export function CardMedia({
   width,
   height,
 }: CardMediaProps) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const showImage = src && !imgFailed;
+
   if (!src && !fallback) return null;
 
   return (
     <div className={`pro-card__media ${aspectClass[aspect]} ${className}`.trim()}>
-      {src ? (
+      {showImage ? (
         <OptimizedImage
           src={src}
           alt={alt}
@@ -53,6 +56,7 @@ export function CardMedia({
           height={height}
           style={{ aspectRatio: aspectRatio[aspect] }}
           className="pro-card__img"
+          onError={() => setImgFailed(true)}
         />
       ) : (
         fallback

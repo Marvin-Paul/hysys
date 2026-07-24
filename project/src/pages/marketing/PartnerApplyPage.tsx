@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Send, Sparkles, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles, CheckCircle, Loader2, User, Building2, Mail, Globe, MessageSquare } from 'lucide-react';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
 import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
@@ -102,54 +102,108 @@ export function PartnerApplyPage() {
           {error && (
             <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>
           )}
-          <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'partner_apply' })} className="relative space-y-6">
+
+          <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'partner_apply' })} className="space-y-6">
             <FormHoneypot />
             <InvisibleChallenge />
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <label htmlFor="firstName" className="form-label">{content.getContent('form_first_name_label', 'First name *')}</label>
-                <input id="firstName" name="firstName" required className="form-control" />
+
+            {/* Personal Information */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <h3 className="form-section__title">Personal information</h3>
+                <p className="form-section__desc">Your primary contact details for the application.</p>
               </div>
-              <div>
-                <label htmlFor="lastName" className="form-label">{content.getContent('form_last_name_label', 'Last name *')}</label>
-                <input id="lastName" name="lastName" required className="form-control" />
+              <div className="form-section__body">
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="form-field">
+                    <label htmlFor="firstName" className="form-field__label">
+                      <User className="w-4 h-4 text-gray-400" /> {content.getContent('form_first_name_label', 'First name *')}
+                    </label>
+                    <input id="firstName" name="firstName" required className="form-control" />
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor="lastName" className="form-field__label">
+                      <User className="w-4 h-4 text-gray-400" /> {content.getContent('form_last_name_label', 'Last name *')}
+                    </label>
+                    <input id="lastName" name="lastName" required className="form-control" />
+                  </div>
+                </div>
+                <div className="form-field">
+                  <label htmlFor="email" className="form-field__label">
+                    <Mail className="w-4 h-4 text-gray-400" /> {content.getContent('form_email_label', 'Work email *')}
+                  </label>
+                  <input id="email" name="email" type="email" required className="form-control" />
+                </div>
               </div>
             </div>
-            <div>
-              <label htmlFor="email" className="form-label">{content.getContent('form_email_label', 'Work email *')}</label>
-              <input id="email" name="email" type="email" required className="form-control" />
+
+            {/* Company Details */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <h3 className="form-section__title">Company details</h3>
+                <p className="form-section__desc">Tell us about your business.</p>
+              </div>
+              <div className="form-section__body">
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="form-field">
+                    <label htmlFor="company" className="form-field__label">
+                      <Building2 className="w-4 h-4 text-gray-400" /> {content.getContent('form_company_label', 'Company name *')}
+                    </label>
+                    <input id="company" name="company" required className="form-control" />
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor="website" className="form-field__label">
+                      <Globe className="w-4 h-4 text-gray-400" /> {content.getContent('form_website_label', 'Company website')}
+                    </label>
+                    <input id="website" name="website" type="url" className="form-control" />
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <label htmlFor="program" className="form-field__label">
+                    <Globe className="w-4 h-4 text-gray-400" /> {content.getContent('form_program_label', 'Partner programme *')}
+                  </label>
+                  <p className="form-field__help">Choose the programme that best fits your business model.</p>
+                  <select id="program" name="program" required className="form-control">
+                    <option value="">Select a programme</option>
+                    <option value="consulting">Consulting Partner</option>
+                    <option value="technology">Technology Partner</option>
+                    <option value="reseller">Reseller Partner</option>
+                    <option value="isv">ISV Partner</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div>
-              <label htmlFor="company" className="form-label">{content.getContent('form_company_label', 'Company name *')}</label>
-              <input id="company" name="company" required className="form-control" />
+
+            {/* Proposal */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <h3 className="form-section__title">Your proposal</h3>
+                <p className="form-section__desc">Share what you would like to achieve as a partner.</p>
+              </div>
+              <div className="form-section__body">
+                <div className="form-field">
+                  <label htmlFor="message" className="form-field__label">
+                    <MessageSquare className="w-4 h-4 text-gray-400" /> {content.getContent('form_message_label', 'Tell us about your business *')}
+                  </label>
+                  <textarea id="message" name="message" rows={5} required className="form-control form-control--textarea" />
+                </div>
+              </div>
             </div>
-            <div>
-              <label htmlFor="website" className="form-label">{content.getContent('form_website_label', 'Company website')}</label>
-              <input id="website" name="website" type="url" className="form-control" />
-            </div>
-            <div>
-              <label htmlFor="program" className="form-label">{content.getContent('form_program_label', 'Partner programme *')}</label>
-              <select id="program" name="program" required className="form-control">
-                <option value="">Select a programme</option>
-                <option value="consulting">Consulting Partner</option>
-                <option value="technology">Technology Partner</option>
-                <option value="reseller">Reseller Partner</option>
-                <option value="isv">ISV Partner</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="message" className="form-label">{content.getContent('form_message_label', 'Tell us about your business *')}</label>
-              <textarea id="message" name="message" rows={4} required className="form-control form-control--textarea" />
-            </div>
+
             <TurnstileWidget />
             <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
-            <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
-              {sending ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> {content.getContent('form_submitting_label', 'Submitting…')}</>
-              ) : (
-                <><Send className="w-4 h-4" /> {content.getContent('form_submit_label', 'Submit application')}</>
-              )}
-            </button>
+
+            <div className="form-actions">
+              <button type="submit" disabled={sending} className="form-actions__submit">
+                {sending ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> {content.getContent('form_submitting_label', 'Submitting…')}</>
+                ) : (
+                  <><Send className="w-4 h-4" /> {content.getContent('form_submit_label', 'Submit application')}</>
+                )}
+              </button>
+              <p className="form-actions__note">Our partnerships team reviews applications within 5 business days.</p>
+            </div>
           </form>
         </div>
       </section>

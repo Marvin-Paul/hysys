@@ -260,6 +260,13 @@ export const MODULE_NAV_GROUPS = [
   { label: 'Operations & Insight', slugs: ['operations', 'fleet', 'projects', 'business-intelligence'] as const },
 ];
 
+/** Solutions mega-menu column groups */
+export const SECTOR_NAV_GROUPS = [
+  { label: 'Production', slugs: ['manufacturing', 'production', 'wholesale', 'retail'] as const },
+  { label: 'Operations', slugs: ['distribution', 'professional-services', 'education', 'healthcare'] as const },
+  { label: 'Services', slugs: ['hospitality', 'non-profit', 'construction', 'media-publishing'] as const },
+];
+
 export function footerModuleLinks(limit = 6) {
   return MARMIDON_MODULES.slice(0, limit).map((m) => ({
     label: m.shortName,

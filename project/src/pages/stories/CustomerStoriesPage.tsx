@@ -31,7 +31,7 @@ const customerStories = CUSTOMER_STORIES;
 const globalStats = [
   { id: 'customers', value: '150K+', label: 'Customers worldwide', iconName: 'Users' },
   { id: 'productivity', value: '35%', label: 'Avg. productivity boost', iconName: 'TrendingUp' },
-  { id: 'rating', value: '4.8★', label: 'Average customer rating', iconName: 'Star' },
+  { id: 'rating', value: '4.8', label: 'Average customer rating', iconName: 'Star', hasStar: true },
   { id: 'retention', value: '99.9%', label: 'Customer retention rate', iconName: 'Shield' },
 ];
 
@@ -103,7 +103,10 @@ export function CustomerStoriesPage() {
                   <div className="story-stat__icon">
                     <stat.icon className="w-5 h-5 text-white" />
                   </div>
-                  <div className="story-stat__value">{stat.value}</div>
+                  <div className="story-stat__value flex items-center justify-center gap-1">
+                    {stat.value}
+                    {stat.hasStar && <Star size={18} className="text-yellow-400 fill-yellow-400" />}
+                  </div>
                   <div className="story-stat__label">{stat.label}</div>
                 </div>
               </ScrollReveal>

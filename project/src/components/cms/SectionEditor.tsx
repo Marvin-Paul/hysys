@@ -68,7 +68,25 @@ function getSectionGroups(section: string) {
 function InlineEditor({ value, onSave, onCancel }: { value: string; onSave: (v: string) => void; onCancel: () => void }) {
   const [text, setText] = useState(value);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => { inputRef.current?.focus(); }, []);
+
+  const commitAutoSave = useCallback((val: string) => {
+    if (val !== value) {
+      setAutoSaveStatus('saving');
+      onSave(val);
+      setAutoSaveStatus('saved');
+      setTimeout(() => setAutoSaveStatus('idle'), 2000);
+    }
+  }, [onSave, value]);
+
+  useEffect(() => {
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    autoSaveTimerRef.current = setTimeout(() => commitAutoSave(text), 2000);
+    return () => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); };
+  }, [text, commitAutoSave]);
+
   const isLong = text.length > 60 || text.includes('\n');
   return (
     <div className="flex items-start gap-1.5">
@@ -79,7 +97,7 @@ function InlineEditor({ value, onSave, onCancel }: { value: string; onSave: (v: 
           onChange={e => setText(e.target.value)}
           rows={2}
           className="flex-1 px-3 py-1.5 text-sm border border-[var(--color-primary)]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:border-[var(--color-primary)] resize-y"
-          onKeyDown={e => { if (e.key === 'Escape') onCancel(); if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') onSave(text); }}
+          onKeyDown={e => { if (e.key === 'Escape') onCancel(); if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); commitAutoSave(text); onCancel(); } }}
         />
       ) : (
         <input
@@ -88,11 +106,15 @@ function InlineEditor({ value, onSave, onCancel }: { value: string; onSave: (v: 
           value={text}
           onChange={e => setText(e.target.value)}
           className="flex-1 px-3 py-1.5 text-sm border border-[var(--color-primary)]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:border-[var(--color-primary)]"
-          onKeyDown={e => { if (e.key === 'Enter') onSave(text); if (e.key === 'Escape') onCancel(); }}
+          onKeyDown={e => { if (e.key === 'Enter') { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); commitAutoSave(text); onCancel(); } if (e.key === 'Escape') onCancel(); }}
         />
       )}
-      <button onClick={() => onSave(text)} className="p-1.5 text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors shadow-sm" title="Save"><Check size={14} /></button>
-      <button onClick={onCancel} className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" title="Cancel"><X size={14} /></button>
+      <div className="flex flex-col items-center gap-0.5 pt-0.5">
+        {autoSaveStatus === 'saving' && <span className="text-[9px] text-blue-500 font-medium whitespace-nowrap">Saving...</span>}
+        {autoSaveStatus === 'saved' && <span className="text-[9px] text-green-600 font-medium whitespace-nowrap">Saved</span>}
+        <button onClick={() => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); commitAutoSave(text); onCancel(); }} className="p-1.5 text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors shadow-sm" title="Save"><Check size={14} /></button>
+        <button onClick={onCancel} className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" title="Cancel"><X size={14} /></button>
+      </div>
     </div>
   );
 }

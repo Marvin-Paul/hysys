@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Check } from 'lucide-react';
 
 interface PricingCardProps {
   title: string;
@@ -34,7 +35,7 @@ export function PricingCard({
       <ul className="mt-6 space-y-3">
         {features.map((feature) => (
           <li key={feature} className="flex items-start gap-2 text-sm text-gray-700">
-            <span className="mt-0.5 text-[var(--color-primary)]">✓</span>
+            <Check size={16} className="mt-0.5 text-[var(--color-primary)] flex-shrink-0" />
             {feature}
           </li>
         ))}

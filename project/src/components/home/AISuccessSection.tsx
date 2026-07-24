@@ -63,9 +63,9 @@ export function AISuccessSection() {
   );
 
   return (
-    <section className="py-14 sm:py-20 bg-white border-t border-gray-200">
+    <section className="py-10 sm:py-14 bg-white border-t border-gray-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10 sm:mb-14">
+        <div className="text-center mb-8 sm:mb-10">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight max-w-2xl mx-auto">
             {sectionTitle}
           </h2>

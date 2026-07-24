@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react';
 import { supabase, type SiteContent } from '../lib/db/supabase';
 import { TranslationContext } from '../lib/i18n';
-import { getI18nKey } from '../lib/cms/cmsDefaults';
+import { getI18nKey, getCmsEnglishDefault } from '../lib/cms/cmsDefaults';
 
 interface ContentMap {
   [key: string]: unknown;
@@ -172,7 +172,22 @@ export function useSiteContent(section: string) {
 
   const getContentWithI18n = useCallback((key: string, fallback = '') => {
     const cmsVal = ctx.getContent(section, key, '');
-    if (cmsVal) return cmsVal;
+    const trimmedCms = cmsVal.trim();
+
+    if (translationCtx && trimmedCms) {
+      const englishDefault = getCmsEnglishDefault(section, key).trim();
+      if (englishDefault && trimmedCms === englishDefault) {
+        const i18nKey = getI18nKey(section, key);
+        if (i18nKey) {
+          const translated = translationCtx.t(i18nKey);
+          if (translated && translated !== i18nKey) return translated;
+        }
+      }
+      return cmsVal;
+    }
+
+    if (trimmedCms) return cmsVal;
+
     if (translationCtx) {
       const i18nKey = getI18nKey(section, key);
       if (i18nKey) {

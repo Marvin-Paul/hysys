@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { CalendarCheck, ArrowLeft, Send, CheckCircle, Loader2 } from 'lucide-react';
+import { CalendarCheck, ArrowLeft, Send, CheckCircle, Loader2, User, Building2, Package, Factory, MessageSquare, Mail, Phone } from 'lucide-react';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { FormHoneypot } from '../../components/ui/FormHoneypot';
 import { InvisibleChallenge } from '../../components/ui/InvisibleChallenge';
@@ -126,6 +126,9 @@ export function DemoRequestPage() {
     { name: 'Request a Demo', path: '/request-a-demo' },
   ])];
 
+  const inputClass = (field: string) =>
+    `form-control${errors[field] ? ' form-control--error' : ''}`;
+
   return (
     <div className="pt-16">
       <SEO title={PAGE_META.demo.title} description={PAGE_META.demo.description} jsonLd={demoJsonLd} fullTitle />
@@ -147,74 +150,132 @@ export function DemoRequestPage() {
           {error && (
             <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>
           )}
-          <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'request_a_demo' })} className="relative space-y-6">
+
+          <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'request_a_demo' })} className="space-y-6">
             <FormHoneypot />
             <InvisibleChallenge />
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <label htmlFor="firstName" className="form-label">{content.getContent('form_first_name_label', 'First name *')}</label>
-                <input id="firstName" name="firstName" required className={`form-control${errors.firstName ? ' border-red-400' : ''}`} onBlur={() => markTouched('firstName')} onFocus={() => clearError('firstName')} {...ariaProps('firstName')} />
-                {errors.firstName && <p id="firstName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
+
+            {/* Personal Information */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <h3 className="form-section__title">Personal information</h3>
+                <p className="form-section__desc">So we know who to personalise the demo for.</p>
               </div>
-              <div>
-                <label htmlFor="lastName" className="form-label">{content.getContent('form_last_name_label', 'Last name *')}</label>
-                <input id="lastName" name="lastName" required className={`form-control${errors.lastName ? ' border-red-400' : ''}`} onBlur={() => markTouched('lastName')} onFocus={() => clearError('lastName')} {...ariaProps('lastName')} />
-                {errors.lastName && <p id="lastName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
+              <div className="form-section__body">
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="form-field">
+                    <label htmlFor="firstName" className="form-field__label">
+                      <User className="w-4 h-4 text-gray-400" /> {content.getContent('form_first_name_label', 'First name *')}
+                    </label>
+                    <input id="firstName" name="firstName" required className={inputClass('firstName')} onBlur={() => markTouched('firstName')} onFocus={() => clearError('firstName')} {...ariaProps('firstName')} />
+                    {errors.firstName && <p id="firstName-error" role="alert" className="form-field__error">{errors.firstName}</p>}
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor="lastName" className="form-field__label">
+                      <User className="w-4 h-4 text-gray-400" /> {content.getContent('form_last_name_label', 'Last name *')}
+                    </label>
+                    <input id="lastName" name="lastName" required className={inputClass('lastName')} onBlur={() => markTouched('lastName')} onFocus={() => clearError('lastName')} {...ariaProps('lastName')} />
+                    {errors.lastName && <p id="lastName-error" role="alert" className="form-field__error">{errors.lastName}</p>}
+                  </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="form-field">
+                    <label htmlFor="email" className="form-field__label">
+                      <Mail className="w-4 h-4 text-gray-400" /> {content.getContent('form_email_label', 'Work email *')}
+                    </label>
+                    <input id="email" name="email" type="email" required className={inputClass('email')} onBlur={() => markTouched('email')} onFocus={() => clearError('email')} {...ariaProps('email')} />
+                    {errors.email && <p id="email-error" role="alert" className="form-field__error">{errors.email}</p>}
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor="phone" className="form-field__label">
+                      <Phone className="w-4 h-4 text-gray-400" /> {content.getContent('form_phone_label', 'Phone number')}
+                    </label>
+                    <input id="phone" name="phone" type="tel" className="form-control" />
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <label htmlFor="email" className="form-label">{content.getContent('form_email_label', 'Work email *')}</label>
-              <input id="email" name="email" type="email" required className={`form-control${errors.email ? ' border-red-400' : ''}`} onBlur={() => markTouched('email')} onFocus={() => clearError('email')} {...ariaProps('email')} />
-              {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email}</p>}
-            </div>
-            <div>
-              <label htmlFor="company" className="form-label">{content.getContent('form_company_label', 'Company name *')}</label>
-              <input id="company" name="company" required className={`form-control${errors.company ? ' border-red-400' : ''}`} onBlur={() => markTouched('company')} onFocus={() => clearError('company')} {...ariaProps('company')} />
-              {errors.company && <p id="company-error" role="alert" className="mt-1 text-sm text-red-600">{errors.company}</p>}
-            </div>
-            <div>
-              <label htmlFor="phone" className="form-label">{content.getContent('form_phone_label', 'Phone number')}</label>
-              <input id="phone" name="phone" type="tel" className="form-control" />
-            </div>
-            <div>
-              <span className="form-label">{content.getContent('form_modules_label', 'Modules of interest *')}</span>
-              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {MARMIDON_MODULES.map((m) => (
-                  <label key={m.slug} className="flex min-h-[44px] items-center gap-2 rounded-[var(--radius-md)] border border-slate-200 px-3 py-2 text-sm cursor-pointer hover:border-[var(--color-primary)] has-checked:border-[var(--color-primary)] has-checked:bg-[var(--color-primary)]/5">
-                    <input
-                      type="checkbox"
-                      name={`module-${m.slug}`}
-                      checked={selectedModules.includes(m.slug)}
-                      onChange={() => toggleModule(m.slug)}
-                      className="rounded accent-[var(--color-primary)]"
-                    />
-                    {m.shortName}
+
+            {/* Company */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <h3 className="form-section__title">Company details</h3>
+                <p className="form-section__desc">Help us understand your organisation.</p>
+              </div>
+              <div className="form-section__body">
+                <div className="form-field">
+                  <label htmlFor="company" className="form-field__label">
+                    <Building2 className="w-4 h-4 text-gray-400" /> {content.getContent('form_company_label', 'Company name *')}
                   </label>
-                ))}
+                  <input id="company" name="company" required className={inputClass('company')} onBlur={() => markTouched('company')} onFocus={() => clearError('company')} {...ariaProps('company')} />
+                  {errors.company && <p id="company-error" role="alert" className="form-field__error">{errors.company}</p>}
+                </div>
+
+                <div className="form-field">
+                  <span className="form-field__label">
+                    <Package className="w-4 h-4 text-gray-400" /> {content.getContent('form_modules_label', 'Modules of interest *')}
+                  </span>
+                  <p className="form-field__help">Select the modules you would like to see in the demo.</p>
+                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {MARMIDON_MODULES.map((m) => (
+                      <label key={m.slug} className="flex min-h-[48px] items-center gap-3 rounded-[var(--radius-md)] border border-slate-200 px-3 py-2.5 text-sm cursor-pointer hover:border-[var(--color-primary)] has-checked:border-[var(--color-primary)] has-checked:bg-[var(--color-primary)]/5 transition-colors">
+                        <input
+                          type="checkbox"
+                          name={`module-${m.slug}`}
+                          checked={selectedModules.includes(m.slug)}
+                          onChange={() => toggleModule(m.slug)}
+                          className="rounded accent-[var(--color-primary)]"
+                        />
+                        <span className="font-medium text-slate-700">{m.shortName}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <label htmlFor="industry" className="form-field__label">
+                    <Factory className="w-4 h-4 text-gray-400" /> {content.getContent('form_industry_label', 'Industry')}
+                  </label>
+                  <p className="form-field__help">We'll tailor examples to your sector.</p>
+                  <select id="industry" name="industry" defaultValue={preSector && MARMIDON_SECTORS.some((s) => s.slug === preSector) ? preSector : ''} className="form-control">
+                    <option value="">Select your industry</option>
+                    {MARMIDON_SECTORS.map((s) => (
+                      <option key={s.slug} value={s.slug}>{s.title}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-            <div>
-              <label htmlFor="industry" className="form-label">{content.getContent('form_industry_label', 'Industry')}</label>
-              <select id="industry" name="industry" defaultValue={preSector && MARMIDON_SECTORS.some((s) => s.slug === preSector) ? preSector : ''} className="form-control">
-                <option value="">Select your industry</option>
-                {MARMIDON_SECTORS.map((s) => (
-                  <option key={s.slug} value={s.slug}>{s.title}</option>
-                ))}
-              </select>
+
+            {/* Additional Details */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <h3 className="form-section__title">Additional details</h3>
+                <p className="form-section__desc">Anything else you would like us to prepare for the demo.</p>
+              </div>
+              <div className="form-section__body">
+                <div className="form-field">
+                  <label htmlFor="message" className="form-field__label">
+                    <MessageSquare className="w-4 h-4 text-gray-400" /> {content.getContent('form_message_label', 'Tell us about your needs')}
+                  </label>
+                  <textarea id="message" name="message" rows={5} className="form-control form-control--textarea" />
+                </div>
+              </div>
             </div>
-            <div>
-              <label htmlFor="message" className="form-label">{content.getContent('form_message_label', 'Tell us about your needs')}</label>
-              <textarea id="message" name="message" rows={4} className="form-control form-control--textarea" />
-            </div>
+
             <TurnstileWidget />
             <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
-            <button type="submit" disabled={sending} className="btn-marmidon btn-marmidon--primary w-full">
-              {sending ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> {content.getContent('form_submitting_label', 'Submitting…')}</>
-              ) : (
-                <><Send className="w-4 h-4" /> {content.getContent('form_submit_label', 'Request a Demo')}</>
-              )}
-            </button>
+
+            <div className="form-actions">
+              <button type="submit" disabled={sending} className="form-actions__submit">
+                {sending ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> {content.getContent('form_submitting_label', 'Submitting…')}</>
+                ) : (
+                  <><Send className="w-4 h-4" /> {content.getContent('form_submit_label', 'Request a Demo')}</>
+                )}
+              </button>
+              <p className="form-actions__note">We typically respond within 1 business day.</p>
+            </div>
           </form>
         </div>
       </section>

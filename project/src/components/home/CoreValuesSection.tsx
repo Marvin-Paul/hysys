@@ -30,9 +30,9 @@ export function CoreValuesSection() {
   );
 
   return (
-    <section className="py-12 sm:py-16 border-t border-gray-200" style={{ background: '#f3f3f3' }}>
+    <section className="py-10 sm:py-12 border-t border-gray-200" style={{ background: '#f3f3f3' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           <div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight mb-4 sm:mb-5">
               {title}

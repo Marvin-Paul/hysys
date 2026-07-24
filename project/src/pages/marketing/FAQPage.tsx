@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { MessageCircle, Search } from 'lucide-react';
+import { MessageCircle, Search, ChevronDown } from 'lucide-react';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
 import { PageCtaSection } from '../../components/ui/PageCtaSection';
@@ -99,7 +99,7 @@ export function FAQPage() {
                           className="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-slate-900 hover:bg-slate-50"
                         >
                           {item.q}
-                          <span className={`ml-2 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+                          <span className={`ml-2 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`}><ChevronDown size={16} /></span>
                         </button>
                         {isOpen && (
                           <div className="px-6 pb-4 text-sm text-slate-600">{item.a}</div>

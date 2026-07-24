@@ -21,6 +21,8 @@ import {
   Factory,
   Store,
   Briefcase,
+  Lock,
+  Handshake,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
@@ -33,8 +35,8 @@ import { AnalystReportSection } from '../../components/home/AnalystReportSection
 import { CoreValuesSection } from '../../components/home/CoreValuesSection';
 import TestimonialsSection from './TestimonialsSection';
 import { AISuccessSection } from '../../components/home/AISuccessSection';
-import { ResourcesTeaser } from '../../components/home/ResourcesTeaser';
 import { FeaturesSection } from '../../components/home/FeaturesSection';
+import { HeroSection } from '../../components/home/MarmidonHero';
 import { useTranslation } from '../../lib/i18n';
 import { useSiteContent } from '../../hooks/useSiteContent';
 import { SEO } from '../../components/ui/SEO';
@@ -47,10 +49,10 @@ import { moduleCardsForHomepage } from '../../lib/marmidonCatalog';
 import { DEFAULT_ERP_OVERVIEW_VIDEO, toYouTubeEmbedUrl } from '../../lib/youtube';
 
 const defaultTrustBadges = [
-  { id: 'security', icon: '🔒', text: 'Enterprise-grade security' },
-  { id: 'modules', icon: '📦', text: '11 integrated ERP modules' },
-  { id: 'sectors', icon: '🏭', text: '12 industry configurations' },
-  { id: 'support', icon: '🤝', text: 'Local implementation support' },
+  { id: 'security', icon: 'Lock', text: 'Enterprise-grade security' },
+  { id: 'modules', icon: 'Package', text: '11 integrated ERP modules' },
+  { id: 'sectors', icon: 'Factory', text: '12 industry configurations' },
+  { id: 'support', icon: 'Handshake', text: 'Local implementation support' },
 ];
 
 const defaultDemoBullets = [
@@ -166,134 +168,7 @@ export function HomePage() {
         fullTitle
       />
       {/* ── Premium Hero ── */}
-      <section className="relative min-h-[60vh] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-primary)] to-[var(--color-accent)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-
-        {/* Animated grid overlay */}
-        <div className="absolute inset-0 opacity-[0.04] animate-grid-move" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-
-        {/* Blob shapes */}
-        <div className="absolute top-40 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/10 to-blue-500/5 animate-blob blur-3xl" />
-        <div className="absolute bottom-20 -right-20 w-[600px] h-[600px] bg-gradient-to-tr from-blue-500/10 to-cyan-400/5 animate-blob blur-3xl" style={{ animationDelay: '5s' }} />
-
-        {/* Floating orbs */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl animate-float-slow" />
-        <div className="absolute bottom-40 right-20 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-float-slower" style={{ animationDelay: '3s' }} />
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
-
-        {/* Spinning ring */}
-        <div className="absolute top-[15%] left-[8%] w-48 h-48 border border-white/[0.06] rounded-full animate-spin-slow">
-          <div className="absolute top-0 left-1/2 w-2 h-2 -translate-x-1/2 -translate-y-1/2 bg-cyan-400/40 rounded-full" />
-        </div>
-        <div className="absolute top-[15%] left-[8%] w-32 h-32 border border-white/[0.04] rounded-full animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '30s' }}>
-          <div className="absolute top-0 left-1/2 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 bg-blue-400/30 rounded-full" />
-        </div>
-
-        {/* Orbital ring elements */}
-        <div className="absolute top-1/3 right-8 w-32 h-32 border border-white/10 rounded-full animate-orbit" />
-        <div className="absolute top-[38%] right-[3.5rem] w-20 h-20 border border-white/10 rounded-full animate-orbit-reverse" />
-
-        {/* Particle dots */}
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 rounded-full animate-pulse-glow"
-            style={{
-              background: i % 2 === 0 ? 'rgba(0, 163, 224, 0.4)' : 'rgba(255, 255, 255, 0.3)',
-              top: `${15 + (i * 7) % 70}%`,
-              left: `${5 + (i * 11) % 90}%`,
-              animationDelay: `${i * 0.4}s`,
-              animationDuration: `${2 + (i % 3)}s`,
-            }}
-          />
-        ))}
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-10 sm:pb-14 flex items-center justify-center">
-          <div ref={heroRef} className={`text-white text-center transition-all duration-1000 w-full ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-
-            <div className="flex justify-center mb-3 sm:mb-4">
-              <span className="type-badge type-badge--hero">
-                <Sparkles className="w-4 h-4 text-cyan-300" />
-                {t('homeSectionBadge')}
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              </span>
-            </div>
-
-            <p className="type-eyebrow type-eyebrow--hero">
-              {global.getContent('page_eyebrow', 'Marmidon Global Solutions Limited')}
-            </p>
-
-            <h1 className="type-display">
-              {content.getContent('hero_title', t('heroTitleLine1'))}
-              <span className="type-display-accent">
-                {content.getContent('hero_subtitle', t('heroTitleLine2'))}
-              </span>
-            </h1>
-
-            <div className="type-divider" />
-
-            <p className="type-hero-lead mb-5 sm:mb-6">
-              {effectiveCmsText(content.getContentRaw('hero_desc'), 'homepage', 'hero_desc', t('heroDescription'))}
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6 sm:mb-8">
-              <Link
-                to="/request-a-demo"
-                className="group relative inline-flex items-center justify-center gap-2 px-10 py-4 bg-white text-[var(--color-secondary)] rounded-2xl font-bold text-base overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="relative flex items-center gap-2">
-                  {content.getContent('hero_cta', 'Request a Demo')}
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-              <Link
-                to="/products"
-                className="group inline-flex items-center justify-center gap-2 px-10 py-4 glass-card rounded-2xl font-bold text-base text-white hover:bg-white/15 transition-all duration-300 hover:-translate-y-1 border border-white/20"
-              >
-                {content.getContent('hero_cta_secondary', 'Explore modules')}
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-
-            {/* Trust micro-badges */}
-            <div className="flex flex-wrap justify-center gap-6 mb-4 sm:mb-6">
-              {resolvedTrustBadges.map((b: any) => (
-                <div key={b.id ?? b.text} className="flex items-center gap-2 text-white/50 text-sm">
-                  <span>{b.icon}</span>
-                  <span>{b.text}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Trusted brands */}
-            <div>
-                <p className="type-label mb-3">{content.getContent('trusted_by_label', t('trustedBy'))}</p>
-              <div className="overflow-hidden">
-                <div className="flex gap-10 animate-marquee hover:pause justify-center">
-                  {resolvedTrustedBrands.map((brand, i) => (
-                    <div key={i} className="flex-shrink-0 text-white/25 font-semibold text-base hover:text-white/55 transition-colors duration-300 cursor-pointer tracking-tight">
-                      {brand}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" className="w-full h-24 sm:h-32">
-            <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white" />
-          </svg>
-        </div>
-      </section>
+      <HeroSection />
 
       {isDemoOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
@@ -358,11 +233,11 @@ export function HomePage() {
       )}
 
       {/* Stats bar — Marmidon metrics (11 modules, 12 sectors, uptime, unified platform) */}
-      <section className="bg-white py-16 border-b border-gray-100 relative overflow-hidden">
+      <section className="bg-white py-10 border-b border-gray-100 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-transparent pointer-events-none" aria-hidden />
         <div ref={statsRef} className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className={`grid grid-cols-2 md:grid-cols-4 gap-8 stagger-children ${statsVisible ? 'visible' : ''}`}>
-            {homepageStatSlots.map((slot, idx) => (
+          <div className={`grid grid-cols-2 md:grid-cols-4 gap-6 stagger-children ${statsVisible ? 'visible' : ''}`}>
+            {homepageStatSlots.map((slot) => (
               <div key={slot.valueKeys[0]} className="text-center group">
                 <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-500">
                   <Counter value={content.getContentAny(slot.valueKeys, slot.value)} />
@@ -377,19 +252,19 @@ export function HomePage() {
       </section>
 
       {/* Platform Intro */}
-      <section className="py-24 relative overflow-hidden" style={{ background: '#f3f3f3' }}>
+      <section className="py-16 relative overflow-hidden" style={{ background: '#f3f3f3' }}>
         <div className="absolute inset-0 opacity-30" style={{
           background: 'radial-gradient(circle at 30% 50%, rgba(11,83,148,0.08) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(0,163,224,0.06) 0%, transparent 50%)'
         }} />
         <div ref={introRef} className={`relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ${introVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full text-sm font-semibold text-[var(--color-primary)] mb-4">
             <Sparkles className="w-4 h-4" />
             {content.getContent('platform_intro_badge', 'Integrated ERP')}
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-secondary)] mb-6 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-secondary)] mb-4 leading-tight">
             {content.getContent('platform_intro_title', 'Run your whole business on one Marmidon platform')}
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
             {content.getContent('platform_intro_desc', 'Eleven integrated modules share one database — so finance, operations, inventory, and sales stay in sync without spreadsheets or duplicate entry.')}
           </p>
           <Link
@@ -403,11 +278,11 @@ export function HomePage() {
       </section>
 
       {/* Product Cards */}
-      <section className="py-24 bg-white relative overflow-hidden">
+      <section className="py-16 bg-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
           <div ref={productsRef} className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${productsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <ScrollReveal>
-              <div className="text-center mb-16">
+              <div className="text-center mb-10">
                 <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                   {content.getContent('product_section_title', 'Eleven modules. One ERP platform.')}
                 </h2>
@@ -446,8 +321,6 @@ export function HomePage() {
       <CoreValuesSection />
 
       <AISuccessSection />
-
-      <ResourcesTeaser />
 
       <FeaturesSection />
 

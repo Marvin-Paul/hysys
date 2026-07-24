@@ -3,19 +3,19 @@ export const productImages: Record<string, string> = {
   financials: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80',
   'hr-payroll': 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=80',
   inventory: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
-  procurement: 'https://images.unsplash.com/photo-1556745753-b2902792b2fc?auto=format&fit=crop&w=800&q=80',
+  procurement: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
   'sales-crm': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
   operations: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
   fleet: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80',
   manufacturing: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
-  'pos-retail': 'https://images.unsplash.com/photo-1557821552-171051766702?auto=format&fit=crop&w=800&q=80',
+  'pos-retail': 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80',
   'business-intelligence': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
   projects: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
   // Legacy CRM slugs (redirect targets)
   'sales-cloud': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-  'service-cloud': 'https://images.unsplash.com/photo-1556745753-b2902792b2fc?auto=format&fit=crop&w=800&q=80',
-  'marketing-cloud': 'https://images.unsplash.com/photo-1533750349088-c74787156e0c?auto=format&fit=crop&w=800&q=80',
-  'commerce-cloud': 'https://images.unsplash.com/photo-1557821552-171051766702?auto=format&fit=crop&w=800&q=80',
+  'service-cloud': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+  'marketing-cloud': 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80',
+  'commerce-cloud': 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80',
   'data-cloud': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
   'platform-cloud': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
 };
@@ -78,7 +78,7 @@ export const blogPostImages: Record<string, string> = {
 
 /** Resource hub category card images */
 export const resourceHubImages: Record<string, string> = {
-  blog: 'https://images.unsplash.com/photo-1504711434969-e33886168cec?auto=format&fit=crop&w=800&q=80',
+  blog: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
   guides: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
   faqs: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=800&q=80',
   docs: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80',
@@ -96,9 +96,9 @@ export const guideImages: Record<string, string> = {
 export const companySectionImages: Record<string, string> = {
   about: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
   team: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80',
-  careers: 'https://images.unsplash.com/photo-1521898284481-a5ec69cb6209?auto=format&fit=crop&w=800&q=80',
+  careers: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
   partners: 'https://images.unsplash.com/photo-1542744173-05336fcc7ad4?auto=format&fit=crop&w=800&q=80',
-  news: 'https://images.unsplash.com/photo-1504711434969-e33886168cec?auto=format&fit=crop&w=800&q=80',
+  news: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80',
 };
 
 /** Partner directory images mapped by partner id */
@@ -152,6 +152,6 @@ export const careerValueImages: Record<string, string> = {
 export const aboutValueImages: Record<string, string> = {
   'customer-success': 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80',
   'trust-security': 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=800&q=80',
-  equality: 'https://images.unsplash.com/photo-1573164574397-dd250dc127b0?auto=format&fit=crop&w=800&q=80',
+  equality: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
   innovation: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
 };

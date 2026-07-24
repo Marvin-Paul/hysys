@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Loader2, Sparkles, ArrowRight, CalendarCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Loader2, Sparkles, ArrowRight, CalendarCheck, User, Building2, Briefcase, MessageSquare, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScrollReveal } from '../../components/ui/ScrollReveal';
 import { LightPageHeader } from '../../components/ui/LightPageHeader';
@@ -118,6 +118,9 @@ export function ContactPage() {
     { name: 'Contact', path: '/contact' },
   ])];
 
+  const inputClass = (field: string) =>
+    `form-control${errors[field] ? ' form-control--error' : ''}`;
+
   return (
     <div className="pt-16">
       <SEO title={PAGE_META.contact.title} description={PAGE_META.contact.description} jsonLd={contactJsonLd} fullTitle />
@@ -216,7 +219,7 @@ export function ContactPage() {
                     {content.getContent('sidebar_desc', 'Fill in the form and our team will get back to you within 24 hours. Or reach us directly using the contacts below.')}
                   </p>
 
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     {[
                       { icon: Phone, label: 'Call Us', value: phoneLines.slice(0, 3).join(' · '), href: `tel:${primaryPhone.startsWith('+') ? primaryPhone : `+256${primaryPhone.replace(/^0/, '')}`}` },
                       { icon: Mail,  label: 'Email Us', value: email, href: `mailto:${email}` },
@@ -276,87 +279,149 @@ export function ContactPage() {
                     {error && (
                       <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>
                     )}
-                    <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'contact' })} className="relative space-y-5">
+                    <form onSubmit={handleSubmit} onFocus={() => trackEvent('lead_form_start', { form_name: 'contact' })} className="space-y-6">
                       <FormHoneypot />
                       <InvisibleChallenge />
-                      <div className="grid md:grid-cols-2 gap-5">
-                        <div>
-                          <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_first_name_label', `${t('firstNameLabel')} *`)}</label>
-                          <input id="firstName" type="text" name="firstName" required placeholder="John"
-                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.firstName ? ' border-red-400' : ' border-gray-200'}`}
-                            onBlur={() => markTouched('firstName')} onFocus={() => clearError('firstName')} {...ariaProps('firstName')} />
-                          {errors.firstName && <p id="firstName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
+
+                      {/* Personal Information */}
+                      <div className="form-section">
+                        <div className="form-section__header">
+                          <h3 className="form-section__title">Personal information</h3>
+                          <p className="form-section__desc">Your name and email so we can reply.</p>
                         </div>
-                        <div>
-                          <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_last_name_label', `${t('lastNameLabel')} *`)}</label>
-                          <input id="lastName" type="text" name="lastName" required placeholder="Doe"
-                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.lastName ? ' border-red-400' : ' border-gray-200'}`}
-                            onBlur={() => markTouched('lastName')} onFocus={() => clearError('lastName')} {...ariaProps('lastName')} />
-                          {errors.lastName && <p id="lastName-error" role="alert" className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
-                        </div>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-5">
-                        <div>
-                          <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_email_label', `${t('workEmailLabel')} *`)}</label>
-                          <input id="email" type="email" name="email" required placeholder="john@company.com"
-                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.email ? ' border-red-400' : ' border-gray-200'}`}
-                            onBlur={() => markTouched('email')} onFocus={() => clearError('email')} {...ariaProps('email')} />
-                          {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email}</p>}
-                        </div>
-                        <div>
-                          <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_phone_label', t('phoneInputLabel'))}</label>
-                          <input id="phone" type="tel" name="phone" placeholder="+256 700 000 000"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
-                        </div>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-5">
-                        <div>
-                          <label htmlFor="company" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_company_label', `${t('companyLabel')} *`)}</label>
-                          <input id="company" type="text" name="company" required placeholder="Company Inc."
-                            className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm${errors.company ? ' border-red-400' : ' border-gray-200'}`}
-                            onBlur={() => markTouched('company')} onFocus={() => clearError('company')} {...ariaProps('company')} />
-                          {errors.company && <p id="company-error" role="alert" className="mt-1 text-sm text-red-600">{errors.company}</p>}
-                        </div>
-                        <div>
-                          <label htmlFor="jobTitle" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_job_title_label', t('jobTitleLabel'))}</label>
-                          <input id="jobTitle" type="text" name="jobTitle" placeholder="VP of Sales"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm" />
+                        <div className="form-section__body">
+                          <div className="grid sm:grid-cols-2 gap-5">
+                            <div className="form-field">
+                              <label htmlFor="firstName" className="form-field__label">
+                                <User className="w-4 h-4 text-gray-400" /> {t('firstNameLabel')} *
+                              </label>
+                              <input id="firstName" type="text" name="firstName" required placeholder="John"
+                                className={inputClass('firstName')}
+                                onBlur={() => markTouched('firstName')} onFocus={() => clearError('firstName')} {...ariaProps('firstName')} />
+                              {errors.firstName && <p id="firstName-error" role="alert" className="form-field__error">{errors.firstName}</p>}
+                            </div>
+                            <div className="form-field">
+                              <label htmlFor="lastName" className="form-field__label">
+                                <User className="w-4 h-4 text-gray-400" /> {t('lastNameLabel')} *
+                              </label>
+                              <input id="lastName" type="text" name="lastName" required placeholder="Doe"
+                                className={inputClass('lastName')}
+                                onBlur={() => markTouched('lastName')} onFocus={() => clearError('lastName')} {...ariaProps('lastName')} />
+                              {errors.lastName && <p id="lastName-error" role="alert" className="form-field__error">{errors.lastName}</p>}
+                            </div>
+                          </div>
+                          <div className="form-field">
+                            <label htmlFor="email" className="form-field__label">
+                              <Mail className="w-4 h-4 text-gray-400" /> {t('workEmailLabel')} *
+                            </label>
+                            <input id="email" type="email" name="email" required placeholder="john@company.com"
+                              className={inputClass('email')}
+                              onBlur={() => markTouched('email')} onFocus={() => clearError('email')} {...ariaProps('email')} />
+                            {errors.email && <p id="email-error" role="alert" className="form-field__error">{errors.email}</p>}
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <label htmlFor="interest" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_interest_label', `${t('interestedInLabel')} *`)}</label>
-                        <select id="interest" name="interest" required
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm bg-white">
-                          <option value="">Select an option...</option>
-                          <optgroup label="Request a demo">
-                            {MARMIDON_MODULES.map((m) => (
-                              <option key={m.slug} value={`demo-${m.slug}`}>Demo: {m.shortName}</option>
-                            ))}
-                          </optgroup>
-                          <optgroup label="Industry">
-                            {MARMIDON_SECTORS.map((s) => (
-                              <option key={s.slug} value={`sector-${s.slug}`}>{s.title}</option>
-                            ))}
-                          </optgroup>
-                          <option value="pricing">Pricing & licensing</option>
-                          <option value="partnership">Partnership</option>
-                          <option value="support">Technical support</option>
-                          <option value="other">Other</option>
-                        </select>
+
+                      {/* Company Information */}
+                      <div className="form-section">
+                        <div className="form-section__header">
+                          <h3 className="form-section__title">Company information</h3>
+                          <p className="form-section__desc">Help us understand your organisation.</p>
+                        </div>
+                        <div className="form-section__body">
+                          <div className="grid sm:grid-cols-2 gap-5">
+                            <div className="form-field">
+                              <label htmlFor="company" className="form-field__label">
+                                <Building2 className="w-4 h-4 text-gray-400" /> {t('companyLabel')} *
+                              </label>
+                              <input id="company" type="text" name="company" required placeholder="Company Inc."
+                                className={inputClass('company')}
+                                onBlur={() => markTouched('company')} onFocus={() => clearError('company')} {...ariaProps('company')} />
+                              {errors.company && <p id="company-error" role="alert" className="form-field__error">{errors.company}</p>}
+                            </div>
+                            <div className="form-field">
+                              <label htmlFor="jobTitle" className="form-field__label">
+                                <Briefcase className="w-4 h-4 text-gray-400" /> {t('jobTitleLabel')}
+                              </label>
+                              <input id="jobTitle" type="text" name="jobTitle" placeholder="VP of Sales"
+                                className="form-control" />
+                            </div>
+                          </div>
+                          <div className="form-field">
+                            <label htmlFor="phone" className="form-field__label">
+                              <Phone className="w-4 h-4 text-gray-400" /> {t('phoneInputLabel')}
+                            </label>
+                            <input id="phone" type="tel" name="phone" placeholder="+256 700 000 000"
+                              className="form-control" />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">{content.getContent('form_message_label', `${t('messageLabel')} *`)}</label>
-                        <textarea id="message" name="message" required rows={4} placeholder="Tell us how we can help..."
-                          className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none text-sm${errors.message ? ' border-red-400' : ' border-gray-200'}`}
-                          onBlur={() => markTouched('message')} onFocus={() => clearError('message')} {...ariaProps('message')} />
-                        {errors.message && <p id="message-error" role="alert" className="mt-1 text-sm text-red-600">{errors.message}</p>}
+
+                      {/* Interest */}
+                      <div className="form-section">
+                        <div className="form-section__header">
+                          <h3 className="form-section__title">What can we help with?</h3>
+                          <p className="form-section__desc">Choose the best fit so we route you to the right team.</p>
+                        </div>
+                        <div className="form-section__body">
+                          <div className="form-field">
+                            <label htmlFor="interest" className="form-field__label">
+                              <Globe className="w-4 h-4 text-gray-400" /> {t('interestedInLabel')} *
+                            </label>
+                            <select id="interest" name="interest" required
+                              className="form-control">
+                              <option value="">{t('selectOption')}</option>
+                              <optgroup label="Request a demo">
+                                {MARMIDON_MODULES.map((m) => (
+                                  <option key={m.slug} value={`demo-${m.slug}`}>Demo: {m.shortName}</option>
+                                ))}
+                              </optgroup>
+                              <optgroup label="Industry">
+                                {MARMIDON_SECTORS.map((s) => (
+                                  <option key={s.slug} value={`sector-${s.slug}`}>{s.title}</option>
+                                ))}
+                              </optgroup>
+                              <option value="pricing">Pricing & licensing</option>
+                              <option value="partnership">Partnership</option>
+                              <option value="support">Technical support</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Message */}
+                      <div className="form-section">
+                        <div className="form-section__header">
+                          <h3 className="form-section__title">Message</h3>
+                          <p className="form-section__desc">Tell us about your needs or questions.</p>
+                        </div>
+                        <div className="form-section__body">
+                          <div className="form-field">
+                            <label htmlFor="message" className="form-field__label">
+                              <MessageSquare className="w-4 h-4 text-gray-400" /> {t('messageLabel')} *
+                            </label>
+                            <textarea id="message" name="message" required rows={5} placeholder="Tell us how we can help…"
+                              className={`form-control form-control--textarea${errors.message ? ' form-control--error' : ''}`}
+                              onBlur={() => markTouched('message')} onFocus={() => clearError('message')} {...ariaProps('message')} />
+                            {errors.message && <p id="message-error" role="alert" className="form-field__error">{errors.message}</p>}
+                          </div>
+                        </div>
+                      </div>
+
                       <TurnstileWidget />
                       <PrivacyConsent checked={consent} onChange={setConsent} error={!consent && error?.includes('privacy') ? 'You must agree to continue.' : undefined} />
-                      <button type="submit" disabled={sending}
-                        className="w-full py-4 bg-[var(--color-primary)] text-white rounded-2xl font-bold hover:bg-[var(--color-secondary)] transition-all hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base">
-                        {sending ? <><Loader2 className="w-5 h-5 animate-spin" /> {content.getContent('form_submitting_label', 'Sending...')}</> : <><Send className="w-5 h-5" /> {content.getContent('form_submit_label', 'Send Message')}</>}
-                      </button>
+
+                      <div className="form-actions">
+                        <button type="submit" disabled={sending} className="form-actions__submit">
+                          {sending ? (
+                            <><Loader2 className="w-5 h-5 animate-spin" /> {content.getContent('form_submitting_label', 'Sending...')}</>
+                          ) : (
+                            <><Send className="w-5 h-5" /> {content.getContent('form_submit_label', 'Send Message')}</>
+                          )}
+                        </button>
+                        <p className="form-actions__note">We respond within 1 business day.</p>
+                      </div>
                     </form>
                   </>
                 )}

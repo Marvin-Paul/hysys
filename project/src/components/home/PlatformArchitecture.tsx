@@ -14,23 +14,31 @@
 
 import { useMemo } from 'react';
 
+import { Globe, Plug, Store, Briefcase, Package, BarChart3, DollarSign, Users, ShoppingCart, TrendingUp, Settings, Truck, Factory, BookOpen, Database, RefreshCw, FileText, Search, Repeat, Building2, ShieldCheck } from 'lucide-react';
+
 import { useSiteContent } from '../../hooks/useSiteContent';
 
 import { mergeCmsList, toCmsArray } from '../../lib/cms/cmsContent';
 
 
+const iconMap: Record<string, typeof Globe> = { Globe, Plug, Store, Briefcase, Package, BarChart3, DollarSign, Users, ShoppingCart, TrendingUp, Settings, Truck, Factory, BookOpen, Database, RefreshCw, FileText, Search, Repeat, Building2, ShieldCheck };
+
+function renderIcon(name: string, size = 20) {
+  const Icon = iconMap[name];
+  return Icon ? <Icon size={size} /> : null;
+}
 
 const defaultAgents = [
-  { id: 'web', icon: '🌐', title: 'Web & mobile access', sub: 'Browser and mobile apps for every role in your organisation' },
-  { id: 'api', icon: '🔌', title: 'API & integrations', sub: 'Connect banks, payment gateways, and third-party systems' },
-  { id: 'pos', icon: '🏪', title: 'POS & retail outlets', sub: 'Point-of-sale tied directly to inventory and finance' },
+  { id: 'web', icon: 'Globe', title: 'Web & mobile access', sub: 'Browser and mobile apps for every role in your organisation' },
+  { id: 'api', icon: 'Plug', title: 'API & integrations', sub: 'Connect banks, payment gateways, and third-party systems' },
+  { id: 'pos', icon: 'Store', title: 'POS & retail outlets', sub: 'Point-of-sale tied directly to inventory and finance' },
 ];
 
 const defaultLayers = [
   {
     id: 'finance-people',
     accent: 'var(--color-primary)',
-    icon: '💼',
+    icon: 'Briefcase',
     brand: 'Finance & People',
     tag: 'Core business layer',
     items: 'Financials, HR & Payroll, Projects, Tax & compliance',
@@ -38,7 +46,7 @@ const defaultLayers = [
   {
     id: 'supply-chain',
     accent: '#0E8F84',
-    icon: '📦',
+    icon: 'Package',
     brand: 'Supply Chain',
     tag: 'Source to fulfil',
     items: 'Inventory, Procurement, Manufacturing, Fleet',
@@ -46,7 +54,7 @@ const defaultLayers = [
   {
     id: 'operations-insight',
     accent: 'var(--color-accent)',
-    icon: '📊',
+    icon: 'BarChart3',
     brand: 'Operations & Insight',
     tag: 'Run & report',
     items: 'Sales & CRM, Operations, POS & Retail, Business Intelligence',
@@ -54,28 +62,28 @@ const defaultLayers = [
 ];
 
 const defaultCustomer360Items = [
-  { id: 'financials', icon: '💰', label: 'Financials' },
-  { id: 'hr-payroll', icon: '👥', label: 'HR & Payroll' },
-  { id: 'inventory', icon: '📦', label: 'Inventory' },
-  { id: 'procurement', icon: '🛒', label: 'Procurement' },
-  { id: 'sales-crm', icon: '📈', label: 'Sales & CRM' },
-  { id: 'operations', icon: '⚙️', label: 'Operations' },
-  { id: 'fleet', icon: '🚛', label: 'Fleet' },
-  { id: 'manufacturing', icon: '🏭', label: 'Manufacturing' },
-  { id: 'pos-retail', icon: '🏪', label: 'POS & Retail' },
-  { id: 'bi', icon: '📊', label: 'BI & Dashboards' },
-  { id: 'projects', icon: '📋', label: 'Projects' },
+  { id: 'financials', icon: 'DollarSign', label: 'Financials' },
+  { id: 'hr-payroll', icon: 'Users', label: 'HR & Payroll' },
+  { id: 'inventory', icon: 'Package', label: 'Inventory' },
+  { id: 'procurement', icon: 'ShoppingCart', label: 'Procurement' },
+  { id: 'sales-crm', icon: 'TrendingUp', label: 'Sales & CRM' },
+  { id: 'operations', icon: 'Settings', label: 'Operations' },
+  { id: 'fleet', icon: 'Truck', label: 'Fleet' },
+  { id: 'manufacturing', icon: 'Factory', label: 'Manufacturing' },
+  { id: 'pos-retail', icon: 'Store', label: 'POS & Retail' },
+  { id: 'bi', icon: 'BarChart3', label: 'BI & Dashboards' },
+  { id: 'projects', icon: 'BookOpen', label: 'Projects' },
 ];
 
 const defaultData360Items = [
-  { id: 'ledger', icon: '📒', label: 'Unified ledger' },
-  { id: 'master', icon: '🗄️', label: 'Master data' },
-  { id: 'workflows', icon: '🔄', label: 'Workflows' },
-  { id: 'reporting', icon: '📑', label: 'Reporting engine' },
-  { id: 'audit', icon: '🔍', label: 'Audit trail' },
-  { id: 'multi-currency', icon: '💱', label: 'Multi-currency' },
-  { id: 'multi-company', icon: '🏢', label: 'Multi-company' },
-  { id: 'security', icon: '🔐', label: 'Role-based access' },
+  { id: 'ledger', icon: 'BookOpen', label: 'Unified ledger' },
+  { id: 'master', icon: 'Database', label: 'Master data' },
+  { id: 'workflows', icon: 'Repeat', label: 'Workflows' },
+  { id: 'reporting', icon: 'FileText', label: 'Reporting engine' },
+  { id: 'audit', icon: 'Search', label: 'Audit trail' },
+  { id: 'multi-currency', icon: 'RefreshCw', label: 'Multi-currency' },
+  { id: 'multi-company', icon: 'Building2', label: 'Multi-company' },
+  { id: 'security', icon: 'ShieldCheck', label: 'Role-based access' },
 ];
 
 const defaultProviders = [
@@ -280,7 +288,7 @@ export function PlatformArchitecture() {
 
                     style={{ background: 'linear-gradient(90deg,transparent,rgba(0,163,224,0.6),transparent)' }} />
 
-                  <div className="text-xl mb-1 leading-none">{a.icon}</div>
+                  <div className="text-xl mb-1 leading-none">{renderIcon(a.icon)}</div>
 
                   <div className="font-bold text-white text-xs leading-snug">{a.title}</div>
 
@@ -380,7 +388,7 @@ export function PlatformArchitecture() {
 
                         style={{ background: `${item.accent}22`, border: `1px solid ${item.accent}44` }}
 
-                      >{item.icon}</span>
+                      >{renderIcon(item.icon)}</span>
 
                       <div>
 
@@ -428,7 +436,7 @@ export function PlatformArchitecture() {
 
                   <span className="w-5 h-5 rounded flex items-center justify-center text-xs"
 
-                    style={{ background: 'linear-gradient(135deg,var(--color-primary),var(--color-accent))' }}>⚙️</span>
+                     style={{ background: 'linear-gradient(135deg,var(--color-primary),var(--color-accent))' }}><Settings /></span>
 
                   <span className="text-white font-bold text-sm">{content.getContent('platform_arch_customer360_title', 'Customer 360')}</span>
 
@@ -450,7 +458,7 @@ export function PlatformArchitecture() {
 
                       style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)' }}>
 
-                      <span className="text-sm leading-none">{item.icon}</span>
+                      {renderIcon(item.icon, 16)}
 
                       <span className="text-[10px] font-medium text-blue-100 whitespace-nowrap">{item.label}</span>
 
@@ -474,7 +482,7 @@ export function PlatformArchitecture() {
 
                   <span className="w-5 h-5 rounded flex items-center justify-center text-xs"
 
-                    style={{ background: 'linear-gradient(135deg,var(--color-primary),var(--color-accent))' }}>🗄️</span>
+                     style={{ background: 'linear-gradient(135deg,var(--color-primary),var(--color-accent))' }}><Database /></span>
 
                   <span className="text-white font-bold text-sm">{content.getContent('platform_arch_data360_title', 'Data 360')}</span>
 
@@ -496,7 +504,7 @@ export function PlatformArchitecture() {
 
                       style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)' }}>
 
-                      <span className="text-sm leading-none">{item.icon}</span>
+                      {renderIcon(item.icon, 16)}
 
                       <span className="text-[10px] font-medium text-blue-100 whitespace-nowrap">{item.label}</span>
 
@@ -542,9 +550,11 @@ export function PlatformArchitecture() {
 
                 </div>
 
-                <span className="text-white font-extrabold text-sm tracking-widest whitespace-nowrap px-3">
+                <span className="text-white font-extrabold text-sm tracking-widest whitespace-nowrap px-3 flex items-center gap-1.5">
 
-                  {content.getContent('platform_arch_trust_layer_label', '🛡️  AI Trust Layer')}
+                  <ShieldCheck size={15} />
+
+                  {content.getContent('platform_arch_trust_layer_label', 'AI Trust Layer')}
 
                 </span>
 
@@ -578,7 +588,13 @@ export function PlatformArchitecture() {
 
               >
 
-                {content.getContent('platform_arch_ask_agentforce', '📊 Explore dashboards')}
+                <span className="inline-flex items-center gap-1.5">
+
+                  <BarChart3 size={13} />
+
+                  {content.getContent('platform_arch_ask_agentforce', 'Explore dashboards')}
+
+                </span>
 
               </div>
 

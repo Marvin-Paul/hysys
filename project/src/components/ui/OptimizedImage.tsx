@@ -1,6 +1,6 @@
 import type { ImgHTMLAttributes } from 'react';
 
-interface OptimizedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
+interface OptimizedImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   src?: string | null;
 }
 

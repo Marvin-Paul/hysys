@@ -7,10 +7,10 @@ import { useSiteContent } from '../../hooks/useSiteContent';
 export function ResourcesTeaser() {
   const content = useSiteContent('homepage');
   return (
-    <section className="py-24 bg-white">
+    <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               {content.getContent('resources_title', 'Resources & Insights')}
             </h2>
@@ -19,7 +19,7 @@ export function ResourcesTeaser() {
             </p>
           </div>
         </ScrollReveal>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6">
           {['guides', 'blog', 'faqs'].map((key) => (
             <ScrollReveal key={key}>
               <Link

@@ -9,9 +9,9 @@ export function SiteFooter() {
   const contact = useSiteContent('contact');
 
   const tagline = global.getContent('footer_tagline', '');
-  const brandName = global.getContent('footer_brand_name', 'Marmidon Global Solutions Limited');
+  const brandName = global.getContent('footer_brand_name', 'Marmidon ');
   const websiteUrl = global.getContent('footer_website_url', 'https://www.marmidon.com');
-  const copyright = global.getContent('footer_copyright', '© 2026 Marmidon Global Solutions Limited. All rights reserved.');
+  const copyright = global.getContent('footer_copyright', '© 2026 Marmidon . All rights reserved.');
   const supportPhone = global.getContent('support_phone', '0782-602854');
   const officeAddress = contact.getContent('office_address', "Plot 19 Sir Albert Cook Road, Mengo — Kampala\nP.O. Box 16435 K'la");
   const phoneLines = (contact.getContent('phone_numbers', supportPhone) || supportPhone).split('\n').filter(Boolean);

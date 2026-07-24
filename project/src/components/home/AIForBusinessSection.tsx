@@ -33,9 +33,9 @@ export function AIForBusinessSection({ videoUrl: fallbackVideoUrl }: { videoUrl?
       );
 
   return (
-    <section className="py-12 sm:py-16 bg-white border-t border-gray-200">
+    <section className="py-10 sm:py-12 bg-white border-t border-gray-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
           <div className="order-2 lg:order-1">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--color-secondary)] leading-tight mb-4">
               {title}

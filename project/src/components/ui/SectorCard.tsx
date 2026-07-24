@@ -1,4 +1,8 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { CardMedia } from './CardMedia';
 
 interface SectorCardProps {
   id?: string;
@@ -9,26 +13,50 @@ interface SectorCardProps {
   link?: string;
   linkLabel?: string;
   className?: string;
-  icon?: ReactNode;
+  icon?: LucideIcon;
+  iconGradient?: string;
   children?: ReactNode;
 }
 
-export function SectorCard({ title, description, image, to, link, linkLabel, className = '', icon, children }: SectorCardProps) {
+export function SectorCard({
+  title,
+  description,
+  image,
+  to,
+  link,
+  linkLabel,
+  className = '',
+  icon: Icon,
+  iconGradient = 'from-[var(--color-primary)] to-[var(--color-accent)]',
+  children,
+}: SectorCardProps) {
   const href = link || to || '#';
   return (
-    <div className={`group relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm transition hover:shadow-lg hover:-translate-y-1 ${className}`.trim()}>
-      {image && (
-        <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover" />
-      )}
-      <div className="relative p-6">
-        {icon && <div className="mb-3 text-[var(--color-primary)]">{icon}</div>}
-        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-        {description && <p className="mt-2 text-sm text-gray-600">{description}</p>}
+    <Link to={href} className={`pro-card group block h-full ${className}`.trim()}>
+      <CardMedia
+        src={image}
+        alt={title}
+        aspect="video"
+        fallback={
+          Icon ? (
+            <div className="pro-card__media-fallback">
+              <div className={`pro-card__icon bg-gradient-to-br ${iconGradient}`}>
+                <Icon className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          ) : undefined
+        }
+      />
+      <div className="pro-card__body">
+        <h3 className="pro-card__title">{title}</h3>
+        {description && <p className="pro-card__description">{description}</p>}
         {children}
-        <a href={href} className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--color-primary)]">
-          {linkLabel || 'Learn more'} <span aria-hidden="true">→</span>
-        </a>
+        <div className="pro-card__footer">
+          <span className="pro-card__cta">
+            {linkLabel || 'Learn more'} <ArrowRight className="w-4 h-4" />
+          </span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
